@@ -4,6 +4,30 @@
 
 File upload service built with [NodeJS](https://nodejs.org) which accepts a file, performs validation, runs a virus scan and stores the files in S3.
 
+## Using the API
+
+The API can be used to upload and download files to/from a storage service. Currently S3 is supported.
+
+### Uploading a file
+
+```
+POST /uploads
+```
+
+#### Parameters
+
+file: The file to be uploaded
+
+### Downloading a file
+
+```
+GET /uploads/:filename
+```
+
+#### Parameters
+
+filename: The name of the file to be downloaded
+
 ## Installing and running the app
 
 - Clone the repo:
