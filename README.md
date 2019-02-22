@@ -2,11 +2,9 @@
 
 ## Introduction
 
-File upload service built with [NodeJS](https://nodejs.org) which accepts a file, performs validation, runs a virus scan and stores the files in S3.
+A service built with [NodeJS](https://nodejs.org) to upload and download files to/from a storage service. The service performs validation and virus scanning on the uploaded files. Currently S3 is supported for storage.
 
 ## Using the API
-
-The API can be used to upload and download files to/from a storage service. Currently S3 is supported.
 
 ### Uploading a file
 
