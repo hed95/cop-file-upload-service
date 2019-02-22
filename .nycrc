@@ -1,0 +1,20 @@
+{
+  "check-coverage": true,
+  "per-file": true,
+  "all": true,
+  "reporter": [
+    "lcov",
+    "text",
+    "text-summary"
+  ],
+  "include": [
+    "src/**/*.js"
+  ],
+  "exclude": [
+    "src/*.js",
+    "src/routes/*.js"
+  ],
+  "require": [
+    "@babel/register"
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "name": "cop-file-upload-service",
+  "version": "1.0.0",
+  "description": "COP file upload service",
+  "main": "index.js",
+  "scripts": {
+    "dev": "NODE_ENV=dev nodemon --exec babel-node index.js",
+    "eslint": "eslint .",
+    "test:unit": "mocha --require @babel/register --require @babel/polyfill test/unit/**/*.js",
+    "test:route": "NODE_ENV=test mocha --require @babel/register --require @babel/polyfill test/route/**/*.js",
+    "test": "npm run test:unit && npm run test:route",
+    "coverage": "nyc npm run test:unit",
+    "mocks": "dyson mocks 8080"
+  },
+  "repository": {
+    "type": "git",
+    "url": "cop-file-upload-service"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "aws-sdk": "^2.404.0",
+    "express": "^4.16.4",
+    "helmet": "^3.15.1",
+    "joi": "^14.3.1",
+    "multer": "^1.4.1",
+    "superagent": "^4.1.0",
+    "winston": "^3.2.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.2.2",
+    "@babel/node": "^7.2.2",
+    "@babel/polyfill": "^7.2.5",
+    "@babel/preset-env": "^7.3.1",
+    "@babel/register": "^7.0.0",
+    "babel-plugin-istanbul": "^5.1.0",
+    "chai": "^4.2.0",
+    "chai-http": "^4.2.1",
+    "dotenv": "^6.2.0",
+    "dyson": "^2.0.3",
+    "eslint": "^5.14.1",
+    "mocha": "^5.2.0",
+    "nock": "^10.0.6",
+    "nodemon": "^1.18.10",
+    "nyc": "^13.3.0",
+    "sinon": "^7.2.3",
+    "sinon-chai": "^3.3.0"
+  }
+}
