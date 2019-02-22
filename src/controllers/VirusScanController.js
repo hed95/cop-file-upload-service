@@ -25,7 +25,7 @@ class VirusScanController {
       next();
     } catch (err) {
       req.logger.error('Unable to call the virus scanning service');
-      req.logger.error(err);
+      req.logger.error(err.toString());
       res.status(500).json({error: 'Unable to call the virus scanning service'});
     }
   }

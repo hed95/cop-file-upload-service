@@ -90,7 +90,7 @@ describe('VirusScanController', () => {
           expect(req.logger.info).to.have.been.calledWith('Virus scanning file');
           expect(req.logger.error).to.have.been.calledTwice;
           expect(req.logger.error).to.have.been.calledWith('Unable to call the virus scanning service');
-          expect(req.logger.error).to.have.been.calledWith('Unable to call the virus scanning service');
+          expect(req.logger.error).to.have.been.calledWith('Error: Internal Server Error');
           expect(res.status).to.have.been.calledOnce;
           expect(res.status).to.have.been.calledWith(500);
           expect(res.json).to.have.been.calledOnce;
