@@ -25,6 +25,7 @@
     "joi": "^14.3.1",
     "multer": "^1.4.1",
     "superagent": "^4.1.0",
+    "tesseractocr": "^1.2.1",
     "winston": "^3.2.1"
   },
   "devDependencies": {

@@ -2,7 +2,14 @@
 
 ## Introduction
 
-A service built with [NodeJS](https://nodejs.org) to upload and download files to/from a storage service. The service performs validation and virus scanning on the uploaded files. Currently S3 is supported for storage.
+A service built with [NodeJS](https://nodejs.org) to upload and download files to/from a storage service. The service performs the following actions on the uploaded files:
+
+- validation
+- virus scanning
+- extracting text with ocr
+- saving into storage
+
+Currently S3 is supported for storage.
 
 ## Using the API
 
@@ -31,7 +38,7 @@ filename: The name of the file to be downloaded
 - Clone the repo:
 
   ```
-  git clone ...
+  git clone git@github.com:UKHomeOffice/file-upload-service.git
   ```
 
 - Install dependencies:
@@ -41,6 +48,12 @@ filename: The name of the file to be downloaded
   ```
 
 - Copy `.env.example` to `.env` and replace the default values with sensible ones
+
+- Install tesseract
+
+  ```
+  brew install tesseract
+  ```
 
 - Start the app:
 
@@ -55,6 +68,8 @@ filename: The name of the file to be downloaded
   ```
   npm run mocks
   ```
+
+  The mocks are used for the virus scanning service.
 
 ## Code quality
 

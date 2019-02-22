@@ -1,3 +1,4 @@
+import OcrController from '../controllers/OcrController';
 import S3Service from '../services/S3Service';
 import StorageController from '../controllers/StorageController';
 import ValidationController from '../controllers/ValidationController';
@@ -6,6 +7,7 @@ import VirusScanController from '../controllers/VirusScanController';
 import config from '../config';
 import express from 'express';
 import multer from 'multer';
+import ocr from 'tesseractocr';
 
 const router = express.Router();
 const storage = multer.memoryStorage();
@@ -22,6 +24,7 @@ router.post(
   upload.single('file'),
   new ValidationController().validatePost,
   new VirusScanController(virusScanConfig).scanFile,
+  new OcrController(ocr).parseFile,
   new StorageController(new S3Service(s3Config)).uploadFile
 );
 
