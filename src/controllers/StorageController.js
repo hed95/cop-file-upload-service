@@ -16,7 +16,7 @@ class StorageController {
       res.status(200).json(result);
     } catch (err) {
       logger.error('Failed to download file');
-      logger.error(err);
+      logger.error(err.toString());
       res.status(500).json({error: 'Failed to download file'});
     }
   }
@@ -31,7 +31,7 @@ class StorageController {
       res.status(200).json({location: result.Location});
     } catch (err) {
       logger.error('Failed to upload file');
-      logger.error(err);
+      logger.error(err.toString());
       res.status(500).json({error: 'Failed to upload file'});
     }
   }

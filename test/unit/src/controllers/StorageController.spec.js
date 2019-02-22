@@ -13,7 +13,7 @@ describe('StorageController', () => {
     req = {
       logger: {
         info: sinon.spy(),
-        error: () => true
+        error: sinon.spy()
       },
       file: testFile,
       params: {}
@@ -51,10 +51,36 @@ describe('StorageController', () => {
           done(err);
         });
     });
+
+    it('should log the correct messages and return an error message when the storage service is not available', (done) => {
+      req.params.filename = testFile.originalname;
+      s3Service = {
+        downloadFile: sinon.stub().returns(Promise.reject(new Error('Internal Server Error')))
+      };
+
+      const storageController = new StorageController(s3Service);
+
+      storageController
+        .downloadFile(req, res)
+        .then(() => {
+          expect(req.logger.info).to.have.been.calledOnce;
+          expect(req.logger.info).to.have.been.calledWith(`Downloading file: ${testFile.originalname}`);
+          expect(req.logger.error).to.have.been.calledTwice;
+          expect(req.logger.error).to.have.been.calledWith('Failed to download file');
+          expect(req.logger.error).to.have.been.calledWith('Error: Internal Server Error');
+          expect(res.status).to.have.been.calledOnce;
+          expect(res.status).to.have.been.calledWith(500);
+          expect(res.json).to.have.been.calledOnce;
+          expect(res.json).to.have.been.calledWith({error: 'Failed to download file'});
+          done();
+        })
+        .catch((err) => {
+          done(err);
+        });
+    });
   });
 
   describe('uploadFile()', () => {
-
     it('should log the correct messages and return a success message when a file is uploaded successfully', (done) => {
       testFile.buffer = fs.createReadStream('test/data/test-file.txt');
 
@@ -73,9 +99,35 @@ describe('StorageController', () => {
           expect(res.status).to.have.been.calledOnce;
           expect(res.status).to.have.been.calledWith(200);
           expect(res.json).to.have.been.calledOnce;
-          expect(res.json).to.have.been.calledWith({
-            location: 'http://localhost/a-file'
-          });
+          expect(res.json).to.have.been.calledWith({location: 'http://localhost/a-file'});
+          done();
+        })
+        .catch((err) => {
+          done(err);
+        });
+    });
+
+    it('should log the correct messages and return an error message when the storage service is not available', (done) => {
+      testFile.buffer = fs.createReadStream('test/data/test-file.txt');
+
+      s3Service = {
+        uploadFile: sinon.stub().returns(Promise.reject(new Error('Internal Server Error')))
+      };
+
+      const storageController = new StorageController(s3Service);
+
+      storageController
+        .uploadFile(req, res)
+        .then(() => {
+          expect(req.logger.info).to.have.been.calledOnce;
+          expect(req.logger.info).to.have.been.calledWith('Uploading file');
+          expect(req.logger.error).to.have.been.calledTwice;
+          expect(req.logger.error).to.have.been.calledWith('Failed to upload file');
+          expect(req.logger.error).to.have.been.calledWith('Error: Internal Server Error');
+          expect(res.status).to.have.been.calledOnce;
+          expect(res.status).to.have.been.calledWith(500);
+          expect(res.json).to.have.been.calledOnce;
+          expect(res.json).to.have.been.calledWith({error: 'Failed to upload file'});
           done();
         })
         .catch((err) => {
