@@ -99,7 +99,7 @@ describe('StorageController', () => {
           expect(res.status).to.have.been.calledOnce;
           expect(res.status).to.have.been.calledWith(200);
           expect(res.json).to.have.been.calledOnce;
-          expect(res.json).to.have.been.calledWith({location: 'http://localhost/a-file'});
+          expect(res.json).to.have.been.calledWith({message: 'File uploaded successfully'});
           done();
         })
         .catch((err) => {

@@ -26,9 +26,9 @@ class StorageController {
     logger.info('Uploading file');
 
     try {
-      const result = await this.storageService.uploadFile(file.originalname, file.buffer);
+      await this.storageService.uploadFile(file.originalname, file.buffer);
       logger.info('File uploaded');
-      res.status(200).json({location: result.Location});
+      res.status(200).json({message: 'File uploaded successfully'});
     } catch (err) {
       logger.error('Failed to upload file');
       logger.error(err.toString());

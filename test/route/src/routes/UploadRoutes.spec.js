@@ -41,9 +41,7 @@ describe('UploadRoutes', () => {
         .attach(testFile.fieldname, testFile.buffer, testFile.originalname)
         .end((err, res) => {
           expect(res.status).to.equal(200);
-          expect(res.body).to.deep.equal({
-            location: 'https://private-cop-test-s3.s3.eu-west-2.amazonaws.com/raw-files/test-file.txt'
-          });
+          expect(res.body).to.deep.equal({message: 'File uploaded successfully'});
           expect(err).to.equal(null);
           done();
         });
