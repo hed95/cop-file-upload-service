@@ -8,6 +8,7 @@ import config from '../config';
 import express from 'express';
 import multer from 'multer';
 import ocr from 'tesseractocr';
+import util from 'util';
 
 const router = express.Router();
 const storage = multer.memoryStorage();
@@ -16,7 +17,7 @@ const {s3: s3Config, virusScan: virusScanConfig} = config.services;
 
 router.get(
   '/uploads/:filename',
-  new StorageController(new S3Service(s3Config)).downloadFile
+  new StorageController(new S3Service(s3Config, util)).downloadFile
 );
 
 router.post(
@@ -25,7 +26,7 @@ router.post(
   new ValidationController().validatePost,
   new VirusScanController(virusScanConfig).scanFile,
   new OcrController(ocr).parseFile,
-  new StorageController(new S3Service(s3Config)).uploadFile
+  new StorageController(new S3Service(s3Config, util)).uploadFile
 );
 
 export default router;

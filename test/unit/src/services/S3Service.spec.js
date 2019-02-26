@@ -92,4 +92,17 @@ describe('S3Service', () => {
       expect(s3.fetchAsync).to.have.been.calledWith('upload', {Bucket: 'awsbucket'});
     });
   });
+
+  describe('fetchAsync()', () => {
+    it('should...', () => {
+      const config = {};
+      const util = {
+        promisify: sinon.stub().returns(() => true)
+      };
+      const s3 = new S3Service(config, util);
+
+      s3.fetchAsync('upload', {file: {}});
+      expect(s3.util.promisify).to.have.been.calledOnce;
+    });
+  });
 });

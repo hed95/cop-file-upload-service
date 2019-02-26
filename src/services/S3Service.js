@@ -1,11 +1,10 @@
 import AWS from 'aws-sdk';
 
-import util from 'util';
-
 class S3Service {
-  constructor(config) {
+  constructor(config, util) {
     this.s3 = this.init(config);
     this.config = config;
+    this.util = util;
   }
 
   init(config) {
@@ -44,7 +43,7 @@ class S3Service {
   }
 
   fetchAsync(method, params) {
-    const asyncMethod = util.promisify(this.s3[method].bind(this.s3));
+    const asyncMethod = this.util.promisify(this.s3[method].bind(this.s3));
     return asyncMethod(params);
   }
 }

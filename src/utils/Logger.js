@@ -8,16 +8,17 @@ class Logger {
   }
 
   outputFormat() {
-    return this.printf(({level, message, timestamp}) => {
+    const output = this.printf(({level, message, timestamp}) => {
       if (typeof message === 'object') {
         message = JSON.stringify(message);
       }
       return `${timestamp} - ${level}: ${message}`;
     });
+    return output;
   }
 
   logger() {
-    const logger = this.createLogger({
+    return this.createLogger({
       format: this.combine(
         this.timestamp(),
         this.outputFormat()
@@ -26,7 +27,6 @@ class Logger {
         new this.transports.Console()
       ]
     });
-    return logger;
   }
 }
 
