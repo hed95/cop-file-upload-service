@@ -20,11 +20,15 @@ describe('StorageController', () => {
     };
     res = {
       status: () => true,
-      json: () => true
+      send: () => true,
+      json: () => true,
+      set: () => true
     };
 
     sinon.stub(res, 'status').returns(res);
+    sinon.stub(res, 'send').returns(res);
     sinon.stub(res, 'json').returns(res);
+    sinon.stub(res, 'set').returns(res);
   });
 
   describe('downloadFile()', () => {
@@ -40,11 +44,11 @@ describe('StorageController', () => {
         .downloadFile(req, res)
         .then(() => {
           expect(req.logger.info).to.have.been.calledTwice;
-          expect(req.logger.info).to.have.been.calledWith(`Downloading file: ${testFile.originalname}`);
+          expect(req.logger.info).to.have.been.calledWith('Downloading file');
           expect(req.logger.info).to.have.been.calledWith('File downloaded');
           expect(res.status).to.have.been.calledOnce;
           expect(res.status).to.have.been.calledWith(200);
-          expect(res.json).to.have.been.calledOnce;
+          expect(res.send).to.have.been.calledOnce;
           done();
         })
         .catch((err) => {
@@ -64,7 +68,7 @@ describe('StorageController', () => {
         .downloadFile(req, res)
         .then(() => {
           expect(req.logger.info).to.have.been.calledOnce;
-          expect(req.logger.info).to.have.been.calledWith(`Downloading file: ${testFile.originalname}`);
+          expect(req.logger.info).to.have.been.calledWith('Downloading file');
           expect(req.logger.error).to.have.been.calledTwice;
           expect(req.logger.error).to.have.been.calledWith('Failed to download file');
           expect(req.logger.error).to.have.been.calledWith('Error: Internal Server Error');

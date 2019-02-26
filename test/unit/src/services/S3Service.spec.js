@@ -14,82 +14,78 @@ describe('S3Service', () => {
   });
 
   describe('downloadParams()', () => {
-    let config;
-    let filename;
-
-    beforeEach(() => {
-      config = {
+    it('should return params without body if body is not given', () => {
+      const config = {
         bucket: 'awsbucket',
         rawFilesDirectory: 'raw-files'
       };
-      filename = 'a-file.txt';
-    });
-
-    it('should return params without body if body is not given', () => {
+      const filename = 'a-file.txt';
       const s3 = new S3Service(config);
       const params = s3.downloadParams(config, filename);
       expect(params).to.deep.equal({
-        Bucket: 'awsbucket',
-        Key: 'raw-files/a-file.txt'
+        Bucket: config.bucket,
+        Key: `${config.rawFilesDirectory}/${filename}`
       });
     });
   });
 
   describe('uploadParams()', () => {
-    let config;
-    let filename;
-
-    beforeEach(() => {
-      config = {
+    it('should return the correct params', () => {
+      const config = {
         bucket: 'awsbucket',
         rawFilesDirectory: 'raw-files',
-      };
-      filename = 'a-file.txt';
-    });
-
-    it('should return the correct params', () => {
-      config = Object.assign(config, {
         serverSideEncryption: 'aws:kms',
         sseKmsKeyId: 'keyid123'
-      });
-      const body = 'some file contents';
+      };
+      const file = {
+        originalname: 'text-file.txt',
+        buffer: 'some file contents',
+        mimetype: 'text/plain'
+      };
       const s3 = new S3Service(config);
-      const params = s3.uploadParams(config, filename, body);
+      const params = s3.uploadParams(config, file);
       expect(params).to.deep.equal({
-        Bucket: 'awsbucket',
-        Key: 'raw-files/a-file.txt',
-        Body: 'some file contents',
-        ServerSideEncryption: 'aws:kms',
-        SSEKMSKeyId: 'keyid123'
+        Bucket: config.bucket,
+        Key: `${config.rawFilesDirectory}/${file.originalname}`,
+        Body: file.buffer,
+        ServerSideEncryption: config.serverSideEncryption,
+        SSEKMSKeyId: config.sseKmsKeyId,
+        ContentType: file.mimetype
       });
     });
   });
 
   describe('downloadFile()', () => {
     it('should call fetchAsync() with the correct params', () => {
-      const config = {};
+      const config = {bucket: 'awsbucket'};
+      const filename = 'text-file.txt';
       const s3 = new S3Service(config);
 
-      s3.downloadParams = sinon.stub().returns({Bucket: 'awsbucket'});
+      s3.downloadParams = sinon.stub().returns({Bucket: config.bucket});
       s3.fetchAsync = sinon.spy();
 
-      s3.downloadFile(config);
+      s3.downloadFile(filename);
+      expect(s3.downloadParams).to.have.been.calledOnce;
+      expect(s3.downloadParams).to.have.been.calledWith(config, filename);
       expect(s3.fetchAsync).to.have.been.calledOnce;
-      expect(s3.fetchAsync).to.have.been.calledWith('getObject', {Bucket: 'awsbucket'});
+      expect(s3.fetchAsync).to.have.been.calledWith('getObject', {Bucket: config.bucket});
     });
   });
 
   describe('uploadFile()', () => {
     it('should call fetchAsync() with the correct params', () => {
-      const config = {};
+      const config = {bucket: 'awsbucket'};
+      const file = {originalname: 'text-file.txt'};
       const s3 = new S3Service(config);
 
-      s3.uploadParams = sinon.stub().returns({Bucket: 'awsbucket'});
+      s3.uploadParams = sinon.stub().returns({Bucket: config.bucket});
       s3.fetchAsync = sinon.spy();
 
-      s3.uploadFile(config);
+      s3.uploadFile(file);
+      expect(s3.uploadParams).to.have.been.calledOnce;
+      expect(s3.uploadParams).to.have.been.calledWith(config, file);
       expect(s3.fetchAsync).to.have.been.calledOnce;
-      expect(s3.fetchAsync).to.have.been.calledWith('upload', {Bucket: 'awsbucket'});
+      expect(s3.fetchAsync).to.have.been.calledWith('upload', {Bucket: config.bucket});
     });
   });
 

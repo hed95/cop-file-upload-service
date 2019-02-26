@@ -41,7 +41,7 @@ filename: The name of the file to be downloaded
   git clone git@github.com:UKHomeOffice/file-upload-service.git
   ```
 
-- Change the directory to the `file-upload-service`:
+- Change the directory to `file-upload-service`:
 
   ```
   cd file-upload-service

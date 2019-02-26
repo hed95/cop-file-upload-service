@@ -11,7 +11,7 @@ describe('UploadRoutes', () => {
         .get('/uploads/test-file.txt')
         .end((err, res) => {
           expect(res.status).to.equal(200);
-          expect(res.body).to.have.property('Body');
+          expect(res.get('Content-Type')).to.equal('text/plain; charset=utf-8');
           expect(err).to.equal(null);
           done();
         });

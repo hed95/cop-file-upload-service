@@ -8,12 +8,16 @@ class StorageController {
   async downloadFile(req, res) {
     const {logger, params} = req;
     const {filename} = params;
-    logger.info(`Downloading file: ${filename}`);
+    logger.info('Downloading file');
 
     try {
-      const result = await this.storageService.downloadFile(filename);
+      const {ContentType, Body} = await this.storageService.downloadFile(filename);
       logger.info('File downloaded');
-      res.status(200).json(result);
+      res
+        .set('Content-Type', ContentType)
+        .set('Content-Disposition', `attachment; filename=${filename}`)
+        .status(200)
+        .send(Body);
     } catch (err) {
       logger.error('Failed to download file');
       logger.error(err.toString());
@@ -26,7 +30,7 @@ class StorageController {
     logger.info('Uploading file');
 
     try {
-      await this.storageService.uploadFile(file.originalname, file.buffer);
+      await this.storageService.uploadFile(file);
       logger.info('File uploaded');
       res.status(200).json({message: 'File uploaded successfully'});
     } catch (err) {
