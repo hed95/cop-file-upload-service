@@ -41,7 +41,13 @@ filename: The name of the file to be downloaded
   git clone git@github.com:UKHomeOffice/file-upload-service.git
   ```
 
-- Install dependencies:
+- Change the directory to the `file-upload-service`:
+
+  ```
+  cd file-upload-service
+  ```
+
+- Install the dependencies:
 
   ```
   npm install
@@ -63,13 +69,15 @@ filename: The name of the file to be downloaded
 
   In dev mode the app is started with [nodemon](https://www.npmjs.com/package/nodemon), which will automatically restart the app when file changes are detected.
 
-- Start the mocks in a new terminal window:
+- Start the virus scanning service in a new terminal window:
+
+  Either run the mocks:
 
   ```
   npm run mocks
   ```
 
-  The mocks are used for the virus scanning service.
+  Or install and run the [docker-clamav-rest](https://github.com/UKHomeOffice/docker-clamav-rest) service.
 
 ## Code quality
 
