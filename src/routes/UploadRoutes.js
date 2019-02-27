@@ -18,7 +18,7 @@ const upload = multer({storage});
 const {s3: s3Config, virusScan: virusScanConfig} = config.services;
 
 router.get(
-  '/uploads/:filename',
+  '/uploads/:processKey/:filename',
   new StorageController(new S3Service(s3Config, util)).downloadFile
 );
 

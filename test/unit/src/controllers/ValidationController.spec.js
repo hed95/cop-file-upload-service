@@ -14,7 +14,8 @@ describe('ValidationController', () => {
           error: sinon.spy(),
           info: sinon.spy()
         },
-        method: 'POST'
+        method: 'POST',
+        body: {}
       };
       res = {
         status: () => true,
@@ -26,7 +27,7 @@ describe('ValidationController', () => {
       sinon.stub(res, 'json').returns(res);
     });
 
-    it('should log the correct message and return an error when a file is not given', (done) => {
+    it('should log the correct message and return an error when incorrect data is given', (done) => {
       const validationMiddleware = new ValidationController();
 
       validationMiddleware.validatePost(req, res, next);
@@ -41,8 +42,9 @@ describe('ValidationController', () => {
       done();
     });
 
-    it('should log the correct message and call next() when a file is given', (done) => {
+    it('should log the correct message and call next() when the correct data is given', (done) => {
       req.file = testFile;
+      req.body.processKey = 'test-process-key';
 
       const validationMiddleware = new ValidationController();
 

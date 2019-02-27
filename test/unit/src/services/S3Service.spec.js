@@ -14,17 +14,17 @@ describe('S3Service', () => {
   });
 
   describe('downloadParams()', () => {
-    it('should return params without body if body is not given', () => {
+    it('should return the correct params', () => {
       const config = {
-        bucket: 'awsbucket',
-        rawFilesDirectory: 'raw-files'
+        bucket: 'awsbucket'
       };
       const filename = 'a-file.txt';
+      const processKey = 'test-process-key';
       const s3 = new S3Service(config);
-      const params = s3.downloadParams(config, filename);
+      const params = s3.downloadParams(config, filename, processKey);
       expect(params).to.deep.equal({
         Bucket: config.bucket,
-        Key: `${config.rawFilesDirectory}/${filename}`
+        Key: `${processKey}/${filename}`
       });
     });
   });
@@ -43,11 +43,12 @@ describe('S3Service', () => {
         mimetype: 'text/plain',
         filename: '9e5eb809-bce7-463e-8c2f-b6bd8c4832d9'
       };
+      const processKey = 'test-process-key';
       const s3 = new S3Service(config);
-      const params = s3.uploadParams(config, file);
+      const params = s3.uploadParams(config, file, processKey);
       expect(params).to.deep.equal({
         Bucket: config.bucket,
-        Key: `${config.rawFilesDirectory}/${file.filename}`,
+        Key: `${processKey}/${file.filename}`,
         Body: file.buffer,
         ServerSideEncryption: config.serverSideEncryption,
         SSEKMSKeyId: config.sseKmsKeyId,

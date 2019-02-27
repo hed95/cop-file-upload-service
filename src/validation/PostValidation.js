@@ -5,7 +5,8 @@ class PostValidation {
     return Joi
       .object()
       .keys({
-        file: Joi.required()
+        file: Joi.object().required(),
+        processKey: Joi.string().required()
       });
   }
 }

@@ -23,6 +23,8 @@ POST /uploads
 
 file: The file to be uploaded
 
+processKey: The process key of the uploaded file
+
 #### Responses
 
 200: application/json
@@ -52,10 +54,12 @@ file: The file to be uploaded
 ### Downloading a file
 
 ```
-GET /uploads/:filename
+GET /uploads/:processKey/:filename
 ```
 
 #### Parameters
+
+processKey: The process key of the file to be downloaded
 
 filename: The name of the file to be downloaded
 

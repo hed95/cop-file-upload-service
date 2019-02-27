@@ -15,17 +15,17 @@ class S3Service {
     });
   }
 
-  downloadParams(config, filename) {
+  downloadParams(config, filename, processKey) {
     return {
       Bucket: config.bucket,
-      Key: `${config.rawFilesDirectory}/${filename}`
+      Key: `${processKey}/${filename}`
     };
   }
 
-  uploadParams(config, file) {
+  uploadParams(config, file, processKey) {
     return {
       Bucket: config.bucket,
-      Key: `${config.rawFilesDirectory}/${file.filename}`,
+      Key: `${processKey}/${file.filename}`,
       Body: file.buffer,
       ServerSideEncryption: config.serverSideEncryption,
       SSEKMSKeyId: config.sseKmsKeyId,
@@ -36,13 +36,13 @@ class S3Service {
     };
   }
 
-  downloadFile(filename) {
-    const params = this.downloadParams(this.config, filename);
+  downloadFile(filename, processKey) {
+    const params = this.downloadParams(this.config, filename, processKey);
     return this.fetchAsync('getObject', params);
   }
 
-  uploadFile(file) {
-    const params = this.uploadParams(this.config, file);
+  uploadFile(file, processKey) {
+    const params = this.uploadParams(this.config, file, processKey);
     return this.fetchAsync('upload', params);
   }
 

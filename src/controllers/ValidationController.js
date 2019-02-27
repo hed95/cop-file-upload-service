@@ -3,9 +3,13 @@ import PostValidation from '../validation/PostValidation';
 
 class ValidationController {
   validatePost(req, res, next) {
-    const {file, logger, method} = req;
+    const {body, file, logger, method} = req;
     const schema = new PostValidation().schema();
-    const result = Joi.validate({file}, schema);
+    const dataToValidate = {
+      file: file,
+      processKey: body.processKey
+    };
+    const result = Joi.validate(dataToValidate, schema);
     const {error} = result;
 
     if (error !== null) {

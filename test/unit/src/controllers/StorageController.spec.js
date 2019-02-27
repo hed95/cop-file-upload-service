@@ -16,7 +16,8 @@ describe('StorageController', () => {
         error: sinon.spy()
       },
       file: testFile,
-      params: {}
+      params: {},
+      body: {}
     };
     res = {
       status: () => true,
@@ -91,6 +92,8 @@ describe('StorageController', () => {
       s3Service = {
         uploadFile: sinon.stub().returns({Location: 'http://localhost/a-file'})
       };
+
+      req.body.processKey = 'test-process-key';
 
       const storageController = new StorageController(s3Service);
 
