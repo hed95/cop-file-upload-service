@@ -16,6 +16,18 @@ describe('UploadRoutes', () => {
           done();
         });
     });
+
+    it('should return the correct status and response when the route is not found', (done) => {
+      chai
+        .request(app)
+        .get('/upload/does-not-exist.txt')
+        .end((err, res) => {
+          expect(res.status).to.equal(404);
+          expect(res.body).to.deep.equal({error: 'Route not found'});
+          expect(err).to.equal(null);
+          done();
+        });
+    });
   });
 
   describe('post()', () => {
@@ -56,6 +68,19 @@ describe('UploadRoutes', () => {
         .end((err, res) => {
           expect(res.status).to.equal(400);
           expect(res.body).to.deep.equal({error: '"file" is required'});
+          expect(err).to.equal(null);
+          done();
+        });
+    });
+
+    it('should return the correct status and response when the route is not found', (done) => {
+      chai
+        .request(app)
+        .post('/uploadz')
+        .attach(testFile.fieldname, testFile.buffer, testFile.originalname)
+        .end((err, res) => {
+          expect(res.status).to.equal(404);
+          expect(res.body).to.deep.equal({error: 'Route not found'});
           expect(err).to.equal(null);
           done();
         });
