@@ -1,17 +1,18 @@
 class StorageController {
-  constructor(storageService) {
+  constructor(storageService, config) {
     this.storageService = storageService;
+    this.config = config;
     this.downloadFile = this.downloadFile.bind(this);
     this.uploadFile = this.uploadFile.bind(this);
   }
 
   async downloadFile(req, res) {
     const {logger, params} = req;
-    const {filename, processKey} = params;
+    const {processKey, fileVersion, filename} = params;
     logger.info('Downloading file');
 
     try {
-      const {ContentType, Body} = await this.storageService.downloadFile(filename, processKey);
+      const {ContentType, Body} = await this.storageService.downloadFile(processKey, fileVersion, filename);
       logger.info('File downloaded');
       res
         .set('Content-Type', ContentType)
@@ -30,7 +31,7 @@ class StorageController {
     logger.info('Uploading file');
 
     try {
-      await this.storageService.uploadFile(file, body.processKey);
+      await this.storageService.uploadFile(body.processKey, this.config.fileVersions.original, file);
       logger.info('File uploaded');
       res.status(200).json({message: 'File uploaded successfully'});
     } catch (err) {

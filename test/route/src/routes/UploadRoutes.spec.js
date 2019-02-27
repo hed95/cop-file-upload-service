@@ -8,7 +8,7 @@ describe('UploadRoutes', () => {
     it('should return the correct status and response', (done) => {
       chai
         .request(app)
-        .get('/uploads/test-file.txt')
+        .get('/uploads/test-process-key/orig/c0569d57-59a0-4c39-8379-03e5a261f954')
         .end((err, res) => {
           expect(res.status).to.equal(200);
           expect(res.get('Content-Type')).to.equal('text/plain; charset=utf-8');
@@ -44,13 +44,14 @@ describe('UploadRoutes', () => {
       nock.restore();
     });
 
-    it('should return the correct status and response when a file is given', (done) => {
+    it('should return the correct status and response when the correct data is given', (done) => {
       virusScanMock.reply(200, 'true');
 
       chai
         .request(app)
         .post('/uploads')
         .attach(testFile.fieldname, testFile.buffer, testFile.originalname)
+        .field('processKey', 'test-process-key')
         .end((err, res) => {
           expect(res.status).to.equal(200);
           expect(res.body).to.deep.equal({message: 'File uploaded successfully'});
@@ -59,12 +60,13 @@ describe('UploadRoutes', () => {
         });
     });
 
-    it('should return the correct status and response when a file is not given', (done) => {
+    it('should return the correct status and response when incorrect data is given', (done) => {
       virusScanMock.reply(200, 'true');
 
       chai
         .request(app)
         .post('/uploads')
+        .field('processKey', 'test-process-key')
         .end((err, res) => {
           expect(res.status).to.equal(400);
           expect(res.body).to.deep.equal({error: '"file" is required'});
@@ -93,6 +95,7 @@ describe('UploadRoutes', () => {
         .request(app)
         .post('/uploads')
         .attach(testFile.fieldname, testFile.buffer, testFile.originalname)
+        .field('processKey', 'test-process-key')
         .end((err, res) => {
           expect(res.status).to.equal(500);
           expect(res.body).to.deep.equal({error: 'Unable to call the virus scanning service'});

@@ -18,9 +18,13 @@ const config = {
       sseKmsKeyId: process.env.SSE_KMS_KEY_ID,
       bucket: process.env.AWS_BUCKET,
       region: process.env.AWS_REGION,
-      serverSideEncryption: 'aws:kms',
-      rawFilesDirectory: 'raw-files'
+      serverSideEncryption: 'aws:kms'
     }
+  },
+  fileVersions: {
+    original: 'orig',
+    clean: 'clean',
+    ocr: 'ocr'
   }
 };
 

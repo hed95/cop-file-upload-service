@@ -1,4 +1,4 @@
-import {expect, sinon, testFile} from '../../../setupTests';
+import {config, expect, sinon, testFile} from '../../../setupTests';
 
 import StorageController from '../../../../src/controllers/StorageController';
 
@@ -95,7 +95,7 @@ describe('StorageController', () => {
 
       req.body.processKey = 'test-process-key';
 
-      const storageController = new StorageController(s3Service);
+      const storageController = new StorageController(s3Service, config);
 
       storageController
         .uploadFile(req, res)
@@ -121,7 +121,7 @@ describe('StorageController', () => {
         uploadFile: sinon.stub().returns(Promise.reject(new Error('Internal Server Error')))
       };
 
-      const storageController = new StorageController(s3Service);
+      const storageController = new StorageController(s3Service, config);
 
       storageController
         .uploadFile(req, res)

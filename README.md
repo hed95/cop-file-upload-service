@@ -54,12 +54,14 @@ processKey: The process key of the uploaded file
 ### Downloading a file
 
 ```
-GET /uploads/:processKey/:filename
+GET /uploads/:processKey/:fileVersion/:filename
 ```
 
 #### Parameters
 
 processKey: The process key of the file to be downloaded
+
+fileVersion: The version of the file to be downloaded. Will be one of: `orig`, `clean` or `ocr`
 
 filename: The name of the file to be downloaded
 

@@ -18,7 +18,7 @@ const upload = multer({storage});
 const {s3: s3Config, virusScan: virusScanConfig} = config.services;
 
 router.get(
-  '/uploads/:processKey/:filename',
+  '/uploads/:processKey/:fileVersion/:filename',
   new StorageController(new S3Service(s3Config, util)).downloadFile
 );
 
@@ -29,7 +29,7 @@ router.post(
   new FilenameController(uuid).generateFilename,
   new VirusScanController(virusScanConfig).scanFile,
   new OcrController(ocr).parseFile,
-  new StorageController(new S3Service(s3Config, util)).uploadFile
+  new StorageController(new S3Service(s3Config, util), config).uploadFile
 );
 
 export default router;

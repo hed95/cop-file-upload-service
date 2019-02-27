@@ -1,4 +1,5 @@
 import AWS from 'aws-sdk';
+import StorageKey from '../utils/StorageKey';
 
 class S3Service {
   constructor(config, util) {
@@ -15,17 +16,17 @@ class S3Service {
     });
   }
 
-  downloadParams(config, filename, processKey) {
+  downloadParams(config, processKey, fileVersion, filename) {
     return {
       Bucket: config.bucket,
-      Key: `${processKey}/${filename}`
+      Key: StorageKey.format(processKey, fileVersion, filename)
     };
   }
 
-  uploadParams(config, file, processKey) {
+  uploadParams(config, processKey, fileVersion, file) {
     return {
       Bucket: config.bucket,
-      Key: `${processKey}/${file.filename}`,
+      Key: StorageKey.format(processKey, fileVersion, file.filename),
       Body: file.buffer,
       ServerSideEncryption: config.serverSideEncryption,
       SSEKMSKeyId: config.sseKmsKeyId,
@@ -36,13 +37,13 @@ class S3Service {
     };
   }
 
-  downloadFile(filename, processKey) {
-    const params = this.downloadParams(this.config, filename, processKey);
+  downloadFile(processKey, fileVersion, filename) {
+    const params = this.downloadParams(this.config, processKey, fileVersion, filename);
     return this.fetchAsync('getObject', params);
   }
 
-  uploadFile(file, processKey) {
-    const params = this.uploadParams(this.config, file, processKey);
+  uploadFile(processKey, fileVersion, file) {
+    const params = this.uploadParams(this.config, processKey, fileVersion, file);
     return this.fetchAsync('upload', params);
   }
 
