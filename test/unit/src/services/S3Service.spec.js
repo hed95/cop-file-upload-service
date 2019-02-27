@@ -40,17 +40,21 @@ describe('S3Service', () => {
       const file = {
         originalname: 'text-file.txt',
         buffer: 'some file contents',
-        mimetype: 'text/plain'
+        mimetype: 'text/plain',
+        filename: '9e5eb809-bce7-463e-8c2f-b6bd8c4832d9'
       };
       const s3 = new S3Service(config);
       const params = s3.uploadParams(config, file);
       expect(params).to.deep.equal({
         Bucket: config.bucket,
-        Key: `${config.rawFilesDirectory}/${file.originalname}`,
+        Key: `${config.rawFilesDirectory}/${file.filename}`,
         Body: file.buffer,
         ServerSideEncryption: config.serverSideEncryption,
         SSEKMSKeyId: config.sseKmsKeyId,
-        ContentType: file.mimetype
+        ContentType: file.mimetype,
+        Metadata: {
+          originalfilename: file.originalname
+        }
       });
     });
   });

@@ -25,11 +25,14 @@ class S3Service {
   uploadParams(config, file) {
     return {
       Bucket: config.bucket,
-      Key: `${config.rawFilesDirectory}/${file.originalname}`,
+      Key: `${config.rawFilesDirectory}/${file.filename}`,
       Body: file.buffer,
       ServerSideEncryption: config.serverSideEncryption,
       SSEKMSKeyId: config.sseKmsKeyId,
-      ContentType: file.mimetype
+      ContentType: file.mimetype,
+      Metadata: {
+        originalfilename: file.originalname
+      }
     };
   }
 
