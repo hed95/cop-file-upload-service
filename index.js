@@ -31,4 +31,9 @@ const server = http
   .createServer(app)
   .listen(port, () => logger.info(`Listening on port ${port}`));
 
+app.use((req, res) => {
+  req.logger.error('Route not found');
+  res.status(404).json({error: 'Route not found'});
+});
+
 export default server;

@@ -23,6 +23,32 @@ POST /uploads
 
 file: The file to be uploaded
 
+#### Responses
+
+200: application/json
+
+```
+{
+  message: 'File uploaded successfully'
+}
+```
+
+404: application/json
+
+```
+{
+  error: 'Route not found'
+}
+```
+
+500: application/json
+
+```
+{
+  error: 'Failed to upload file'
+}
+```
+
 ### Downloading a file
 
 ```
@@ -32,6 +58,26 @@ GET /uploads/:filename
 #### Parameters
 
 filename: The name of the file to be downloaded
+
+#### Responses
+
+200: image/jpeg, image/png, application/pdf etc.
+
+404: application/json
+
+```
+{
+  error: 'Route not found'
+}
+```
+
+500: application/json
+
+```
+{
+  error: 'Failed to download file'
+}
+```
 
 ## Installing and running the app
 
