@@ -129,7 +129,11 @@ filename: The name of the file to be downloaded
   npm run mocks
   ```
 
-  Or install and run the [docker-clamav-rest](https://github.com/UKHomeOffice/docker-clamav-rest) service.
+  Or install [Docker](https://www.docker.com) and then start the docker containers with:
+
+  ```
+  docker-compose up
+  ```
 
 ## Code quality
 
