@@ -30,7 +30,8 @@ router.post(
   new StorageController(new S3Service(s3Config, util)).uploadFile,
   new VirusScanController(config).scanFile,
   new StorageController(new S3Service(s3Config, util)).uploadFile,
-  new OcrController(ocr).parseFile,
+  new OcrController(ocr, config).parseFile,
+  new StorageController(new S3Service(s3Config, util)).uploadFile,
   (req, res) => {
     res.status(200).json({message: 'File uploaded successfully'});
   }

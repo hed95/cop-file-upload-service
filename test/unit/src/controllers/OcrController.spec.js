@@ -1,4 +1,4 @@
-import {expect, sinon} from '../../../setupTests';
+import {config, expect, sinon} from '../../../setupTests';
 
 import OcrController from '../../../../src/controllers/OcrController';
 
@@ -25,15 +25,17 @@ describe('OcrController', () => {
     it('should log the correct messages and call next() when a valid file type is given', (done) => {
       req.file.mimetype = 'image/jpeg';
 
-      const ocrController = new OcrController(ocr);
+      const ocrController = new OcrController(ocr, config);
 
       ocrController.parseFile(req, res, next)
         .then(() => {
-          expect(req.logger.info).to.have.been.calledThrice;
+          expect(req.logger.info).to.have.been.calledTwice;
           expect(req.logger.info).to.have.been.calledWith('Parsing file for ocr');
           expect(req.logger.info).to.have.been.calledWith('Parsed text from file');
-          expect(req.logger.info).to.have.been.calledWith('some text from an image');
           expect(next).to.have.been.calledOnce;
+          expect(req.file.buffer).to.deep.equal(new Buffer('some text from an image'));
+          expect(req.file.version).to.equal(config.fileVersions.ocr);
+          expect(req.file.mimetype).to.equal('text/plain');
           done();
         })
         .catch((err) => {
@@ -48,10 +50,9 @@ describe('OcrController', () => {
 
       ocrController.parseFile(req, res, next)
         .then(() => {
-          expect(req.logger.info).to.have.been.calledOnce;
+          expect(req.logger.info).to.have.been.calledTwice;
           expect(req.logger.info).to.have.been.calledWith('Parsing file for ocr');
-          expect(req.logger.error).to.have.been.calledOnce;
-          expect(req.logger.error).to.have.been.calledWith('Failed to parse file as pdf is an unsupported file type');
+          expect(req.logger.info).to.have.been.calledWith('File not parsed - pdf is an unsupported file type');
           expect(next).to.have.been.calledOnce;
           done();
         })

@@ -27,16 +27,21 @@ class StorageController {
 
   async uploadFile(req, res, next) {
     const {body, file, logger} = req;
-    logger.info('Uploading file');
+
+    if (!file.version) {
+      return next();
+    }
+
+    logger.info(`Uploading file - ${file.version} version`);
 
     try {
       await this.storageService.uploadFile(body.processKey, file);
-      logger.info('File uploaded');
+      logger.info(`File uploaded - ${file.version} version`);
       next();
     } catch (err) {
-      logger.error('Failed to upload file');
+      logger.error(`Failed to upload file - ${file.version} version`);
       logger.error(err.toString());
-      res.status(500).json({error: 'Failed to upload file'});
+      res.status(500).json({error: `Failed to upload file - ${file.version} version`});
     }
   }
 }

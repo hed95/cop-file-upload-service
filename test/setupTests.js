@@ -14,7 +14,8 @@ const testFile = {
   originalname: 'test-file.txt',
   encoding: '7bit',
   mimetype: 'application/octet-stream',
-  size: 5
+  size: 5,
+  version: config.fileVersions.original
 };
 
 export {
