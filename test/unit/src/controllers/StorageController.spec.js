@@ -7,6 +7,7 @@ import fs from 'fs';
 describe('StorageController', () => {
   let req;
   let res;
+  let next;
   let s3Service;
 
   beforeEach(() => {
@@ -25,6 +26,7 @@ describe('StorageController', () => {
       json: () => true,
       set: () => true
     };
+    next = sinon.spy();
 
     sinon.stub(res, 'status').returns(res);
     sinon.stub(res, 'send').returns(res);
@@ -86,7 +88,7 @@ describe('StorageController', () => {
   });
 
   describe('uploadFile()', () => {
-    it('should log the correct messages and return a success message when a file is uploaded successfully', (done) => {
+    it('should log the correct messages and call next() when a file is uploaded successfully', (done) => {
       testFile.buffer = fs.createReadStream('test/data/test-file.txt');
 
       s3Service = {
@@ -98,15 +100,12 @@ describe('StorageController', () => {
       const storageController = new StorageController(s3Service, config);
 
       storageController
-        .uploadFile(req, res)
+        .uploadFile(req, res, next)
         .then(() => {
           expect(req.logger.info).to.have.been.calledTwice;
           expect(req.logger.info).to.have.been.calledWith('Uploading file');
           expect(req.logger.info).to.have.been.calledWith('File uploaded');
-          expect(res.status).to.have.been.calledOnce;
-          expect(res.status).to.have.been.calledWith(200);
-          expect(res.json).to.have.been.calledOnce;
-          expect(res.json).to.have.been.calledWith({message: 'File uploaded successfully'});
+          expect(next).to.have.been.calledOnce;
           done();
         })
         .catch((err) => {

@@ -23,10 +23,10 @@ class S3Service {
     };
   }
 
-  uploadParams(config, processKey, fileVersion, file) {
+  uploadParams(config, processKey, file) {
     return {
       Bucket: config.bucket,
-      Key: StorageKey.format(processKey, fileVersion, file.filename),
+      Key: StorageKey.format(processKey, file.version, file.filename),
       Body: file.buffer,
       ServerSideEncryption: config.serverSideEncryption,
       SSEKMSKeyId: config.sseKmsKeyId,
@@ -42,8 +42,8 @@ class S3Service {
     return this.fetchAsync('getObject', params);
   }
 
-  uploadFile(processKey, fileVersion, file) {
-    const params = this.uploadParams(this.config, processKey, fileVersion, file);
+  uploadFile(processKey, file) {
+    const params = this.uploadParams(this.config, processKey, file);
     return this.fetchAsync('upload', params);
   }
 

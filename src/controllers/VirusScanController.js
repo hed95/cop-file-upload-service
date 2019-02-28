@@ -8,16 +8,19 @@ class VirusScanController {
 
   async scanFile(req, res, next) {
     const {file} = req;
+    const {services, fileVersions} = this.config;
+    const {virusScan} = services;
     req.logger.info('Virus scanning file');
 
     try {
       const res = await request
-        .post(`${this.config.url}:${this.config.port}${this.config.path}`)
+        .post(`${virusScan.url}:${virusScan.port}${virusScan.path}`)
         .attach('file', file.buffer, file.originalname)
         .field('name', file.originalname);
 
       if (res.text.includes('true')) {
         req.logger.info('Virus scan passed');
+        req.file.version = fileVersions.clean;
       } else {
         req.logger.error('Virus scan failed');
       }

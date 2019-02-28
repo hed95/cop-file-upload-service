@@ -15,7 +15,7 @@ import uuid from 'uuid/v4';
 const router = express.Router();
 const storage = multer.memoryStorage();
 const upload = multer({storage});
-const {s3: s3Config, virusScan: virusScanConfig} = config.services;
+const {s3: s3Config} = config.services;
 
 router.get(
   '/uploads/:processKey/:fileVersion/:filename',
@@ -26,10 +26,14 @@ router.post(
   '/uploads',
   upload.single('file'),
   new ValidationController().validatePost,
-  new FilenameController(uuid).generateFilename,
-  new VirusScanController(virusScanConfig).scanFile,
+  new FilenameController(uuid, config).generateFilename,
+  new StorageController(new S3Service(s3Config, util)).uploadFile,
+  new VirusScanController(config).scanFile,
+  new StorageController(new S3Service(s3Config, util)).uploadFile,
   new OcrController(ocr).parseFile,
-  new StorageController(new S3Service(s3Config, util), config).uploadFile
+  (req, res) => {
+    res.status(200).json({message: 'File uploaded successfully'});
+  }
 );
 
 export default router;

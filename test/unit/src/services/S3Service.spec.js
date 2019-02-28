@@ -45,15 +45,15 @@ describe('S3Service', () => {
         originalname: 'text-file.txt',
         buffer: 'some file contents',
         mimetype: 'text/plain',
-        filename: '9e5eb809-bce7-463e-8c2f-b6bd8c4832d9'
+        filename: '9e5eb809-bce7-463e-8c2f-b6bd8c4832d9',
+        version: 'clean'
       };
       const processKey = 'test-process-key';
-      const fileVersion = 'clean';
       const s3 = new S3Service(s3Config);
-      const params = s3.uploadParams(s3Config, processKey, fileVersion, file);
+      const params = s3.uploadParams(s3Config, processKey, file);
       expect(params).to.deep.equal({
         Bucket: s3Config.bucket,
-        Key: StorageKey.format(processKey, fileVersion, file.filename),
+        Key: StorageKey.format(processKey, file.version, file.filename),
         Body: file.buffer,
         ServerSideEncryption: s3Config.serverSideEncryption,
         SSEKMSKeyId: s3Config.sseKmsKeyId,

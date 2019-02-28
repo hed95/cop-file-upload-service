@@ -1,4 +1,4 @@
-import {expect, sinon} from '../../../setupTests';
+import {config, expect, sinon} from '../../../setupTests';
 
 import FilenameController from '../../../../src/controllers/FilenameController';
 
@@ -11,9 +11,14 @@ describe('FilenameController', () => {
       };
       const res = {};
       const next = sinon.spy();
-      const filenameController = new FilenameController(uuid);
+      const filenameController = new FilenameController(uuid, config);
       filenameController.generateFilename(req, res, next);
-      expect(req).to.deep.equal({file: {filename: uuid()}});
+      expect(req).to.deep.equal({
+        file: {
+          filename: uuid(),
+          version: config.fileVersions.original
+        }
+      });
       done();
     });
   });

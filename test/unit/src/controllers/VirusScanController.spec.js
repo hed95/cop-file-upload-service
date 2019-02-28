@@ -6,16 +6,14 @@ import fs from 'fs';
 
 describe('VirusScanController', () => {
   describe('scanFile()', () => {
-    let virusScanConfig;
     let virusScanMock;
     let req;
     let res;
     let next;
 
     beforeEach(() => {
-      virusScanConfig = config.services.virusScan;
-      virusScanMock = nock(`${virusScanConfig.url}:${virusScanConfig.port}`)
-        .post(virusScanConfig.path);
+      const {virusScan} = config.services;
+      virusScanMock = nock(`${virusScan.url}:${virusScan.port}`).post(virusScan.path);
 
       req = {
         logger: {
@@ -42,7 +40,7 @@ describe('VirusScanController', () => {
     it('should log the correct messages and call next() if the scan passes', (done) => {
       virusScanMock.reply(200, {text: 'true'});
 
-      const virusScanController = new VirusScanController(virusScanConfig);
+      const virusScanController = new VirusScanController(config);
 
       virusScanController
         .scanFile(req, res, next)
@@ -61,7 +59,7 @@ describe('VirusScanController', () => {
     it('should log the correct messages and call next() if the scan fails', (done) => {
       virusScanMock.reply(200, {text: 'false'});
 
-      const virusScanController = new VirusScanController(virusScanConfig);
+      const virusScanController = new VirusScanController(config);
 
       virusScanController
         .scanFile(req, res, next)
@@ -81,7 +79,7 @@ describe('VirusScanController', () => {
     it('should log the correct messages and return an error if the scan fails', (done) => {
       virusScanMock.reply(500, new Error('Internal Server Error'));
 
-      const virusScanController = new VirusScanController(virusScanConfig);
+      const virusScanController = new VirusScanController(config);
 
       virusScanController
         .scanFile(req, res, next)
