@@ -6,7 +6,7 @@
   },
   "extends": "eslint:recommended",
   "parserOptions": {
-      "ecmaVersion": 2017,
+      "ecmaVersion": 2018,
       "sourceType": "module"
   },
   "rules": {
@@ -249,6 +249,7 @@
       "prefer-arrow-callback": "off",
       "prefer-const": "error",
       "prefer-numeric-literals": "error",
+      "prefer-object-spread": "error",
       "prefer-promise-reject-errors": "error",
       "prefer-reflect": "off",
       "prefer-rest-params": "error",
