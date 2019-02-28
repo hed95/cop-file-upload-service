@@ -140,5 +140,21 @@ describe('StorageController', () => {
           done(err);
         });
     });
+
+    it('should call next() if the file version does not exist', (done) => {
+      delete req.file.version;
+
+      const storageController = new StorageController(s3Service, config);
+
+      storageController
+        .uploadFile(req, res, next)
+        .then(() => {
+          expect(next).to.have.been.calledOnce;
+          done();
+        })
+        .catch((err) => {
+          done(err);
+        });
+    });
   });
 });

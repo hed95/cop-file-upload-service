@@ -12,7 +12,9 @@ describe('OcrController', () => {
     beforeEach(() => {
       ocr = sinon.stub().returns('   some text from an image     ');
       req = {
-        file: {},
+        file: {
+          version: config.fileVersions.original
+        },
         logger: {
           info: sinon.spy(),
           error: sinon.spy()
@@ -22,7 +24,7 @@ describe('OcrController', () => {
       next = sinon.spy();
     });
 
-    it('should log the correct messages and call next() when a valid file type is given', (done) => {
+    it('should log the correct messages, set file data call next() when a valid file type is given', (done) => {
       req.file.mimetype = 'image/jpeg';
 
       const ocrController = new OcrController(ocr, config);
@@ -43,7 +45,7 @@ describe('OcrController', () => {
         });
     });
 
-    it('should log the correct messages and call next() when an invalid file type is given', (done) => {
+    it('should log the correct messages, delete the file version and call next() when an invalid file type is given', (done) => {
       req.file.mimetype = 'application/pdf';
 
       const ocrController = new OcrController(ocr);
@@ -54,6 +56,7 @@ describe('OcrController', () => {
           expect(req.logger.info).to.have.been.calledWith('Parsing file for ocr');
           expect(req.logger.info).to.have.been.calledWith('File not parsed - pdf is an unsupported file type');
           expect(next).to.have.been.calledOnce;
+          expect(req.file.version).to.be.undefined;
           done();
         })
         .catch((err) => {
@@ -61,7 +64,7 @@ describe('OcrController', () => {
         });
     });
 
-    it('should log the correct messages and call next() when the ocr service is not available', (done) => {
+    it('should log the correct messages, delete the file version and call next() when the ocr service is not available', (done) => {
       ocr = sinon.stub().returns(Promise.reject(new Error('Internal Server Error')));
       req.file.mimetype = 'image/jpeg';
 
@@ -75,6 +78,7 @@ describe('OcrController', () => {
           expect(req.logger.error).to.have.been.calledWith('Failed to parse text from file');
           expect(req.logger.error).to.have.been.calledWith('Error: Internal Server Error');
           expect(next).to.have.been.calledOnce;
+          expect(req.file.version).to.be.undefined;
           done();
         })
         .catch((err) => {

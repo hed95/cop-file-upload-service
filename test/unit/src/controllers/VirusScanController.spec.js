@@ -49,6 +49,7 @@ describe('VirusScanController', () => {
           expect(req.logger.info).to.have.been.calledWith('Virus scanning file');
           expect(req.logger.info).to.have.been.calledWith('Virus scan passed');
           expect(next).to.have.been.calledOnce;
+          expect(req.file.version).to.equal(config.fileVersions.clean);
           done();
         })
         .catch(err => {
