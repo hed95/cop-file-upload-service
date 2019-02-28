@@ -16,4 +16,4 @@ services:
       - 3310:3310
 
   tesseract:
-    image: hub.docker.com/r/tesseractshadow/tesseract4re
+    image: tesseractshadow/tesseract4re

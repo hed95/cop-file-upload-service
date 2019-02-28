@@ -10,6 +10,8 @@ pipeline:
         - push
         - pull_request
         - tag
+        branch:
+        - master
 
   sonar-scanner:
     image: quay.io/ukhomeofficedigital/sonar-scanner:v3.0.1
