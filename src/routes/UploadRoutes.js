@@ -18,12 +18,12 @@ const upload = multer({storage});
 const {s3: s3Config} = config.services;
 
 router.get(
-  '/uploads/:processKey/:fileVersion/:filename',
+  `${config.endpoints.files}/:processKey/:fileVersion/:filename`,
   new StorageController(new S3Service(s3Config, util)).downloadFile
 );
 
 router.post(
-  '/uploads',
+  config.endpoints.files,
   upload.single('file'),
   new ValidationController().validatePost,
   new FilenameController(uuid, config).generateFilename,

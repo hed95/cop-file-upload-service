@@ -6,6 +6,9 @@ if (['dev', 'test'].includes(process.env.NODE_ENV)) {
 
 const config = {
   port: process.env.PORT || 8181,
+  endpoints: {
+    files: '/files'
+  },
   services: {
     virusScan: {
       url: process.env.VIRUS_SCAN_URL || 'http://localhost',

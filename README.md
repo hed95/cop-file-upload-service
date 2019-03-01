@@ -16,7 +16,7 @@ Currently S3 is supported for storage.
 ### Uploading a file
 
 ```
-POST /uploads
+POST /files
 ```
 
 #### Parameters
@@ -54,7 +54,7 @@ processKey: The process key of the uploaded file
 ### Downloading a file
 
 ```
-GET /uploads/:processKey/:fileVersion/:filename
+GET /files/:processKey/:fileVersion/:filename
 ```
 
 #### Parameters

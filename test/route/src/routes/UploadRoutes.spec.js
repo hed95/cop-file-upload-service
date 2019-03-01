@@ -8,7 +8,7 @@ describe('UploadRoutes', () => {
     it('should return the correct status and response', (done) => {
       chai
         .request(app)
-        .get('/uploads/test-process-key/orig/c0569d57-59a0-4c39-8379-03e5a261f954')
+        .get(`${config.endpoints.files}/test-process-key/orig/c0569d57-59a0-4c39-8379-03e5a261f954`)
         .end((err, res) => {
           expect(res.status).to.equal(200);
           expect(res.get('Content-Type')).to.equal('text/plain; charset=utf-8');
@@ -20,7 +20,7 @@ describe('UploadRoutes', () => {
     it('should return the correct status and response when the route is not found', (done) => {
       chai
         .request(app)
-        .get('/upload/does-not-exist.txt')
+        .get(`${config.endpoints.files}/does-not-exist.txt`)
         .end((err, res) => {
           expect(res.status).to.equal(404);
           expect(res.body).to.deep.equal({error: 'Route not found'});
@@ -49,7 +49,7 @@ describe('UploadRoutes', () => {
 
       chai
         .request(app)
-        .post('/uploads')
+        .post(config.endpoints.files)
         .attach(testFile.fieldname, testFile.buffer, testFile.originalname)
         .field('processKey', 'test-process-key')
         .end((err, res) => {
@@ -65,7 +65,7 @@ describe('UploadRoutes', () => {
 
       chai
         .request(app)
-        .post('/uploads')
+        .post(config.endpoints.files)
         .field('processKey', 'test-process-key')
         .end((err, res) => {
           expect(res.status).to.equal(400);
@@ -93,7 +93,7 @@ describe('UploadRoutes', () => {
 
       chai
         .request(app)
-        .post('/uploads')
+        .post(config.endpoints.files)
         .attach(testFile.fieldname, testFile.buffer, testFile.originalname)
         .field('processKey', 'test-process-key')
         .end((err, res) => {
