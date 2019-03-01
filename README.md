@@ -6,7 +6,7 @@ A service built with [NodeJS](https://nodejs.org) to upload and download files t
 
 - validation
 - virus scanning
-- extracting text with ocr
+- extracting text with ocr (for .png, .jpg, .jpeg, .jpe, .tiff, .tif, .bmp, .pnm or .jfif)
 - saving into storage
 
 Currently S3 is supported for storage.

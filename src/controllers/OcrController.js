@@ -33,7 +33,7 @@ class OcrController {
   }
 
   isSupportedFileType(fileType) {
-    return ['bmp', 'pnm', 'png', 'jfif', 'jpeg', 'tiff'].includes(fileType);
+    return ['png', 'jpeg', 'tiff', 'bmp', 'x-portable-anymap', 'pipeg'].includes(fileType);
   }
 
   getFileType(mimeType) {
