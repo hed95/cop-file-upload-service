@@ -107,10 +107,16 @@ filename: The name of the file to be downloaded
 
 - Copy `.env.example` to `.env` and replace the default values with sensible ones
 
-- Install tesseract
+- Install [Tesseract OCR](https://github.com/tesseract-ocr/tesseract)
 
   ```
   brew install tesseract
+  ```
+
+- Install [GraphicsMagick](http://www.graphicsmagick.org)
+
+  ```
+  brew install graphicsmagick
   ```
 
 - Start the app:

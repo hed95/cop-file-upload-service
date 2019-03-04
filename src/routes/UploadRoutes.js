@@ -1,4 +1,5 @@
 import FilenameController from '../controllers/FilenameController';
+import Image from '../utils/Image';
 import OcrController from '../controllers/OcrController';
 import S3Service from '../services/S3Service';
 import StorageController from '../controllers/StorageController';
@@ -7,6 +8,7 @@ import VirusScanController from '../controllers/VirusScanController';
 
 import config from '../config';
 import express from 'express';
+import gm from 'gm';
 import multer from 'multer';
 import ocr from 'tesseractocr';
 import util from 'util';
@@ -28,7 +30,7 @@ router.post(
   new ValidationController().validatePost,
   new FilenameController(uuid, config).generateFilename,
   new StorageController(new S3Service(s3Config, util)).uploadFile,
-  new VirusScanController(config).scanFile,
+  new VirusScanController(new Image(gm, util), config).scanFile,
   new StorageController(new S3Service(s3Config, util)).uploadFile,
   new OcrController(ocr, config).parseFile,
   new StorageController(new S3Service(s3Config, util)).uploadFile,

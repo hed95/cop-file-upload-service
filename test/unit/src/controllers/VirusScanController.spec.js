@@ -10,6 +10,7 @@ describe('VirusScanController', () => {
     let req;
     let res;
     let next;
+    let image;
 
     beforeEach(() => {
       const {virusScan} = config.services;
@@ -28,6 +29,9 @@ describe('VirusScanController', () => {
         json: () => true
       };
       next = sinon.spy();
+      image = {
+        convert: sinon.stub().returns({mimetype: 'image/tiff'})
+      };
 
       sinon.stub(res, 'status').returns(res);
       sinon.stub(res, 'json').returns(res);
@@ -40,7 +44,7 @@ describe('VirusScanController', () => {
     it('should log the correct messages and call next() if the scan passes', (done) => {
       virusScanMock.reply(200, {text: 'true'});
 
-      const virusScanController = new VirusScanController(config);
+      const virusScanController = new VirusScanController(image, config);
 
       virusScanController
         .scanFile(req, res, next)
@@ -57,10 +61,11 @@ describe('VirusScanController', () => {
         });
     });
 
-    it('should log the correct messages and call next() if the scan fails', (done) => {
+    it('should log the correct messages and call next() if the scan fails with an image file', (done) => {
       virusScanMock.reply(200, {text: 'false'});
+      req.file.mimetype = 'image/jpeg';
 
-      const virusScanController = new VirusScanController(config);
+      const virusScanController = new VirusScanController(image, config);
 
       virusScanController
         .scanFile(req, res, next)
@@ -70,6 +75,32 @@ describe('VirusScanController', () => {
           expect(req.logger.error).to.have.been.calledOnce;
           expect(req.logger.error).to.have.been.calledWith('Virus scan failed');
           expect(next).to.have.been.calledOnce;
+          expect(req.file).to.deep.equal({
+            mimetype: 'image/tiff',
+            version: config.fileVersions.clean
+          });
+          done();
+        })
+        .catch(err => {
+          done(err);
+        });
+    });
+
+    it('should log the correct messages and call next() if the scan fails with a npn-image file', (done) => {
+      virusScanMock.reply(200, {text: 'false'});
+      req.file.mimetype = 'text/plain';
+
+      const virusScanController = new VirusScanController(image, config);
+
+      virusScanController
+        .scanFile(req, res, next)
+        .then(() => {
+          expect(req.logger.info).to.have.been.calledOnce;
+          expect(req.logger.info).to.have.been.calledWith('Virus scanning file');
+          expect(req.logger.error).to.have.been.calledOnce;
+          expect(req.logger.error).to.have.been.calledWith('Virus scan failed');
+          expect(next).to.have.been.calledOnce;
+          expect(req.file.version).to.equal(config.fileVersions.clean);
           done();
         })
         .catch(err => {
@@ -80,7 +111,7 @@ describe('VirusScanController', () => {
     it('should log the correct messages and return an error if the scan fails', (done) => {
       virusScanMock.reply(500, new Error('Internal Server Error'));
 
-      const virusScanController = new VirusScanController(config);
+      const virusScanController = new VirusScanController(image, config);
 
       virusScanController
         .scanFile(req, res, next)

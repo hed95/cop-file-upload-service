@@ -28,7 +28,8 @@ const config = {
     original: 'orig',
     clean: 'clean',
     ocr: 'ocr'
-  }
+  },
+  virusFileConversions: 2
 };
 
 export default config;
