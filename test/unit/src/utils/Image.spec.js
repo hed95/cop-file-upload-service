@@ -22,7 +22,7 @@ describe('Image', () => {
   });
 
   describe('fetchFileBuffer()', () => {
-    it('should call gm() and util.promisify()', (done) => {
+    it('should call gm() and util.promisify()', done => {
       const newFileType = 'png';
       const image = new Image(gm, util);
       image.fetchFileBuffer(file, newFileType);
@@ -34,7 +34,7 @@ describe('Image', () => {
   });
 
   describe('newMimeType()', () => {
-    it('should return the correct MIME type when the current MIME type is image/jpeg', (done) => {
+    it('should return the correct MIME type when the current MIME type is image/jpeg', done => {
       const currentMimeType = 'image/jpeg';
       const originalMimeType = 'image/jpeg';
       const image = new Image(gm, util);
@@ -43,7 +43,7 @@ describe('Image', () => {
       done();
     });
 
-    it('should return the correct MIME type when the current MIME type is not image/jpeg', (done) => {
+    it('should return the correct MIME type when the current MIME type is not image/jpeg', done => {
       const currentMimeType = 'image/png';
       const originalMimeType = 'image/png';
       const image = new Image(gm, util);
@@ -52,7 +52,7 @@ describe('Image', () => {
       done();
     });
 
-    it('should return the correct MIME type when the new MIME type matches the original MIME type', (done) => {
+    it('should return the correct MIME type when the new MIME type matches the original MIME type', done => {
       const currentMimeType = 'image/png';
       const originalMimeType = 'image/jpeg';
       const image = new Image(gm, util);
@@ -63,7 +63,7 @@ describe('Image', () => {
   });
 
   describe('fetchFile()', () => {
-    it('should return the correct file', (done) => {
+    it('should return the correct file', done => {
       const image = new Image(gm, util);
 
       image.fetchFileBuffer = sinon.stub().returns(file.buffer);
@@ -81,7 +81,7 @@ describe('Image', () => {
   });
 
   describe('convert()', () => {
-    it('should return a correctly converted file', (done) => {
+    it('should return a correctly converted file', done => {
       const logger = {
         info: sinon.spy()
       };

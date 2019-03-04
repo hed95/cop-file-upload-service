@@ -5,7 +5,7 @@ import {expect} from '../../../setupTests';
 
 describe('PostValidation', () => {
   describe('schema()', () => {
-    it('should not return an error when the correct data is given', (done) => {
+    it('should not return an error when the correct data is given', done => {
       const data = {
         file: {},
         processKey: 'test-process-key'
@@ -15,7 +15,7 @@ describe('PostValidation', () => {
       done();
     });
 
-    it('should return an error when a file is not given', (done) => {
+    it('should return an error when a file is not given', done => {
       const data = {
         processKey: 'test-process-key'
       };
@@ -24,7 +24,7 @@ describe('PostValidation', () => {
       done();
     });
 
-    it('should return an error when a file is not an object', (done) => {
+    it('should return an error when a file is not an object', done => {
       const data = {
         file: 'test-file'
       };
@@ -33,7 +33,7 @@ describe('PostValidation', () => {
       done();
     });
 
-    it('should return an error when a processKey is not given', (done) => {
+    it('should return an error when a processKey is not given', done => {
       const data = {
         file: {},
       };
@@ -42,7 +42,7 @@ describe('PostValidation', () => {
       done();
     });
 
-    it('should return an error when a processKey is not a string', (done) => {
+    it('should return an error when a processKey is not a string', done => {
       const data = {
         file: {},
         processKey: ['test-process-key']

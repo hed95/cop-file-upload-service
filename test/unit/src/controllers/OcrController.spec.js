@@ -24,7 +24,7 @@ describe('OcrController', () => {
       next = sinon.spy();
     });
 
-    it('should log the correct messages, set file data call next() when a valid file type is given', (done) => {
+    it('should log the correct messages, set file data call next() when a valid file type is given', done => {
       req.file.mimetype = 'image/jpeg';
 
       const ocrController = new OcrController(ocr, config);
@@ -40,12 +40,12 @@ describe('OcrController', () => {
           expect(req.file.mimetype).to.equal('text/plain');
           done();
         })
-        .catch((err) => {
+        .catch(err => {
           done(err);
         });
     });
 
-    it('should log the correct messages, delete the file version and call next() when an invalid file type is given', (done) => {
+    it('should log the correct messages, delete the file version and call next() when an invalid file type is given', done => {
       req.file.mimetype = 'application/pdf';
 
       const ocrController = new OcrController(ocr);
@@ -59,12 +59,12 @@ describe('OcrController', () => {
           expect(req.file.version).to.be.undefined;
           done();
         })
-        .catch((err) => {
+        .catch(err => {
           done(err);
         });
     });
 
-    it('should log the correct messages, delete the file version and call next() when the ocr service is not available', (done) => {
+    it('should log the correct messages, delete the file version and call next() when the ocr service is not available', done => {
       ocr = sinon.stub().returns(Promise.reject(new Error('Internal Server Error')));
       req.file.mimetype = 'image/jpeg';
 
@@ -81,21 +81,21 @@ describe('OcrController', () => {
           expect(req.file.version).to.be.undefined;
           done();
         })
-        .catch((err) => {
+        .catch(err => {
           done(err);
         });
     });
   });
 
   describe('isSupportedFileType()', () => {
-    it('should return true for a supported file type', (done) => {
+    it('should return true for a supported file type', done => {
       const ocrController = new OcrController();
       const isSupportedFileType = ocrController.isSupportedFileType('jpeg');
       expect(isSupportedFileType).to.equal(true);
       done();
     });
 
-    it('should return false for an unsupported file type', (done) => {
+    it('should return false for an unsupported file type', done => {
       const ocrController = new OcrController();
       const isSupportedFileType = ocrController.isSupportedFileType('pdf');
       expect(isSupportedFileType).to.equal(false);
@@ -104,7 +104,7 @@ describe('OcrController', () => {
   });
 
   describe('getFileType()', () => {
-    it('should return the file type when given a mime type', (done) => {
+    it('should return the file type when given a mime type', done => {
       const ocrController = new OcrController();
       const fileType = ocrController.getFileType('image/jpeg');
       expect(fileType).to.equal('jpeg');

@@ -13,16 +13,17 @@ describe('S3Service', () => {
   });
 
   describe('init()', () => {
-    it('should return an instance of AWS.S3', () => {
+    it('should return an instance of AWS.S3', done => {
       s3Config = {};
       const s3 = new S3Service(s3Config);
       const result = s3.init(s3Config);
       expect(result).to.be.an.instanceOf(AWS.S3);
+      done();
     });
   });
 
   describe('downloadParams()', () => {
-    it('should return the correct params', () => {
+    it('should return the correct params', done => {
       const filename = '9e5eb809-bce7-463e-8c2f-b6bd8c4832d9';
       const processKey = 'test-process-key';
       const fileVersion = 'clean';
@@ -32,11 +33,12 @@ describe('S3Service', () => {
         Bucket: s3Config.bucket,
         Key: StorageKey.format(processKey, fileVersion, filename)
       });
+      done();
     });
   });
 
   describe('uploadParams()', () => {
-    it('should return the correct params', () => {
+    it('should return the correct params', done => {
       Object.assign(s3Config, {
         serverSideEncryption: 'aws:kms',
         sseKmsKeyId: 'keyid123'
@@ -62,11 +64,12 @@ describe('S3Service', () => {
           originalfilename: file.originalname
         }
       });
+      done();
     });
   });
 
   describe('downloadFile()', () => {
-    it('should call fetchAsync() with the correct params', () => {
+    it('should call fetchAsync() with the correct params', done => {
       const filename = 'text-file.txt';
       const s3 = new S3Service(s3Config);
 
@@ -78,11 +81,12 @@ describe('S3Service', () => {
       expect(s3.downloadParams).to.have.been.calledWith(s3Config, filename);
       expect(s3.fetchAsync).to.have.been.calledOnce;
       expect(s3.fetchAsync).to.have.been.calledWith('getObject', {Bucket: s3Config.bucket});
+      done();
     });
   });
 
   describe('uploadFile()', () => {
-    it('should call fetchAsync() with the correct params', () => {
+    it('should call fetchAsync() with the correct params', done => {
       const file = {originalname: 'text-file.txt'};
       const s3 = new S3Service(s3Config);
 
@@ -94,11 +98,12 @@ describe('S3Service', () => {
       expect(s3.uploadParams).to.have.been.calledWith(s3Config, file);
       expect(s3.fetchAsync).to.have.been.calledOnce;
       expect(s3.fetchAsync).to.have.been.calledWith('upload', {Bucket: s3Config.bucket});
+      done();
     });
   });
 
   describe('fetchAsync()', () => {
-    it('should...', () => {
+    it('should call util.promisify()', done => {
       s3Config = {};
       const util = {
         promisify: sinon.stub().returns(() => true)
@@ -107,6 +112,7 @@ describe('S3Service', () => {
 
       s3.fetchAsync('upload', {file: {}});
       expect(s3.util.promisify).to.have.been.calledOnce;
+      done();
     });
   });
 });

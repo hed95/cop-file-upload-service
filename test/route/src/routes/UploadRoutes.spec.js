@@ -5,7 +5,7 @@ import fs from 'fs';
 
 describe('UploadRoutes', () => {
   describe('get()', () => {
-    it('should return the correct status and response', (done) => {
+    it('should return the correct status and response', done => {
       chai
         .request(app)
         .get(`${config.endpoints.files}/test-process-key/orig/c0569d57-59a0-4c39-8379-03e5a261f954`)
@@ -17,7 +17,7 @@ describe('UploadRoutes', () => {
         });
     });
 
-    it('should return the correct status and response when the route is not found', (done) => {
+    it('should return the correct status and response when the route is not found', done => {
       chai
         .request(app)
         .get(`${config.endpoints.files}/does-not-exist.txt`)
@@ -44,7 +44,7 @@ describe('UploadRoutes', () => {
       nock.restore();
     });
 
-    it('should return the correct status and response when the correct data is given', (done) => {
+    it('should return the correct status and response when the correct data is given', done => {
       virusScanMock.reply(200, 'true');
 
       chai
@@ -60,7 +60,7 @@ describe('UploadRoutes', () => {
         });
     });
 
-    it('should return the correct status and response when incorrect data is given', (done) => {
+    it('should return the correct status and response when incorrect data is given', done => {
       virusScanMock.reply(200, 'true');
 
       chai
@@ -75,7 +75,7 @@ describe('UploadRoutes', () => {
         });
     });
 
-    it('should return the correct status and response when the route is not found', (done) => {
+    it('should return the correct status and response when the route is not found', done => {
       chai
         .request(app)
         .post('/uploadz')
@@ -88,7 +88,7 @@ describe('UploadRoutes', () => {
         });
     });
 
-    it('should return the correct status and response when the virus scanning service is not available', (done) => {
+    it('should return the correct status and response when the virus scanning service is not available', done => {
       virusScanMock.reply(500, 'Internal Server Error');
 
       chai

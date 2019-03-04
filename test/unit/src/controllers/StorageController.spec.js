@@ -35,7 +35,7 @@ describe('StorageController', () => {
   });
 
   describe('downloadFile()', () => {
-    it('should log the correct messages and return a success message when a file is downloaded successfully', (done) => {
+    it('should log the correct messages and return a success message when a file is downloaded successfully', done => {
       req.params.filename = testFile.originalname;
       s3Service = {
         downloadFile: sinon.stub().returns({Body: 'some body content'})
@@ -54,12 +54,12 @@ describe('StorageController', () => {
           expect(res.send).to.have.been.calledOnce;
           done();
         })
-        .catch((err) => {
+        .catch(err => {
           done(err);
         });
     });
 
-    it('should log the correct messages and return an error message when the storage service is not available', (done) => {
+    it('should log the correct messages and return an error message when the storage service is not available', done => {
       req.params.filename = testFile.originalname;
       s3Service = {
         downloadFile: sinon.stub().returns(Promise.reject(new Error('Internal Server Error')))
@@ -81,14 +81,14 @@ describe('StorageController', () => {
           expect(res.json).to.have.been.calledWith({error: 'Failed to download file'});
           done();
         })
-        .catch((err) => {
+        .catch(err => {
           done(err);
         });
     });
   });
 
   describe('uploadFile()', () => {
-    it('should log the correct messages and call next() when a file is uploaded successfully', (done) => {
+    it('should log the correct messages and call next() when a file is uploaded successfully', done => {
       testFile.buffer = fs.createReadStream('test/data/test-file.txt');
 
       s3Service = {
@@ -108,12 +108,12 @@ describe('StorageController', () => {
           expect(next).to.have.been.calledOnce;
           done();
         })
-        .catch((err) => {
+        .catch(err => {
           done(err);
         });
     });
 
-    it('should log the correct messages and return an error message when the storage service is not available', (done) => {
+    it('should log the correct messages and return an error message when the storage service is not available', done => {
       testFile.buffer = fs.createReadStream('test/data/test-file.txt');
 
       s3Service = {
@@ -136,12 +136,12 @@ describe('StorageController', () => {
           expect(res.json).to.have.been.calledWith({error: `Failed to upload file - ${config.fileVersions.original} version`});
           done();
         })
-        .catch((err) => {
+        .catch(err => {
           done(err);
         });
     });
 
-    it('should call next() if the file version does not exist', (done) => {
+    it('should call next() if the file version does not exist', done => {
       delete req.file.version;
 
       const storageController = new StorageController(s3Service, config);
@@ -152,7 +152,7 @@ describe('StorageController', () => {
           expect(next).to.have.been.calledOnce;
           done();
         })
-        .catch((err) => {
+        .catch(err => {
           done(err);
         });
     });

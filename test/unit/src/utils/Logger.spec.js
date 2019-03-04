@@ -20,7 +20,7 @@ describe('Logger', () => {
   });
 
   describe('outputFormat()', () => {
-    it('should call format.printf()', (done) => {
+    it('should call format.printf()', done => {
       const logger = new Logger(createLogger, format, transports);
       logger.outputFormat();
       expect(format.printf).to.have.been.calledOnce;
@@ -29,7 +29,7 @@ describe('Logger', () => {
   });
 
   describe('logger()', () => {
-    it('should...', (done) => {
+    it('should call createLogger', done => {
       const logger = new Logger(createLogger, format, transports);
       logger.logger();
       expect(createLogger).to.have.been.calledOnce;

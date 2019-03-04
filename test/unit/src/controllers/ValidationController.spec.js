@@ -27,7 +27,7 @@ describe('ValidationController', () => {
       sinon.stub(res, 'json').returns(res);
     });
 
-    it('should log the correct message and return an error when incorrect data is given', (done) => {
+    it('should log the correct message and return an error when incorrect data is given', done => {
       const validationMiddleware = new ValidationController();
 
       validationMiddleware.validatePost(req, res, next);
@@ -42,7 +42,7 @@ describe('ValidationController', () => {
       done();
     });
 
-    it('should log the correct message and call next() when the correct data is given', (done) => {
+    it('should log the correct message and call next() when the correct data is given', done => {
       req.file = testFile;
       req.body.processKey = 'test-process-key';
 
