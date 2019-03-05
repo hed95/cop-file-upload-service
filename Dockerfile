@@ -12,8 +12,12 @@ RUN npm install
 # If you are building your code for production
 # RUN npm ci --only=production
 
+RUN apt-get update
+RUN apt-get install -y --no-install-recommends graphicsmagick tesseract-ocr
+RUN rm -rf /var/lib/apt/lists/*
+
 # Bundle app source
 COPY . .
 
-EXPOSE 8080 8181
-CMD [ "npm", "run" ]
+EXPOSE 8181
+CMD [ "npm", "start" ]

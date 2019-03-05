@@ -86,7 +86,7 @@ filename: The name of the file to be downloaded
 }
 ```
 
-## Installing and running the app
+## Installing the app
 
 - Clone the repo:
 
@@ -100,13 +100,25 @@ filename: The name of the file to be downloaded
   cd file-upload-service
   ```
 
+- Copy `.env.example` to `.env` and replace the default values with sensible ones
+
+## Running the app with docker
+
+- Install [Docker](https://www.docker.com)
+
+- Start the docker containers with:
+
+  ```
+  docker-compose up
+  ```
+
+## Running the app manually
+
 - Install the dependencies:
 
   ```
   npm install
   ```
-
-- Copy `.env.example` to `.env` and replace the default values with sensible ones
 
 - Install [Tesseract OCR](https://github.com/tesseract-ocr/tesseract)
 
@@ -123,23 +135,13 @@ filename: The name of the file to be downloaded
 - Start the app:
 
   ```
-  npm run dev
+  npm start
   ```
 
-  In dev mode the app is started with [nodemon](https://www.npmjs.com/package/nodemon), which will automatically restart the app when file changes are detected.
-
-- Start the virus scanning service in a new terminal window:
-
-  Either run the mocks:
+- Run the virus scanning mock service in a new terminal window:
 
   ```
   npm run mocks
-  ```
-
-  Or install [Docker](https://www.docker.com) and then start the docker containers with:
-
-  ```
-  docker-compose up
   ```
 
 ## Code quality

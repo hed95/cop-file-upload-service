@@ -1,7 +1,18 @@
 version: '3'
 
 services:
+  file-upload-service:
+    container_name: file-upload-service
+    build: .
+    ports:
+      - 8181:8181
+    environment:
+      - VIRUS_SCAN_URL=http://clamav-api
+    depends_on:
+      - clamav-api
+
   clamav-api:
+    container_name: clamav-api
     image: quay.io/ukhomeofficedigital/docker-clamav-rest:1.0.0
     environment:
       - CLAMD_HOST=clamav
@@ -11,9 +22,7 @@ services:
       - clamav
 
   clamav:
+    container_name: clamav
     image: quay.io/ukhomeofficedigital/clamav:v1.6.1
     ports:
       - 3310:3310
-
-  tesseract:
-    image: tesseractshadow/tesseract4re

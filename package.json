@@ -4,6 +4,7 @@
   "description": "COP file upload service",
   "main": "index.js",
   "scripts": {
+    "start": "NODE_ENV=dev babel-node index.js",
     "dev": "NODE_ENV=dev nodemon --exec babel-node index.js",
     "eslint": "eslint .",
     "test:unit": "mocha --require @babel/register --require @babel/polyfill test/unit/**/*.js",
