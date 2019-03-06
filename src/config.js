@@ -29,7 +29,10 @@ const config = {
     clean: 'clean',
     ocr: 'ocr'
   },
-  virusFileConversions: 2
+  fileConversions: {
+    count: 2,
+    pdfDensity: 300
+  }
 };
 
 export default config;

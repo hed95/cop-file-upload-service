@@ -13,7 +13,12 @@ RUN npm install
 # RUN npm ci --only=production
 
 RUN apt-get update
-RUN apt-get install -y --no-install-recommends graphicsmagick tesseract-ocr
+
+RUN apt-get install -y --no-install-recommends \
+  tesseract-ocr \
+  graphicsmagick \
+  ghostscript
+
 RUN rm -rf /var/lib/apt/lists/*
 
 # Bundle app source

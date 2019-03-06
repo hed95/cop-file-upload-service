@@ -6,7 +6,7 @@ A service built with [NodeJS](https://nodejs.org) to upload and download files t
 
 - validation
 - virus scanning
-- file conversion - if a virus is found and the file is an image then the file is converted into a different format twice to remove the virus
+- file conversion - if a virus is found and the file is an image or a pdf then the file is converted into a different format twice to remove the virus
 - extracting text with ocr (for .png, .jpg, .jpeg, .jpe, .tiff, .tif, .bmp, .pnm or .jfif)
 - saving into storage
 
@@ -130,6 +130,12 @@ filename: The name of the file to be downloaded
 
   ```
   brew install graphicsmagick
+  ```
+
+- Install [Ghostscript](https://www.ghostscript.com)
+
+  ```
+  brew install gs
   ```
 
 - Start the app:

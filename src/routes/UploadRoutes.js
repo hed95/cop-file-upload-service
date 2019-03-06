@@ -1,5 +1,5 @@
+import FileConverter from '../utils/FileConverter';
 import FilenameController from '../controllers/FilenameController';
-import Image from '../utils/Image';
 import OcrController from '../controllers/OcrController';
 import S3Service from '../services/S3Service';
 import StorageController from '../controllers/StorageController';
@@ -30,7 +30,7 @@ router.post(
   new ValidationController().validatePost,
   new FilenameController(uuid, config).generateFilename,
   new StorageController(new S3Service(s3Config, util)).uploadFile,
-  new VirusScanController(new Image(gm, util), config).scanFile,
+  new VirusScanController(new FileConverter(gm, util, config), config).scanFile,
   new StorageController(new S3Service(s3Config, util)).uploadFile,
   new OcrController(ocr, config).parseFile,
   new StorageController(new S3Service(s3Config, util)).uploadFile,
