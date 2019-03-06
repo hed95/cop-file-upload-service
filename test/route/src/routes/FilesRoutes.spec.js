@@ -3,7 +3,7 @@ import {chai, config, expect, nock, testFile} from '../../../setupTests';
 import app from '../../../../index';
 import fs from 'fs';
 
-describe('UploadRoutes', () => {
+describe('FilesRoutes', () => {
   describe('get()', () => {
     it('should return the correct status and response', done => {
       chai

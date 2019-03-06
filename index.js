@@ -1,7 +1,7 @@
 import {createLogger, format, transports} from 'winston';
 
+import FilesRoutes from './src/routes/FilesRoutes';
 import Logger from './src/utils/Logger';
-import UploadRoutes from './src/routes/UploadRoutes';
 
 import config from './src/config';
 import express from 'express';
@@ -25,7 +25,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(UploadRoutes);
+app.use(FilesRoutes);
 
 const server = http
   .createServer(app)
