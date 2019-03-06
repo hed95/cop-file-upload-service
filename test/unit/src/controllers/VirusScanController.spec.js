@@ -41,7 +41,7 @@ describe('VirusScanController', () => {
       nock.cleanAll();
     });
 
-    it('should log the correct messages and call next() if the scan passes', done => {
+    it('should log the correct messages and call next() if the scan passes and the MIME type is not application/pdf', done => {
       virusScanMock.reply(200, {text: 'true'});
 
       const virusScanController = new VirusScanController(image, config);
@@ -54,6 +54,32 @@ describe('VirusScanController', () => {
           expect(req.logger.info).to.have.been.calledWith('Virus scan passed');
           expect(next).to.have.been.calledOnce;
           expect(req.file.version).to.equal(config.fileVersions.clean);
+          done();
+        })
+        .catch(err => {
+          done(err);
+        });
+    });
+
+    it('should log the correct messages and call next() if the scan passes and the MIME type is application/pdf', done => {
+      virusScanMock.reply(200, {text: 'true'});
+
+      req.file.mimetype = 'application/pdf';
+
+      const virusScanController = new VirusScanController(image, config);
+
+      virusScanController
+        .scanFile(req, res, next)
+        .then(() => {
+          expect(req.logger.info).to.have.been.calledThrice;
+          expect(req.logger.info).to.have.been.calledWith('Virus scanning file');
+          expect(req.logger.info).to.have.been.calledWith('Virus scan passed');
+          expect(req.logger.info).to.have.been.calledWith('Converting pdf to an image for ocr');
+          expect(next).to.have.been.calledOnce;
+          expect(req.file).to.deep.equal({
+            mimetype: 'image/tiff',
+            version: config.fileVersions.clean
+          });
           done();
         })
         .catch(err => {

@@ -48,15 +48,14 @@ class FileConverter {
     return {mimetype: newMimeType, buffer: newBuffer};
   }
 
-  async convert(file, logger) {
-    const {fileConversions} = this.config;
+  async convert(file, logger, fileConversionCount) {
     let counter;
 
-    logger.info(`Converting file ${fileConversions.count} times`);
+    logger.info(`Converting file ${fileConversionCount} times`);
 
     file.originalMimeType = file.mimetype;
 
-    for (counter = 0; counter < fileConversions.count; counter++) {
+    for (counter = 0; counter < fileConversionCount; counter++) {
       const convertedFile = await this.fetchFile(file);
       logger.info(`File converted from ${file.mimetype} to ${convertedFile.mimetype}`);
       file = {...file, ...convertedFile};

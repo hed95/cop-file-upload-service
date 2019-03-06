@@ -9,7 +9,7 @@ class VirusScanController {
 
   async scanFile(req, res, next) {
     const {file, logger} = req;
-    const {services, fileVersions} = this.config;
+    const {services, fileVersions, fileConversions} = this.config;
     const {virusScan} = services;
     logger.info('Virus scanning file');
 
@@ -21,9 +21,14 @@ class VirusScanController {
 
       if (res.text.includes('true')) {
         logger.info('Virus scan passed');
+
+        if (file.mimetype === 'application/pdf') {
+          logger.info('Converting pdf to an image for ocr');
+          req.file = await this.fileConverter.convert(req.file, logger, 1);
+        }
       } else {
         logger.error('Virus scan failed');
-        req.file = await this.fileConverter.convert(req.file, logger);
+        req.file = await this.fileConverter.convert(req.file, logger, fileConversions.count);
       }
 
       req.file.version = fileVersions.clean;

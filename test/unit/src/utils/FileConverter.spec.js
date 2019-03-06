@@ -114,7 +114,7 @@ describe('FileConverter', () => {
       };
 
       fileConverter
-        .convert(file, logger)
+        .convert(file, logger, config.fileConversions.count)
         .then(res => {
           expect(logger.info).to.have.been.calledThrice;
           expect(logger.info).to.have.been.calledWith('Converting file 2 times');

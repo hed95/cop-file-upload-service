@@ -6,11 +6,13 @@ A service built with [NodeJS](https://nodejs.org) to upload and download files t
 
 - validation
 - virus scanning
-- file conversion - if a virus is found and the file is an image or a pdf then the file is converted into a different format twice to remove the virus
-- extracting text with ocr (for .png, .jpg, .jpeg, .jpe, .tiff, .tif, .bmp, .pnm or .jfif)
+- file conversion
+  - if a virus is found and the file is an image or a pdf then the file is converted into a different format twice to remove the virus
+  - if a virus is not found and the file is a pdf then it is converted to an image for ocr
+- extracting text with ocr
+  - valid files for ocr are: for .png, .jpg, .jpeg, .jpe, .tiff, .tif, .bmp, .pnm and .jfif
 - saving into storage
-
-Currently S3 is supported for storage.
+  - currently S3 is supported for storage
 
 ## Using the API
 
