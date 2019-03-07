@@ -1,6 +1,7 @@
 class StorageController {
-  constructor(storageService) {
+  constructor(storageService, config) {
     this.storageService = storageService;
+    this.config = config;
     this.downloadFile = this.downloadFile.bind(this);
     this.uploadFile = this.uploadFile.bind(this);
   }
@@ -27,10 +28,7 @@ class StorageController {
 
   async uploadFile(req, res, next) {
     const {body, file, logger} = req;
-
-    if (!file.version) {
-      return next();
-    }
+    file.version = file.version || this.config.fileVersions.original;
 
     logger.info(`Uploading file - ${file.version} version`);
 

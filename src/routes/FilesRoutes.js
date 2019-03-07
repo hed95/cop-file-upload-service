@@ -18,22 +18,24 @@ const router = express.Router();
 const storage = multer.memoryStorage();
 const upload = multer({storage});
 const {s3: s3Config} = config.services;
+const s3Service = new S3Service(s3Config, util);
+const storageController = new StorageController(s3Service, config);
 
 router.get(
   `${config.endpoints.files}/:processKey/:fileVersion/:filename`,
-  new StorageController(new S3Service(s3Config, util)).downloadFile
+  storageController.downloadFile
 );
 
 router.post(
   config.endpoints.files,
   upload.single('file'),
   new ValidationController().validatePost,
-  new FilenameController(uuid, config).generateFilename,
-  new StorageController(new S3Service(s3Config, util)).uploadFile,
+  new FilenameController(uuid).generateFilename,
+  storageController.uploadFile,
   new VirusScanController(new FileConverter(gm, util, config), config).scanFile,
-  new StorageController(new S3Service(s3Config, util)).uploadFile,
+  storageController.uploadFile,
   new OcrController(ocr, config).parseFile,
-  new StorageController(new S3Service(s3Config, util)).uploadFile,
+  storageController.uploadFile,
   (req, res) => {
     res.status(200).json({message: 'File uploaded successfully'});
   }

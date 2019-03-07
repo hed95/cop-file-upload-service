@@ -88,7 +88,7 @@ describe('StorageController', () => {
   });
 
   describe('uploadFile()', () => {
-    it('should log the correct messages and call next() when a file is uploaded successfully', done => {
+    it('should log the correct messages and call next() when a file is uploaded successfully and the file version exists', done => {
       testFile.buffer = fs.createReadStream('test/data/test-file.txt');
 
       s3Service = {
@@ -96,6 +96,32 @@ describe('StorageController', () => {
       };
 
       req.body.processKey = 'test-process-key';
+
+      const storageController = new StorageController(s3Service, config);
+
+      storageController
+        .uploadFile(req, res, next)
+        .then(() => {
+          expect(req.logger.info).to.have.been.calledTwice;
+          expect(req.logger.info).to.have.been.calledWith(`Uploading file - ${config.fileVersions.original} version`);
+          expect(req.logger.info).to.have.been.calledWith(`File uploaded - ${config.fileVersions.original} version`);
+          expect(next).to.have.been.calledOnce;
+          done();
+        })
+        .catch(err => {
+          done(err);
+        });
+    });
+
+    it('should log the correct messages and call next() when a file is uploaded successfully and the file version does not exist', done => {
+      testFile.buffer = fs.createReadStream('test/data/test-file.txt');
+
+      s3Service = {
+        uploadFile: sinon.stub().returns({Location: 'http://localhost/a-file'})
+      };
+
+      req.body.processKey = 'test-process-key';
+      delete req.file.version;
 
       const storageController = new StorageController(s3Service, config);
 
@@ -134,22 +160,6 @@ describe('StorageController', () => {
           expect(res.status).to.have.been.calledWith(500);
           expect(res.json).to.have.been.calledOnce;
           expect(res.json).to.have.been.calledWith({error: `Failed to upload file - ${config.fileVersions.original} version`});
-          done();
-        })
-        .catch(err => {
-          done(err);
-        });
-    });
-
-    it('should call next() if the file version does not exist', done => {
-      delete req.file.version;
-
-      const storageController = new StorageController(s3Service, config);
-
-      storageController
-        .uploadFile(req, res, next)
-        .then(() => {
-          expect(next).to.have.been.calledOnce;
           done();
         })
         .catch(err => {
