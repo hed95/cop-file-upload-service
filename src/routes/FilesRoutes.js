@@ -37,7 +37,7 @@ router.post(
   new OcrController(ocr, config).parseFile,
   storageController.uploadFile,
   (req, res) => {
-    res.status(200).json({message: 'File uploaded successfully'});
+    res.status(200).json({filename: req.file.filename});
   }
 );
 
