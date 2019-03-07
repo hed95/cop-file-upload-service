@@ -15,7 +15,7 @@ class VirusScanController {
 
     try {
       const res = await request
-        .post(`${virusScan.url}:${virusScan.port}${virusScan.path}`)
+        .post(`http://${virusScan.host}:${virusScan.port}${virusScan.path}`)
         .attach('file', file.buffer, file.originalname)
         .field('name', file.originalname);
 

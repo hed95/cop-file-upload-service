@@ -7,7 +7,7 @@ services:
     ports:
       - 8181:8181
     environment:
-      - VIRUS_SCAN_URL=http://clamav-api
+      - VIRUS_SCAN_HOST=clamav-api
     depends_on:
       - clamav-api
 

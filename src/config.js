@@ -11,7 +11,7 @@ const config = {
   },
   services: {
     virusScan: {
-      url: process.env.VIRUS_SCAN_URL || 'http://localhost',
+      host: process.env.VIRUS_SCAN_HOST || 'localhost',
       port: process.env.VIRUS_SCAN_PORT || 8080,
       path: '/scan'
     },

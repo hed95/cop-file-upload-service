@@ -35,7 +35,7 @@ describe('FilesRoutes', () => {
 
     beforeEach(() => {
       const {virusScan} = config.services;
-      virusScanMock = nock(`${virusScan.url}:${virusScan.port}`).post(virusScan.path);
+      virusScanMock = nock(`http://${virusScan.host}:${virusScan.port}`).post(virusScan.path);
 
       testFile.buffer = fs.createReadStream('test/data/test-file.txt');
     });
