@@ -24,5 +24,8 @@ RUN rm -rf /var/lib/apt/lists/*
 # Bundle app source
 COPY . .
 
+RUN npm run build
+
 EXPOSE 8181
+
 CMD [ "npm", "start" ]

@@ -1,11 +1,12 @@
 {
-  "name": "cop-file-upload-service",
+  "name": "file-upload-service",
   "version": "1.0.0",
-  "description": "COP file upload service",
-  "main": "index.js",
+  "description": "File upload service",
+  "main": "src/index.js",
   "scripts": {
-    "start": "NODE_ENV=dev babel-node index.js",
-    "dev": "NODE_ENV=dev nodemon --exec babel-node index.js",
+    "build": "babel src -d build",
+    "start": "node --require @babel/polyfill build/index.js",
+    "dev": "NODE_ENV=dev nodemon --exec babel-node src/index.js",
     "eslint": "eslint .",
     "test:unit": "mocha --require @babel/register --require @babel/polyfill test/unit/**/*.js",
     "test:route": "NODE_ENV=test mocha --require @babel/register --require @babel/polyfill test/route/**/*.js",
@@ -13,18 +14,14 @@
     "coverage": "nyc npm run test:unit",
     "mocks": "dyson mocks 8080"
   },
-  "repository": {
-    "type": "git",
-    "url": "cop-file-upload-service"
-  },
-  "author": "",
-  "license": "ISC",
   "dependencies": {
+    "@babel/polyfill": "^7.2.5",
     "aws-sdk": "^2.404.0",
     "express": "^4.16.4",
     "gm": "^1.23.1",
     "helmet": "^3.15.1",
     "joi": "^14.3.1",
+    "keycloak-connect": "^5.0.0",
     "multer": "^1.4.1",
     "superagent": "^4.1.0",
     "tesseractocr": "^1.2.1",
@@ -32,9 +29,9 @@
     "winston": "^3.2.1"
   },
   "devDependencies": {
+    "@babel/cli": "^7.2.3",
     "@babel/core": "^7.2.2",
     "@babel/node": "^7.2.2",
-    "@babel/polyfill": "^7.2.5",
     "@babel/preset-env": "^7.3.1",
     "@babel/register": "^7.0.0",
     "babel-plugin-istanbul": "^5.1.0",

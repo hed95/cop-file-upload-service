@@ -22,6 +22,15 @@ const config = {
       bucket: process.env.AWS_BUCKET,
       region: process.env.AWS_REGION,
       serverSideEncryption: 'aws:kms'
+    },
+    keycloak: {
+      authServerUrl: process.env.KEYCLOAK_AUTH_SERVER_URL,
+      realm: process.env.KEYCLOAK_REALM,
+      clientId: process.env.KEYCLOAK_CLIENT_ID,
+      bearerOnly: true,
+      confidentialPort: 0,
+      resource: 'file-upload-service',
+      sslRequired: 'external'
     }
   },
   fileVersions: {

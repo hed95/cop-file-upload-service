@@ -1,6 +1,6 @@
 import {chai, config, expect, nock, testFile} from '../../../setupTests';
 
-import app from '../../../../index';
+import app from '../../../../src/index';
 import fs from 'fs';
 
 describe('FilesRoutes', () => {

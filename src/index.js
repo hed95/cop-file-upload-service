@@ -1,16 +1,23 @@
 import {createLogger, format, transports} from 'winston';
 
-import FilesRoutes from './src/routes/FilesRoutes';
-import Logger from './src/utils/Logger';
+import FilesRoutes from './routes/FilesRoutes';
+import Keycloak from 'keycloak-connect';
+import Logger from './utils/Logger';
 
-import config from './src/config';
+import config from './config';
 import express from 'express';
 import helmet from 'helmet';
 import http from 'http';
 
-const {port} = config;
-const app = express();
+const {port, services} = config;
 const logger = new Logger(createLogger, format, transports).logger();
+const app = express();
+
+if (process.env.NODE_ENV !== 'dev') {
+  const keycloak = new Keycloak({}, services.keycloak);
+  app.use(keycloak.middleware());
+  app.use('*', keycloak.protect());
+}
 
 app.use(helmet());
 
