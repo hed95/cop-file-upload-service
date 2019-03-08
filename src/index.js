@@ -13,7 +13,7 @@ const {port, services} = config;
 const logger = new Logger(createLogger, format, transports).logger();
 const app = express();
 
-if (process.env.NODE_ENV !== 'dev') {
+if (!['dev', 'test'].includes(process.env.NODE_ENV)) {
   const keycloak = new Keycloak({}, services.keycloak);
   app.use(keycloak.middleware());
   app.use('*', keycloak.protect());
