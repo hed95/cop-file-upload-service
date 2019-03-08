@@ -1,18 +1,18 @@
 pipeline:
   test:
-      image: node:8
-      commands:
-        - npm install
-        - npm run eslint
-        - npm run test
-      when:
-        event:
-        - push
-        - pull_request
-        - tag
-        branch:
-        - master
-        - develop
+    image: node:8
+    commands:
+      - npm install
+      - npm run eslint
+      - npm run test
+    when:
+      event: 
+      - push
+      - pull_request
+      - tag
+      branch:
+      - master
+      - develop
   sonar-scanner:
     image: quay.io/ukhomeofficedigital/sonar-scanner:v3.0.1
     when:
