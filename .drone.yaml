@@ -12,7 +12,7 @@ pipeline:
         - tag
         branch:
         - master
-
+        - develop
   sonar-scanner:
     image: quay.io/ukhomeofficedigital/sonar-scanner:v3.0.1
     when:
@@ -38,7 +38,7 @@ pipeline:
         - pull_request
         - tag
 
-  image_to_artifactory:
+  image_to_quay:
     image: docker:17.09.1
     environment:
       - DOCKER_HOST=tcp://172.17.0.1:2375
@@ -55,7 +55,7 @@ pipeline:
     when:
       event: push
 
-  tag_image_to_artifactory:
+  tag_image_to_quay:
     image: docker:17.09.1
     environment:
       - DOCKER_HOST=tcp://172.17.0.1:2375
