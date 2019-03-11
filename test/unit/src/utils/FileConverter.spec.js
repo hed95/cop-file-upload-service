@@ -9,7 +9,8 @@ describe('FileConverter', () => {
 
   beforeEach(() => {
     gm = sinon.stub().returns({
-      toBuffer: sinon.spy()
+      toBuffer: sinon.spy(),
+      density: sinon.spy()
     });
     util = {
       promisify: sinon.stub().returns(() => true)
@@ -23,6 +24,15 @@ describe('FileConverter', () => {
 
   describe('initGm()', () => {
     it('should call gm() when given a MIME type other than application/pdf', done => {
+      const fileConverter = new FileConverter(gm, util, config);
+      fileConverter.initGm(file);
+      expect(fileConverter.gm).to.have.been.calledOnce;
+      expect(fileConverter.gm).to.have.been.calledWith(file.buffer, file.originalname);
+      done();
+    });
+
+    it('should call gm() when given a MIME type of application/pdf', done => {
+      file.mimetype = 'application/pdf';
       const fileConverter = new FileConverter(gm, util, config);
       fileConverter.initGm(file);
       expect(fileConverter.gm).to.have.been.calledOnce;
