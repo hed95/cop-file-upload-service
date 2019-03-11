@@ -8,13 +8,12 @@ class Logger {
   }
 
   outputFormat() {
-    const output = this.printf(({level, message, timestamp}) => {
-      if (typeof message === 'object') {
-        message = JSON.stringify(message);
-      }
-      return `${timestamp} - ${level}: ${message}`;
-    });
-    return output;
+    return this.printf(this.formatMessage);
+  }
+
+  formatMessage({level, message, timestamp}) {
+    message = typeof message === 'object' ? JSON.stringify(message) : message;
+    return `${timestamp} - ${level}: ${message}`;
   }
 
   logger() {
