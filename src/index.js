@@ -1,5 +1,6 @@
 import {createLogger, format, transports} from 'winston';
 
+import Environment from './utils/Environment';
 import FilesRoutes from './routes/FilesRoutes';
 import Keycloak from 'keycloak-connect';
 import Logger from './utils/Logger';
@@ -13,7 +14,7 @@ const {port, services} = config;
 const logger = new Logger(createLogger, format, transports).logger();
 const app = express();
 
-if (!['dev', 'test'].includes(process.env.NODE_ENV)) {
+if (Environment.isProd(process.env.NODE_ENV)) {
   const keycloak = new Keycloak({}, services.keycloak);
   app.use(keycloak.middleware());
   app.use('*', keycloak.protect());
