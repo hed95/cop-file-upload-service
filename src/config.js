@@ -1,6 +1,8 @@
+import Environment from './utils/Environment';
+
 import dotenv from 'dotenv';
 
-if (['dev', 'test'].includes(process.env.NODE_ENV)) {
+if (Environment.isNotProd(process.env.NODE_ENV)) {
   dotenv.config();
 }
 
