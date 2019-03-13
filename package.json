@@ -8,9 +8,10 @@
     "start": "node --require @babel/polyfill build/index.js",
     "dev": "NODE_ENV=dev nodemon --exec babel-node src/index.js",
     "eslint": "eslint .",
-    "test:unit": "mocha --require @babel/register --require @babel/polyfill test/unit/**/*.js",
-    "test:route": "NODE_ENV=test mocha --require @babel/register --require @babel/polyfill test/route/**/*.js",
-    "test": "npm run test:unit && npm run test:route",
+    "test:unit": "mocha --require @babel/register --require @babel/polyfill test/unit/**/*.spec.js",
+    "test:route": "NODE_ENV=test mocha --require @babel/register --require @babel/polyfill test/route/**/*.spec.js",
+    "test:route-auth": "mocha --require @babel/register --require @babel/polyfill test/routeAuth/**/*.spec.js",
+    "test": "npm run test:unit && npm run test:route && npm run test:route-auth",
     "coverage": "nyc npm run test:unit",
     "mocks": "dyson mocks 8080"
   },
