@@ -71,3 +71,4 @@ pipeline:
     - docker push $${DOCKER_SERVER}/$${DOCKER_GROUP}/$${DOCKER_NAME}:$${DRONE_COMMIT_SHA}
     when:
       event: tag
+      branch: master
