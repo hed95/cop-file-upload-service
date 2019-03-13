@@ -1,7 +1,8 @@
 pipeline:
   test:
     image: node:8
-    secrets: aws_bucket
+    secrets:
+      - aws_bucket   
     commands:
       - npm install
       - npm run eslint
