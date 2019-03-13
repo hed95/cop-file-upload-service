@@ -4,31 +4,7 @@ import app from '../../../../src/index';
 import fs from 'fs';
 
 describe('FilesRoutes', () => {
-  describe('get()', () => {
-    it('should return the correct status and response', done => {
-      chai
-        .request(app)
-        .get(`${config.endpoints.files}/test-process-key/orig/c0569d57-59a0-4c39-8379-03e5a261f954`)
-        .end((err, res) => {
-          expect(res.status).to.equal(200);
-          expect(res.get('Content-Type')).to.equal('text/plain; charset=utf-8');
-          expect(err).to.equal(null);
-          done();
-        });
-    });
-
-    it('should return the correct status and response when the route is not found', done => {
-      chai
-        .request(app)
-        .get(`${config.endpoints.files}/does-not-exist.txt`)
-        .end((err, res) => {
-          expect(res.status).to.equal(404);
-          expect(res.body).to.deep.equal({error: 'Route not found'});
-          expect(err).to.equal(null);
-          done();
-        });
-    });
-  });
+  let filename;
 
   describe('post()', () => {
     let virusScanMock;
@@ -53,6 +29,7 @@ describe('FilesRoutes', () => {
         .attach(testFile.fieldname, testFile.buffer, testFile.originalname)
         .field('processKey', 'test-process-key')
         .end((err, res) => {
+          filename = res.body.filename;
           expect(res.status).to.equal(200);
           expect(res.body).to.have.property('filename');
           expect(res.body.filename).to.match(/^([a-f0-9]{4,}-){4}[a-f0-9]{4,}$/);
@@ -100,6 +77,32 @@ describe('FilesRoutes', () => {
         .end((err, res) => {
           expect(res.status).to.equal(500);
           expect(res.body).to.deep.equal({error: 'Unable to call the virus scanning service'});
+          expect(err).to.equal(null);
+          done();
+        });
+    });
+  });
+
+  describe('get()', () => {
+    it('should return the correct status and response', done => {
+      chai
+        .request(app)
+        .get(`${config.endpoints.files}/test-process-key/orig/${filename}`)
+        .end((err, res) => {
+          expect(res.status).to.equal(200);
+          expect(res.get('Content-Type')).to.equal('text/plain; charset=utf-8');
+          expect(err).to.equal(null);
+          done();
+        });
+    });
+
+    it('should return the correct status and response when the route is not found', done => {
+      chai
+        .request(app)
+        .get(`${config.endpoints.files}/does-not-exist.txt`)
+        .end((err, res) => {
+          expect(res.status).to.equal(404);
+          expect(res.body).to.deep.equal({error: 'Route not found'});
           expect(err).to.equal(null);
           done();
         });
