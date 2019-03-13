@@ -1,7 +1,7 @@
 import {createLogger, format, transports} from 'winston';
 
 import Environment from './utils/Environment';
-import FilesRoutes from './routes/FilesRoutes';
+import FilesRouter from './routes/FilesRouter';
 import Keycloak from 'keycloak-connect';
 import Logger from './utils/Logger';
 
@@ -33,7 +33,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(FilesRoutes);
+app.use(FilesRouter.router());
 
 const server = http
   .createServer(app)
