@@ -3,6 +3,9 @@ pipeline:
     image: node:8
     secrets:
       - aws_bucket   
+      - aws_access_key
+      - aws_secret_access_key
+      - sse_kms_key_id
     commands:
       - npm install
       - npm run eslint
