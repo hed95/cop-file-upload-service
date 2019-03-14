@@ -1,0 +1,7 @@
+*.yml
+**/.git
+.gitignore
+Dockerfile
+LICENSE
+README.md
+sonar-project.properties
