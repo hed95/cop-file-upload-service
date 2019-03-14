@@ -2,7 +2,7 @@ pipeline:
   test:
     image: node:8
     secrets:
-      - aws_bucket   
+      - aws_bucket
       - aws_access_key
       - aws_secret_access_key
       - sse_kms_key_id
@@ -10,8 +10,9 @@ pipeline:
       - npm install
       - npm run eslint
       - npm run test
+      - npm run coverage
     when:
-      event: 
+      event:
       - push
       - pull_request
       - tag
