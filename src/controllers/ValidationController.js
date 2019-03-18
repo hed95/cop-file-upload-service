@@ -1,16 +1,20 @@
-import Joi from 'joi';
-import PostValidation from '../validation/PostValidation';
+import Validate from '../utils/Validate';
 
 class ValidationController {
-  validatePost(req, res, next) {
-    const {body, file, logger, method} = req;
-    const schema = new PostValidation().schema();
-    const dataToValidate = {
-      file: file,
-      processKey: body.processKey
-    };
-    const result = Joi.validate(dataToValidate, schema);
-    const {error} = result;
+  constructor(joi) {
+    this.joi = joi;
+    this.validate = Validate;
+    this.validateRoute = this.validateRoute.bind(this);
+  }
+
+  validateRoute(req, res, next) {
+    const {logger, method} = req;
+    logger.error(`${method} validation is not configured`);
+    next();
+  }
+
+  handleValidation(req, res, next, error) {
+    const {logger, method} = req;
 
     if (error !== null) {
       logger.error(`${method} validation failed`);

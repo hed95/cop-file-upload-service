@@ -1,5 +1,7 @@
 import {chai, config, expect, nock, testFile} from '../../../setupTests';
 
+import GetValidation from '../../../../src/validation/GetValidation';
+
 import app from '../../../../src/index';
 import fs from 'fs';
 
@@ -32,7 +34,7 @@ describe('FilesRoutes', () => {
           filename = res.body.filename;
           expect(res.status).to.equal(200);
           expect(res.body).to.have.property('filename');
-          expect(res.body.filename).to.match(/^([a-f0-9]{4,}-){4}[a-f0-9]{4,}$/);
+          expect(res.body.filename).to.match(new GetValidation().filenameRegex);
           expect(err).to.equal(null);
           done();
         });

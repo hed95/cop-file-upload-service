@@ -18,11 +18,18 @@ const testFile = {
   version: config.fileVersions.original
 };
 
+const validateMock = class {
+  static validateFields() {
+    return null;
+  }
+};
+
 export {
   chai,
   config,
   expect,
   nock,
   sinon,
-  testFile
+  testFile,
+  validateMock
 };
