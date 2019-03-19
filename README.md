@@ -2,7 +2,9 @@
 
 ## Introduction
 
-A service built with [NodeJS](https://nodejs.org) to upload and download files to/from a storage service. The service performs the following actions on the uploaded files:
+A service built with [NodeJS](https://nodejs.org) to upload and download files to/from a storage service.
+
+The service performs the following actions on the uploaded files:
 
 - validation
 - virus scanning
@@ -12,7 +14,7 @@ A service built with [NodeJS](https://nodejs.org) to upload and download files t
 - extracting text with ocr
   - valid files for ocr are: for .png, .jpg, .jpeg, .jpe, .tiff, .tif, .bmp, .pnm and .jfif
 - saving into storage
-  - currently S3 is supported for storage
+  - currently S3 is supported
 
 ## Using the API
 
@@ -34,7 +36,7 @@ processKey: The process key of the uploaded file
 
 ```
 {
-  message: 'File uploaded successfully'
+  filename: UUID
 }
 ```
 
