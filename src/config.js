@@ -26,9 +26,9 @@ const config = {
       serverSideEncryption: 'aws:kms'
     },
     keycloak: {
-      authServerUrl: process.env.KEYCLOAK_AUTH_SERVER_URL,
-      realm: process.env.KEYCLOAK_REALM,
-      clientId: process.env.KEYCLOAK_CLIENT_ID,
+      authServerUrl: process.env.AUTH_URL,
+      realm: process.env.AUTH_REALM,
+      clientId: process.env.AUTH_CLIENT_ID,
       bearerOnly: true,
       confidentialPort: 0,
       resource: 'file-upload-service',
