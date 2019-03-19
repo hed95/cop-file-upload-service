@@ -12,7 +12,7 @@
   ],
   "exclude": [
     "src/*.js",
-    "src/routes/*.js"
+    "src/routers/*.js"
   ],
   "require": [
     "@babel/register"

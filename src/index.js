@@ -1,7 +1,7 @@
 import {createLogger, format, transports} from 'winston';
 
 import Environment from './utils/Environment';
-import FilesRouter from './routes/FilesRouter';
+import FilesRouter from './routers/FilesRouter';
 import Keycloak from 'keycloak-connect';
 import Logger from './utils/Logger';
 

@@ -3,7 +3,7 @@ import {chai, config, expect, testFile} from '../../../setupTests';
 import app from '../../../../src/index';
 import fs from 'fs';
 
-describe('FilesRoutes', () => {
+describe('FilesRouter', () => {
   describe('get()', () => {
     it('should return the correct status and response when authentication fails', done => {
       chai

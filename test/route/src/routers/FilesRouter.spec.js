@@ -5,7 +5,7 @@ import GetValidation from '../../../../src/validation/GetValidation';
 import app from '../../../../src/index';
 import fs from 'fs';
 
-describe('FilesRoutes', () => {
+describe('FilesRouter', () => {
   let filename;
 
   describe('post()', () => {
