@@ -6,13 +6,16 @@ import app from '../../../../src/index';
 import fs from 'fs';
 
 describe('FilesRouter', () => {
+  const processKey = 'test-process-key';
+  const {endpoints, fileVersions, services} = config;
   let filename;
 
   describe('post()', () => {
+    const postUrl = `${endpoints.files}/${processKey}`;
     let virusScanMock;
 
     beforeEach(() => {
-      const {virusScan} = config.services;
+      const {virusScan} = services;
       virusScanMock = nock(`http://${virusScan.host}:${virusScan.port}`).post(virusScan.path);
 
       testFile.buffer = fs.createReadStream('test/data/test-file.txt');
@@ -27,13 +30,20 @@ describe('FilesRouter', () => {
 
       chai
         .request(app)
-        .post(`${config.endpoints.files}/test-process-key`)
+        .post(postUrl)
         .attach(testFile.fieldname, testFile.buffer, testFile.originalname)
         .end((err, res) => {
-          filename = res.body.filename;
           expect(res.status).to.equal(200);
-          expect(res.body).to.have.property('filename');
-          expect(res.body.filename).to.match(new GetValidation().filenameRegex);
+          expect(res.body).to.have.property('url');
+          expect(res.body).to.have.property('name');
+          expect(res.body).to.have.property('size');
+
+          filename = res.body.url.split('/')[4];
+
+          expect(filename).to.match(new GetValidation().filenameRegex);
+          expect(res.body.url).to.match(new RegExp(`${endpoints.files}/${processKey}/${fileVersions.original}/`));
+          expect(res.body.name).to.equal(testFile.originalname);
+          expect(res.body.size).to.equal(testFile.size);
           expect(err).to.equal(null);
           done();
         });
@@ -44,7 +54,7 @@ describe('FilesRouter', () => {
 
       chai
         .request(app)
-        .post(`${config.endpoints.files}/test-process-key`)
+        .post(postUrl)
         .end((err, res) => {
           expect(res.status).to.equal(400);
           expect(res.body).to.deep.equal({error: '"file" is required'});
@@ -71,7 +81,7 @@ describe('FilesRouter', () => {
 
       chai
         .request(app)
-        .post(`${config.endpoints.files}/test-process-key`)
+        .post(postUrl)
         .attach(testFile.fieldname, testFile.buffer, testFile.originalname)
         .end((err, res) => {
           expect(res.status).to.equal(500);
@@ -86,7 +96,7 @@ describe('FilesRouter', () => {
     it('should return the correct status and response', done => {
       chai
         .request(app)
-        .get(`${config.endpoints.files}/test-process-key/orig/${filename}`)
+        .get(`${endpoints.files}/${processKey}/${fileVersions.original}/${filename}`)
         .end((err, res) => {
           expect(res.status).to.equal(200);
           expect(res.get('Content-Type')).to.equal('text/plain; charset=utf-8');
@@ -98,7 +108,7 @@ describe('FilesRouter', () => {
     it('should return the correct status and response when the route is not found', done => {
       chai
         .request(app)
-        .get(`${config.endpoints.files}/does-not-exist.txt`)
+        .get(`${endpoints.files}/does-not-exist.txt`)
         .end((err, res) => {
           expect(res.status).to.equal(404);
           expect(res.body).to.deep.equal({error: 'Route not found'});

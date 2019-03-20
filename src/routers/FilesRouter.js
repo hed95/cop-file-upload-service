@@ -2,6 +2,7 @@ import FileConverter from '../utils/FileConverter';
 import FilenameController from '../controllers/FilenameController';
 import GetValidationController from '../controllers/GetValidationController';
 import OcrController from '../controllers/OcrController';
+import PostResponseController from '../controllers/PostResponseController';
 import PostValidationController from '../controllers/PostValidationController';
 import S3Service from '../services/S3Service';
 import StorageController from '../controllers/StorageController';
@@ -42,9 +43,7 @@ class FilesRouter {
       storageController.uploadFile,
       new OcrController(ocr, config).parseFile,
       storageController.uploadFile,
-      (req, res) => {
-        res.status(200).json({filename: req.file.filename});
-      }
+      new PostResponseController(config).response
     );
 
     return router;

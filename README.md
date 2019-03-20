@@ -36,7 +36,9 @@ processKey: The process key of the uploaded file
 
 ```
 {
-  filename: UUID
+  url: Relative path of the file
+  name: Original file name
+  size: Size of the file
 }
 ```
 
