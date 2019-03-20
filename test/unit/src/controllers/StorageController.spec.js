@@ -95,7 +95,7 @@ describe('StorageController', () => {
         uploadFile: sinon.stub().returns({Location: 'http://localhost/a-file'})
       };
 
-      req.body.processKey = 'test-process-key';
+      req.params.processKey = 'test-process-key';
 
       const storageController = new StorageController(s3Service, config);
 
@@ -120,7 +120,7 @@ describe('StorageController', () => {
         uploadFile: sinon.stub().returns({Location: 'http://localhost/a-file'})
       };
 
-      req.body.processKey = 'test-process-key';
+      req.params.processKey = 'test-process-key';
       delete req.file.version;
 
       const storageController = new StorageController(s3Service, config);

@@ -27,13 +27,13 @@ class StorageController {
   }
 
   async uploadFile(req, res, next) {
-    const {body, file, logger} = req;
+    const {file, logger, params} = req;
     file.version = file.version || this.config.fileVersions.original;
 
     logger.info(`Uploading file - ${file.version} version`);
 
     try {
-      await this.storageService.uploadFile(body.processKey, file);
+      await this.storageService.uploadFile(params.processKey, file);
       logger.info(`File uploaded - ${file.version} version`);
       next();
     } catch (err) {

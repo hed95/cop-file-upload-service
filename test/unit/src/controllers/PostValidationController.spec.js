@@ -9,7 +9,7 @@ describe('PostValidationController', () => {
     it('should call validate.validateFields() and handleValidation()', done => {
       const req = {
         file: testFile,
-        body: {
+        params: {
           processKey: 'test-process-key'
         }
       };

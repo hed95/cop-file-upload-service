@@ -27,9 +27,8 @@ describe('FilesRouter', () => {
 
       chai
         .request(app)
-        .post(config.endpoints.files)
+        .post(`${config.endpoints.files}/test-process-key`)
         .attach(testFile.fieldname, testFile.buffer, testFile.originalname)
-        .field('processKey', 'test-process-key')
         .end((err, res) => {
           filename = res.body.filename;
           expect(res.status).to.equal(200);
@@ -45,8 +44,7 @@ describe('FilesRouter', () => {
 
       chai
         .request(app)
-        .post(config.endpoints.files)
-        .field('processKey', 'test-process-key')
+        .post(`${config.endpoints.files}/test-process-key`)
         .end((err, res) => {
           expect(res.status).to.equal(400);
           expect(res.body).to.deep.equal({error: '"file" is required'});
@@ -58,7 +56,7 @@ describe('FilesRouter', () => {
     it('should return the correct status and response when the route is not found', done => {
       chai
         .request(app)
-        .post('/uploadz')
+        .post('/uploads')
         .attach(testFile.fieldname, testFile.buffer, testFile.originalname)
         .end((err, res) => {
           expect(res.status).to.equal(404);
@@ -73,9 +71,8 @@ describe('FilesRouter', () => {
 
       chai
         .request(app)
-        .post(config.endpoints.files)
+        .post(`${config.endpoints.files}/test-process-key`)
         .attach(testFile.fieldname, testFile.buffer, testFile.originalname)
-        .field('processKey', 'test-process-key')
         .end((err, res) => {
           expect(res.status).to.equal(500);
           expect(res.body).to.deep.equal({error: 'Unable to call the virus scanning service'});

@@ -33,7 +33,7 @@ class FilesRouter {
     );
 
     router.post(
-      config.endpoints.files,
+      `${config.endpoints.files}/:processKey`,
       upload.single('file'),
       new PostValidationController(joi).validateRoute,
       new FilenameController(uuid).generateFilename,

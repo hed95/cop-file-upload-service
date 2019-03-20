@@ -21,7 +21,7 @@ The service performs the following actions on the uploaded files:
 ### Uploading a file
 
 ```
-POST /files
+POST /files/{processKey}
 ```
 
 #### Parameters
@@ -59,7 +59,7 @@ processKey: The process key of the uploaded file
 ### Downloading a file
 
 ```
-GET /files/:processKey/:fileVersion/:filename
+GET /files/{processKey}/{fileVersion}/{filename}
 ```
 
 #### Parameters
