@@ -12,11 +12,11 @@ class StorageController {
     logger.info('Downloading file');
 
     try {
-      const {ContentType, Body} = await this.storageService.downloadFile(processKey, fileVersion, filename);
+      const {Body, ContentType, Metadata} = await this.storageService.downloadFile(processKey, fileVersion, filename);
       logger.info('File downloaded');
       res
         .set('Content-Type', ContentType)
-        .set('Content-Disposition', `attachment; filename=${filename}`)
+        .set('Content-Disposition', `attachment; filename=${Metadata.originalfilename}`)
         .status(200)
         .send(Body);
     } catch (err) {

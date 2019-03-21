@@ -9,13 +9,15 @@ describe('PostResponseController', () => {
         file: testFile,
         params: {
           processKey: 'test-process-key'
+        },
+        logger: {
+          info: sinon.spy()
         }
       };
       const res = {
         status: () => true,
         json: () => true
       };
-      const {endpoints, fileVersions} = config;
 
       req.file.filename = '9e5eb809-bce7-463e-8c2f-b6bd8c4832d9';
 
@@ -30,7 +32,7 @@ describe('PostResponseController', () => {
       expect(res.status).to.have.been.calledWith(200);
       expect(res.json).to.have.been.calledOnce;
       expect(res.json).to.have.been.calledWith({
-        url: `${endpoints.files}/${req.params.processKey}/${fileVersions.original}/${testFile.filename}`,
+        url: `/${config.fileVersions.original}/${testFile.filename}`,
         name: testFile.originalname,
         size: testFile.size
       });

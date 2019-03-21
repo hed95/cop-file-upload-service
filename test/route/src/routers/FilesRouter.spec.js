@@ -38,10 +38,10 @@ describe('FilesRouter', () => {
           expect(res.body).to.have.property('name');
           expect(res.body).to.have.property('size');
 
-          filename = res.body.url.split('/')[4];
+          filename = res.body.url.split('/')[2];
 
           expect(filename).to.match(new GetValidation().filenameRegex);
-          expect(res.body.url).to.match(new RegExp(`${endpoints.files}/${processKey}/${fileVersions.original}/`));
+          expect(res.body.url).to.match(new RegExp(`/${fileVersions.original}/`));
           expect(res.body.name).to.equal(testFile.originalname);
           expect(res.body.size).to.equal(testFile.size);
           expect(err).to.equal(null);

@@ -38,7 +38,12 @@ describe('StorageController', () => {
     it('should log the correct messages and return a success message when a file is downloaded successfully', done => {
       req.params.filename = testFile.originalname;
       s3Service = {
-        downloadFile: sinon.stub().returns({Body: 'some body content'})
+        downloadFile: sinon.stub().returns({
+          Body: 'some body content',
+          Metadata: {
+            originalfilename: testFile.originalname
+          }
+        })
       };
 
       const storageController = new StorageController(s3Service);

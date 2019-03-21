@@ -5,10 +5,11 @@ class PostResponseController {
   }
 
   response(req, res) {
-    const {file, params} = req;
-    const {endpoints, fileVersions} = this.config;
+    const {file} = req;
+    const {fileVersions} = this.config;
+    req.logger.info(`File url: ${`/${fileVersions.original}/${file.filename}`}`);
     res.status(200).json({
-      url: `${endpoints.files}/${params.processKey}/${fileVersions.original}/${file.filename}`,
+      url: `/${fileVersions.original}/${file.filename}`,
       name: req.file.originalname,
       size: req.file.size
     });
