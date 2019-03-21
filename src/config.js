@@ -9,7 +9,9 @@ if (Environment.isNotProd(process.env.NODE_ENV)) {
 const config = {
   port: process.env.PORT || 8181,
   endpoints: {
-    files: '/files'
+    files: '/files',
+    health: '/healthz',
+    readiness: '/readiness'
   },
   services: {
     virusScan: {
