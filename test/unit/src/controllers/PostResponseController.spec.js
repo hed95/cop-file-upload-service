@@ -29,7 +29,7 @@ describe('PostResponseController', () => {
       postResponseController.response(req, res);
 
       expect(res.status).to.have.been.calledOnce;
-      expect(res.status).to.have.been.calledWith(200);
+      expect(res.status).to.have.been.calledWith(201);
       expect(res.json).to.have.been.calledOnce;
       expect(res.json).to.have.been.calledWith({
         url: `/${config.fileVersions.clean}/${testFile.filename}`,
