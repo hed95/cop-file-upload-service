@@ -1,8 +1,8 @@
 import {createLogger, format, transports} from 'winston';
 
-import Environment from './utils/Environment';
+// import Environment from './utils/Environment';
 import FilesRouter from './routers/FilesRouter';
-import Keycloak from 'keycloak-connect';
+// import Keycloak from 'keycloak-connect';
 import Logger from './utils/Logger';
 
 import config from './config';
@@ -10,15 +10,15 @@ import express from 'express';
 import helmet from 'helmet';
 import http from 'http';
 
-const {port, services} = config;
+const {port} = config;
 const logger = new Logger(createLogger, format, transports).logger();
 const app = express();
 
-if (Environment.isProd(process.env.NODE_ENV)) {
-  const keycloak = new Keycloak({}, services.keycloak);
-  app.use(keycloak.middleware());
-  app.use('*', keycloak.protect());
-}
+// if (Environment.isProd(process.env.NODE_ENV)) {
+//   const keycloak = new Keycloak({}, services.keycloak);
+//   app.use(keycloak.middleware());
+//   app.use('*', keycloak.protect());
+// }
 
 app.use(helmet());
 
