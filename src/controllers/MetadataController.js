@@ -1,15 +1,15 @@
-class FilenameController {
+class MetadataController {
   constructor(uuid, processedTime) {
     this.uuid = uuid;
     this.processedTime = processedTime;
-    this.generateFilename = this.generateFilename.bind(this);
+    this.generateMetadata = this.generateMetadata.bind(this);
   }
 
-  generateFilename(req, res, next) {
+  generateMetadata(req, res, next) {
     req.file.filename = this.uuid();
     req.file.processedTime = this.processedTime;
     next();
   }
 }
 
-export default FilenameController;
+export default MetadataController;

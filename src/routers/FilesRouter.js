@@ -1,6 +1,6 @@
 import FileConverter from '../utils/FileConverter';
-import FilenameController from '../controllers/FilenameController';
 import GetValidationController from '../controllers/GetValidationController';
+import MetadataController from '../controllers/MetadataController';
 import OcrController from '../controllers/OcrController';
 import PostResponseController from '../controllers/PostResponseController';
 import PostValidationController from '../controllers/PostValidationController';
@@ -37,7 +37,7 @@ class FilesRouter {
       `${config.endpoints.files}/:processKey`,
       upload.single('file'),
       new PostValidationController(joi).validateRoute,
-      new FilenameController(uuid, Date.now()).generateFilename,
+      new MetadataController(uuid, Date.now()).generateMetadata,
       storageController.uploadFile,
       new VirusScanController(new FileConverter(gm, util, config), config).scanFile,
       storageController.uploadFile,
