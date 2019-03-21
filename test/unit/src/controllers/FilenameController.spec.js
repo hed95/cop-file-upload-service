@@ -6,16 +6,18 @@ describe('FilenameController', () => {
   describe('generateFilename()', () => {
     it('should generate a filename', done => {
       const uuid = () => '9e5eb809-bce7-463e-8c2f-b6bd8c4832d9';
+      const processedTime = Date.now();
       const req = {
         file: {}
       };
       const res = {};
       const next = sinon.spy();
-      const filenameController = new FilenameController(uuid);
+      const filenameController = new FilenameController(uuid, processedTime);
       filenameController.generateFilename(req, res, next);
       expect(req).to.deep.equal({
         file: {
-          filename: uuid()
+          filename: uuid(),
+          processedTime: processedTime
         }
       });
       done();

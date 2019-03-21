@@ -37,7 +37,7 @@ class FilesRouter {
       `${config.endpoints.files}/:processKey`,
       upload.single('file'),
       new PostValidationController(joi).validateRoute,
-      new FilenameController(uuid).generateFilename,
+      new FilenameController(uuid, Date.now()).generateFilename,
       storageController.uploadFile,
       new VirusScanController(new FileConverter(gm, util, config), config).scanFile,
       storageController.uploadFile,

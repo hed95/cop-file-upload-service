@@ -37,6 +37,7 @@ describe('FilesRouter', () => {
           expect(res.body).to.have.property('url');
           expect(res.body).to.have.property('name');
           expect(res.body).to.have.property('size');
+          expect(res.body).to.have.property('processedTime');
 
           filename = res.body.url.split('/')[2];
 

@@ -34,7 +34,8 @@ describe('PostResponseController', () => {
       expect(res.json).to.have.been.calledWith({
         url: `/${config.fileVersions.clean}/${testFile.filename}`,
         name: testFile.originalname,
-        size: testFile.size
+        size: testFile.size,
+        processedTime: testFile.processedTime
       });
 
       done();

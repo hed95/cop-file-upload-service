@@ -48,7 +48,8 @@ describe('S3Service', () => {
         buffer: 'some file contents',
         mimetype: 'text/plain',
         filename: '9e5eb809-bce7-463e-8c2f-b6bd8c4832d9',
-        version: 'clean'
+        version: 'clean',
+        processedTime: 1553181662189
       };
       const processKey = 'test-process-key';
       const s3 = new S3Service(s3Config);
@@ -61,7 +62,8 @@ describe('S3Service', () => {
         SSEKMSKeyId: s3Config.sseKmsKeyId,
         ContentType: file.mimetype,
         Metadata: {
-          originalfilename: file.originalname
+          originalfilename: file.originalname,
+          processedtime: file.processedTime.toString()
         }
       });
       done();

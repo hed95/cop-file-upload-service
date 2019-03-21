@@ -15,7 +15,8 @@ const testFile = {
   encoding: '7bit',
   mimetype: 'application/octet-stream',
   size: 5,
-  version: config.fileVersions.original
+  version: config.fileVersions.original,
+  processedTime: 1553181662189
 };
 
 const validateMock = class {

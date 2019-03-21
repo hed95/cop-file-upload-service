@@ -32,7 +32,8 @@ class S3Service {
       SSEKMSKeyId: config.sseKmsKeyId,
       ContentType: file.mimetype,
       Metadata: {
-        originalfilename: file.originalname
+        originalfilename: file.originalname,
+        processedtime: file.processedTime.toString()
       }
     };
   }

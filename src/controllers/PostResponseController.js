@@ -9,8 +9,9 @@ class PostResponseController {
     const {fileVersions} = this.config;
     res.status(200).json({
       url: `/${fileVersions.clean}/${file.filename}`,
-      name: req.file.originalname,
-      size: req.file.size
+      name: file.originalname,
+      size: file.size,
+      processedTime: file.processedTime
     });
   }
 }
