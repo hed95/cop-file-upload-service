@@ -36,7 +36,6 @@ describe('StorageController', () => {
 
   describe('downloadFile()', () => {
     it('should log the correct messages and return a success message when a file is downloaded successfully', done => {
-      req.params.filename = testFile.originalname;
       s3Service = {
         downloadFile: sinon.stub().returns({
           Body: 'some body content',
@@ -165,6 +164,58 @@ describe('StorageController', () => {
           expect(res.status).to.have.been.calledWith(500);
           expect(res.json).to.have.been.calledOnce;
           expect(res.json).to.have.been.calledWith({error: `Failed to upload file - ${config.fileVersions.original} version`});
+          done();
+        })
+        .catch(err => {
+          done(err);
+        });
+    });
+  });
+
+  describe('deleteFiles()', () => {
+    it('should log the correct messages and return a success message when files are deleted successfully', done => {
+      s3Service = {
+        deleteFiles: () => true
+      };
+
+      const storageController = new StorageController(s3Service);
+
+      storageController
+        .deleteFiles(req, res)
+        .then(() => {
+          expect(req.logger.info).to.have.been.calledTwice;
+          expect(req.logger.info).to.have.been.calledWith('Deleting files');
+          expect(req.logger.info).to.have.been.calledWith('Files deleted');
+          expect(res.status).to.have.been.calledOnce;
+          expect(res.status).to.have.been.calledWith(200);
+          expect(res.json).to.have.been.calledOnce;
+          expect(res.json).to.have.been.calledWith({message: 'Files deleted successfully'});
+          done();
+        })
+        .catch(err => {
+          done(err);
+        });
+    });
+
+    it('should log the correct messages and return an error message when the storage service is not available', done => {
+      s3Service = {
+        deleteFiles: sinon.stub().returns(Promise.reject(new Error('Internal Server Error')))
+      };
+
+      const storageController = new StorageController(s3Service);
+
+      storageController
+        .deleteFiles(req, res)
+        .then(() => {
+          expect(req.logger.info).to.have.been.calledOnce;
+          expect(req.logger.info).to.have.been.calledWith('Deleting files');
+          expect(req.logger.error).to.have.been.calledTwice;
+          expect(req.logger.error).to.have.been.calledWith('Failed to delete files');
+          expect(req.logger.error).to.have.been.calledWith('Error: Internal Server Error');
+          expect(res.status).to.have.been.calledOnce;
+          expect(res.status).to.have.been.calledWith(500);
+          expect(res.json).to.have.been.calledOnce;
+          expect(res.json).to.have.been.calledWith({error: 'Failed to delete files'});
           done();
         })
         .catch(err => {

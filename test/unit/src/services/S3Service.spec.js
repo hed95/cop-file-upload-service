@@ -5,18 +5,12 @@ import S3Service from '../../../../src/services/S3Service';
 import StorageKey from '../../../../src/utils/StorageKey';
 
 describe('S3Service', () => {
-  let s3Config;
-
-  beforeEach(() => {
-    config.services.s3.bucket = 'awsbucket';
-    s3Config = config.services.s3;
-  });
+  config.services.s3.bucket = 'awsbucket';
 
   describe('init()', () => {
     it('should return an instance of AWS.S3', done => {
-      s3Config = {};
-      const s3 = new S3Service(s3Config);
-      const result = s3.init(s3Config);
+      const s3 = new S3Service(config);
+      const result = s3.init(config);
       expect(result).to.be.an.instanceOf(AWS.S3);
       done();
     });
@@ -27,11 +21,11 @@ describe('S3Service', () => {
       const filename = '9e5eb809-bce7-463e-8c2f-b6bd8c4832d9';
       const processKey = 'test-process-key';
       const fileVersion = 'clean';
-      const s3 = new S3Service(s3Config);
-      const params = s3.downloadParams(s3Config, processKey, fileVersion, filename);
+      const s3 = new S3Service(config);
+      const params = s3.downloadParams(config, processKey, fileVersion, filename);
 
       expect(params).to.deep.equal({
-        Bucket: s3Config.bucket,
+        Bucket: config.services.s3.bucket,
         Key: StorageKey.format(processKey, fileVersion, filename)
       });
 
@@ -41,25 +35,22 @@ describe('S3Service', () => {
 
   describe('uploadParams()', () => {
     it('should return the correct params', done => {
-      s3Config = Object.assign(s3Config, {
-        serverSideEncryption: 'aws:kms',
-        sseKmsKeyId: 'keyid123'
-      });
+      config.services.s3.sseKmsKeyId = 'keyid123';
 
       const file = Object.assign(testFile, {
         filename: '9e5eb809-bce7-463e-8c2f-b6bd8c4832d9',
         buffer: new Buffer('some file contents')
       });
       const processKey = 'test-process-key';
-      const s3 = new S3Service(s3Config);
-      const params = s3.uploadParams(s3Config, processKey, file);
+      const s3 = new S3Service(config);
+      const params = s3.uploadParams(config, processKey, file);
 
       expect(params).to.deep.equal({
-        Bucket: s3Config.bucket,
+        Bucket: config.services.s3.bucket,
         Key: StorageKey.format(processKey, file.version, file.filename),
         Body: file.buffer,
-        ServerSideEncryption: s3Config.serverSideEncryption,
-        SSEKMSKeyId: s3Config.sseKmsKeyId,
+        ServerSideEncryption: config.services.s3.serverSideEncryption,
+        SSEKMSKeyId: config.services.s3.sseKmsKeyId,
         ContentType: file.mimetype,
         Metadata: {
           originalfilename: file.originalname,
@@ -71,19 +62,40 @@ describe('S3Service', () => {
     });
   });
 
+  describe('deleteParams()', () => {
+    it('should return the correct params', done => {
+      const filename = '9e5eb809-bce7-463e-8c2f-b6bd8c4832d9';
+      const processKey = 'test-process-key';
+      const s3 = new S3Service(config);
+      const params = s3.deleteParams(config, processKey, filename);
+
+      expect(params).to.deep.equal({
+        Bucket: config.services.s3.bucket,
+        Delete: {
+          Objects: Object.values(config.fileVersions).map(version => ({
+            Key: StorageKey.format(processKey, version, filename)
+          })),
+          Quiet: true
+        }
+      });
+
+      done();
+    });
+  });
+
   describe('downloadFile()', () => {
     it('should call fetchAsync() with the correct params', done => {
       const filename = 'text-file.txt';
-      const s3 = new S3Service(s3Config);
+      const s3 = new S3Service(config);
 
-      s3.downloadParams = sinon.stub().returns({Bucket: s3Config.bucket});
+      s3.downloadParams = sinon.stub().returns({Bucket: config.services.s3.bucket});
       s3.fetchAsync = sinon.spy();
 
       s3.downloadFile(filename);
       expect(s3.downloadParams).to.have.been.calledOnce;
-      expect(s3.downloadParams).to.have.been.calledWith(s3Config, filename);
+      expect(s3.downloadParams).to.have.been.calledWith(config, filename);
       expect(s3.fetchAsync).to.have.been.calledOnce;
-      expect(s3.fetchAsync).to.have.been.calledWith('getObject', {Bucket: s3Config.bucket});
+      expect(s3.fetchAsync).to.have.been.calledWith('getObject', {Bucket: config.services.s3.bucket});
       done();
     });
   });
@@ -91,28 +103,44 @@ describe('S3Service', () => {
   describe('uploadFile()', () => {
     it('should call fetchAsync() with the correct params', done => {
       const file = {originalname: 'text-file.txt'};
-      const s3 = new S3Service(s3Config);
+      const s3 = new S3Service(config);
 
-      s3.uploadParams = sinon.stub().returns({Bucket: s3Config.bucket});
+      s3.uploadParams = sinon.stub().returns({Bucket: config.services.s3.bucket});
       s3.fetchAsync = sinon.spy();
 
       s3.uploadFile(file);
       expect(s3.uploadParams).to.have.been.calledOnce;
-      expect(s3.uploadParams).to.have.been.calledWith(s3Config, file);
+      expect(s3.uploadParams).to.have.been.calledWith(config, file);
       expect(s3.fetchAsync).to.have.been.calledOnce;
-      expect(s3.fetchAsync).to.have.been.calledWith('upload', {Bucket: s3Config.bucket});
+      expect(s3.fetchAsync).to.have.been.calledWith('upload', {Bucket: config.services.s3.bucket});
+      done();
+    });
+  });
+
+  describe('deleteFiles()', () => {
+    it('should call fetchAsync() with the correct params', done => {
+      const processKey = 'test-process-key';
+      const filename = '9e5eb809-bce7-463e-8c2f-b6bd8c4832d9';
+      const s3 = new S3Service(config);
+
+      s3.deleteParams = sinon.stub().returns({Bucket: config.services.s3.bucket});
+      s3.fetchAsync = sinon.spy();
+
+      s3.deleteFiles(processKey, filename);
+      expect(s3.deleteParams).to.have.been.calledOnce;
+      expect(s3.deleteParams).to.have.been.calledWith(config, processKey, filename);
+      expect(s3.fetchAsync).to.have.been.calledOnce;
+      expect(s3.fetchAsync).to.have.been.calledWith('deleteObjects', {Bucket: config.services.s3.bucket});
       done();
     });
   });
 
   describe('fetchAsync()', () => {
     it('should call util.promisify()', done => {
-      s3Config = {};
-
       const util = {
         promisify: sinon.stub().returns(() => true)
       };
-      const s3 = new S3Service(s3Config, util);
+      const s3 = new S3Service(config, util);
 
       s3.fetchAsync('upload', {file: {}});
       expect(s3.util.promisify).to.have.been.calledOnce;

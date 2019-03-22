@@ -118,4 +118,30 @@ describe('FilesRouter', () => {
         });
     });
   });
+
+  describe('delete()', () => {
+    it('should return the correct status and response', done => {
+      chai
+        .request(app)
+        .delete(`${endpoints.files}/${processKey}/${filename}`)
+        .end((err, res) => {
+          expect(res.status).to.equal(200);
+          expect(res.body).to.deep.equal({message: 'Files deleted successfully'});
+          expect(err).to.equal(null);
+          done();
+        });
+    });
+
+    it('should return the correct status and response when the route is not found', done => {
+      chai
+        .request(app)
+        .delete(`${endpoints.files}/${processKey}`)
+        .end((err, res) => {
+          expect(res.status).to.equal(404);
+          expect(res.body).to.deep.equal({error: 'Route not found'});
+          expect(err).to.equal(null);
+          done();
+        });
+    });
+  });
 });

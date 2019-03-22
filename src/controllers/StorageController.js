@@ -4,6 +4,7 @@ class StorageController {
     this.config = config;
     this.downloadFile = this.downloadFile.bind(this);
     this.uploadFile = this.uploadFile.bind(this);
+    this.deleteFiles = this.deleteFiles.bind(this);
   }
 
   async downloadFile(req, res) {
@@ -40,6 +41,22 @@ class StorageController {
       logger.error(`Failed to upload file - ${file.version} version`);
       logger.error(err.toString());
       res.status(500).json({error: `Failed to upload file - ${file.version} version`});
+    }
+  }
+
+  async deleteFiles(req, res) {
+    const {logger, params} = req;
+    const {processKey, filename} = params;
+    logger.info('Deleting files');
+
+    try {
+      await this.storageService.deleteFiles(processKey, filename);
+      logger.info('Files deleted');
+      res.status(200).json({message: 'Files deleted successfully'});
+    } catch (err) {
+      logger.error('Failed to delete files');
+      logger.error(err.toString());
+      res.status(500).json({error: 'Failed to delete files'});
     }
   }
 }

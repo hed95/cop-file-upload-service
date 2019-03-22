@@ -1,3 +1,4 @@
+import DeleteValidationController from '../controllers/DeleteValidationController';
 import FileConverter from '../utils/FileConverter';
 import GetValidationController from '../controllers/GetValidationController';
 import MetadataController from '../controllers/MetadataController';
@@ -19,8 +20,7 @@ import uuid from 'uuid/v4';
 
 const storage = multer.memoryStorage();
 const upload = multer({storage});
-const {s3: s3Config} = config.services;
-const s3Service = new S3Service(s3Config, util);
+const s3Service = new S3Service(config, util);
 const storageController = new StorageController(s3Service, config);
 
 class FilesRouter {
@@ -44,6 +44,12 @@ class FilesRouter {
       new OcrController(ocr, config).parseFile,
       storageController.uploadFile,
       new PostResponseController(config).response
+    );
+
+    router.delete(
+      `${config.endpoints.files}/:processKey/:filename`,
+      new DeleteValidationController(joi).validateRoute,
+      storageController.deleteFiles
     );
 
     return router;

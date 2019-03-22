@@ -92,6 +92,44 @@ filename: The name of the file to be downloaded
 }
 ```
 
+### Deleting a file
+
+```
+DELETE /files/{processKey}/{filename}
+```
+
+#### Parameters
+
+processKey: The process key of the file to be deleted
+
+filename: The name of the file to be deleted
+
+#### Responses
+
+200: application/json
+
+```
+{
+  message: 'Files deleted successfully'
+}
+```
+
+404: application/json
+
+```
+{
+  error: 'Route not found'
+}
+```
+
+500: application/json
+
+```
+{
+  error: 'Failed to delete files'
+}
+```
+
 ## Installing the app
 
 - Clone the repo:

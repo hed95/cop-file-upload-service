@@ -9,31 +9,47 @@ class S3Service {
   }
 
   init(config) {
+    const {s3} = config.services;
     return new AWS.S3({
-      accessKeyId: config.accessKeyId,
-      secretAccessKey: config.secretAccessKey,
-      region: config.region
+      accessKeyId: s3.accessKeyId,
+      secretAccessKey: s3.secretAccessKey,
+      region: s3.region
     });
   }
 
   downloadParams(config, processKey, fileVersion, filename) {
+    const {s3} = config.services;
     return {
-      Bucket: config.bucket,
+      Bucket: s3.bucket,
       Key: StorageKey.format(processKey, fileVersion, filename)
     };
   }
 
   uploadParams(config, processKey, file) {
+    const {s3} = config.services;
     return {
-      Bucket: config.bucket,
+      Bucket: s3.bucket,
       Key: StorageKey.format(processKey, file.version, file.filename),
       Body: file.buffer,
-      ServerSideEncryption: config.serverSideEncryption,
-      SSEKMSKeyId: config.sseKmsKeyId,
+      ServerSideEncryption: s3.serverSideEncryption,
+      SSEKMSKeyId: s3.sseKmsKeyId,
       ContentType: file.mimetype,
       Metadata: {
         originalfilename: file.originalname,
         processedtime: file.processedTime.toString()
+      }
+    };
+  }
+
+  deleteParams(config, processKey, filename) {
+    const {s3} = config.services;
+    return {
+      Bucket: s3.bucket,
+      Delete: {
+        Objects: Object.values(config.fileVersions).map(version => ({
+          Key: StorageKey.format(processKey, version, filename)
+        })),
+        Quiet: true
       }
     };
   }
@@ -46,6 +62,11 @@ class S3Service {
   uploadFile(processKey, file) {
     const params = this.uploadParams(this.config, processKey, file);
     return this.fetchAsync('upload', params);
+  }
+
+  deleteFiles(processKey, filename) {
+    const params = this.deleteParams(this.config, processKey, filename);
+    return this.fetchAsync('deleteObjects', params);
   }
 
   fetchAsync(method, params) {
