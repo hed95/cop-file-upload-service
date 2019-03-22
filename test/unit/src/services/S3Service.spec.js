@@ -1,4 +1,4 @@
-import {config, expect, sinon} from '../../../setupTests';
+import {config, expect, sinon, testFile} from '../../../setupTests';
 
 import AWS from 'aws-sdk';
 import S3Service from '../../../../src/services/S3Service';
@@ -29,31 +29,31 @@ describe('S3Service', () => {
       const fileVersion = 'clean';
       const s3 = new S3Service(s3Config);
       const params = s3.downloadParams(s3Config, processKey, fileVersion, filename);
+
       expect(params).to.deep.equal({
         Bucket: s3Config.bucket,
         Key: StorageKey.format(processKey, fileVersion, filename)
       });
+
       done();
     });
   });
 
   describe('uploadParams()', () => {
     it('should return the correct params', done => {
-      Object.assign(s3Config, {
+      s3Config = Object.assign(s3Config, {
         serverSideEncryption: 'aws:kms',
         sseKmsKeyId: 'keyid123'
       });
-      const file = {
-        originalname: 'text-file.txt',
-        buffer: 'some file contents',
-        mimetype: 'text/plain',
+
+      const file = Object.assign(testFile, {
         filename: '9e5eb809-bce7-463e-8c2f-b6bd8c4832d9',
-        version: 'clean',
-        processedTime: 1553181662189
-      };
+        buffer: new Buffer('some file contents')
+      });
       const processKey = 'test-process-key';
       const s3 = new S3Service(s3Config);
       const params = s3.uploadParams(s3Config, processKey, file);
+
       expect(params).to.deep.equal({
         Bucket: s3Config.bucket,
         Key: StorageKey.format(processKey, file.version, file.filename),
@@ -66,6 +66,7 @@ describe('S3Service', () => {
           processedtime: file.processedTime.toString()
         }
       });
+
       done();
     });
   });
@@ -107,6 +108,7 @@ describe('S3Service', () => {
   describe('fetchAsync()', () => {
     it('should call util.promisify()', done => {
       s3Config = {};
+
       const util = {
         promisify: sinon.stub().returns(() => true)
       };
@@ -114,6 +116,7 @@ describe('S3Service', () => {
 
       s3.fetchAsync('upload', {file: {}});
       expect(s3.util.promisify).to.have.been.calledOnce;
+
       done();
     });
   });
