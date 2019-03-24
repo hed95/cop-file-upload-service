@@ -1,5 +1,4 @@
 version: '3'
-
 services:
   file-upload-service:
     container_name: file-upload-service
@@ -10,7 +9,6 @@ services:
       - VIRUS_SCAN_HOST=clamav-api
     depends_on:
       - clamav-api
-
   clamav-api:
     container_name: clamav-api
     image: quay.io/ukhomeofficedigital/docker-clamav-rest:1.0.0
@@ -20,7 +18,6 @@ services:
       - 8080:8080
     depends_on:
       - clamav
-
   clamav:
     container_name: clamav
     image: quay.io/ukhomeofficedigital/clamav:v1.6.1

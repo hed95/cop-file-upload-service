@@ -2,7 +2,7 @@
 
 ## Introduction
 
-A service built with [NodeJS](https://nodejs.org) to upload and download files to/from a storage service.
+A service built with [NodeJS](https://nodejs.org) and [TypeScript](https://www.typescriptlang.org) to upload and download files to/from a storage service.
 
 The service performs the following actions on the uploaded files:
 
@@ -196,33 +196,41 @@ filename: The name of the file to be deleted
 
 ## Code quality
 
-We're using [ESLint](https://eslint.org) to ensure a consistent code style.
+We're using [TSLint](https://palantir.github.io/tslint/) to ensure a consistent code style.
 
 The linter can be run with:
 
 ```
-npm run eslint
+npm run linter
 ````
 
 ## Testing
 
-Unit tests can be run with:
+All tests can be run with:
 
 ```
-npm run test:unit
+npm test
 ```
 
-Route tests can be run with:
+Individual tests can be run with:
 
-```
-npm run test:route
-```
+- Unit tests
 
-Both unit and route tests can be run with:
+  ```
+  npm run test:unit
+  ```
 
-```
-npm run test
-```
+- Route tests
+
+  ```
+  npm run test:route
+  ```
+
+- Route auth tests
+
+  ```
+  npm run test:route-auth
+  ```
 
 ## Test coverage
 

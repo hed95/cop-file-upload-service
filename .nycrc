@@ -8,13 +8,14 @@
     "text-summary"
   ],
   "include": [
-    "src/**/*.js"
+    "src/**/*.ts"
   ],
   "exclude": [
-    "src/*.js",
-    "src/routers/*.js"
+    "src/*.ts",
+    "src/routers/*.ts",
+    "src/interfaces/*.ts"
   ],
-  "require": [
-    "@babel/register"
+  "extension": [
+    ".ts"
   ]
 }

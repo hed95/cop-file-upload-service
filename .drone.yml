@@ -8,8 +8,8 @@ pipeline:
       - sse_kms_key_id
     commands:
       - npm install
-      - npm run eslint
-      - npm run test
+      - npm run linter
+      - npm test
       - npm run coverage
     when:
       event:
@@ -29,7 +29,6 @@ pipeline:
         - push
         - pull_request
         - tag
-
   build:
     image: docker:17.09.1
     environment:
@@ -43,7 +42,6 @@ pipeline:
         - push
         - pull_request
         - tag
-
   image_to_quay:
     image: docker:17.09.1
     environment:
@@ -60,7 +58,6 @@ pipeline:
     - docker push $${DOCKER_SERVER}/$${DOCKER_GROUP}/$${DOCKER_NAME}:$${DRONE_COMMIT_BRANCH}
     when:
       event: push
-
   tag_image_to_quay:
     image: docker:17.09.1
     environment:
