@@ -8,13 +8,9 @@ The service performs the following actions on the uploaded files:
 
 - validation
 - virus scanning
-- file conversion
-  - if a virus is found and the file is an image or a pdf then the file is converted into a different format twice to remove the virus
-  - if a virus is not found and the file is a pdf then it is converted to an image for ocr
-- extracting text with ocr
-  - valid files for ocr are: for .png, .jpg, .jpeg, .jpe, .tiff, .tif, .bmp, .pnm and .jfif
-- saving into storage
-  - currently S3 is supported
+- file conversion - if a virus is not found and the file is an image or a pdf then a clean version is created by converting the file into a different format twice
+- extracting text with ocr - valid files for ocr are: for .png, .jpg, .jpeg, .jpe, .tiff, .tif, .bmp, .pnm and .jfif
+- saving into storage - 3 file versions (`orig`, `clean` and `ocr`) are saved for most images and pdfs, 2 file versions (`orig` and `clean`) are saved for all other file types - currently S3 is supported
 
 ## Using the API
 

@@ -24,7 +24,7 @@ describe('VirusScanController', () => {
           info: sinon.spy()
         }
       });
-      req.file.buffer = new Buffer(fs.readFileSync('test/data/test-file.txt'));
+      req.file.buffer = fs.readFileSync('test/data/test-file.pdf');
       res = responseMock();
       next = sinon.spy();
       image = {
@@ -39,30 +39,9 @@ describe('VirusScanController', () => {
       nock.cleanAll();
     });
 
-    it('should log the correct messages and call next() if the scan passes and the MIME type is not application/pdf', (done) => {
+    it('should log the correct messages and call next() if the scan passes - image or pdf file', (done) => {
       virusScanMock.reply(200, {text: 'true'});
-
-      virusScanController = new VirusScanController(image, config);
-
-      virusScanController
-        .scanFile(req, res, next)
-        .then(() => {
-          expect(req.logger.info).to.have.been.calledTwice;
-          expect(req.logger.info).to.have.been.calledWith('Virus scanning file');
-          expect(req.logger.info).to.have.been.calledWith('Virus scan passed');
-          expect(next).to.have.been.calledOnce;
-          expect(req.file.version).to.equal(config.fileVersions.clean);
-          done();
-        })
-        .catch((err) => {
-          done(err);
-        });
-    });
-
-    it('should log the correct messages and call next() if the scan passes and the MIME type is application/pdf', (done) => {
-      virusScanMock.reply(200, {text: 'true'});
-
-      req.file.mimetype = 'application/pdf';
+      req.file.mimetype = 'image/jpeg';
 
       virusScanController = new VirusScanController(image, config);
 
@@ -72,7 +51,7 @@ describe('VirusScanController', () => {
           expect(req.logger.info).to.have.been.calledThrice;
           expect(req.logger.info).to.have.been.calledWith('Virus scanning file');
           expect(req.logger.info).to.have.been.calledWith('Virus scan passed');
-          expect(req.logger.info).to.have.been.calledWith('Converting pdf to an image for ocr');
+          expect(req.logger.info).to.have.been.calledWith('File can be converted - image/jpeg');
           expect(next).to.have.been.calledOnce;
           expect(req.file).to.deep.equal({
             mimetype: 'image/tiff',
@@ -85,9 +64,38 @@ describe('VirusScanController', () => {
         });
     });
 
-    it('should log the correct messages and call next() if the scan fails', (done) => {
+    it('should log the correct messages and call next() if the scan passes - text file', (done) => {
+      req.file.mimetype = 'text/plain';
+      req.file.buffer = fs.readFileSync('test/data/test-file.txt');
+
+      virusScanMock.reply(200, {text: 'true'});
+
+      virusScanController = new VirusScanController(image, config);
+
+      virusScanController
+        .scanFile(req, res, next)
+        .then(() => {
+          expect(req.logger.info).to.have.been.calledThrice;
+          expect(req.logger.info).to.have.been.calledWith('Virus scanning file');
+          expect(req.logger.info).to.have.been.calledWith('Virus scan passed');
+          expect(req.logger.info).to.have.been.calledWith('File cannot be converted - text/plain');
+          expect(next).to.have.been.calledOnce;
+          expect(req.file).to.deep.equal({
+            ...testFile,
+            ...{
+              mimetype: 'text/plain',
+              version: config.fileVersions.clean
+            }
+          });
+          done();
+        })
+        .catch((err) => {
+          done(err);
+        });
+    });
+
+    it('should log the correct messages and return an error if the scan fails', (done) => {
       virusScanMock.reply(200, {text: 'false'});
-      req.file.mimetype = 'image/jpeg';
 
       virusScanController = new VirusScanController(image, config);
 
@@ -98,11 +106,10 @@ describe('VirusScanController', () => {
           expect(req.logger.info).to.have.been.calledWith('Virus scanning file');
           expect(req.logger.error).to.have.been.calledOnce;
           expect(req.logger.error).to.have.been.calledWith('Virus scan failed');
-          expect(next).to.have.been.calledOnce;
-          expect(req.file).to.deep.equal({
-            mimetype: 'image/tiff',
-            version: config.fileVersions.clean
-          });
+          expect(res.status).to.have.been.calledOnce;
+          expect(res.status).to.have.been.calledWith(400);
+          expect(res.json).to.have.been.calledOnce;
+          expect(res.json).to.have.been.calledWith({error: 'Virus scan failed'});
           done();
         })
         .catch((err) => {
@@ -110,7 +117,7 @@ describe('VirusScanController', () => {
         });
     });
 
-    it('should log the correct messages and return an error if the virus scaner cannot be called', (done) => {
+    it('should log the correct messages and return an error if the virus scanner cannot be called', (done) => {
       virusScanMock.reply(500, new Error('Internal Server Error'));
 
       virusScanController = new VirusScanController(image, config);

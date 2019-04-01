@@ -7,23 +7,20 @@ import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
 import config from '../src/config';
 
-const chaiHttp = require('chai-http');
-
 chai.use(sinonChai);
-chai.use(chaiHttp);
+chai.use(require('chai-http'));
 
-const testFile = {
-  buffer: new Buffer('test file content'),
+const testFile: Express.Multer.File = {
   destination: '',
   encoding: '7bit',
   fieldname: 'file',
   filename: '',
   mimetype: 'application/octet-stream',
-  originalMimeType: 'image/png',
-  originalname: 'test-file.txt',
+  originalMimeType: 'application/pdf',
+  originalname: 'test-file.pdf',
   path: '',
   processedTime: 1553181662189,
-  size: 5,
+  size: 13557,
   version: config.fileVersions.original
 };
 

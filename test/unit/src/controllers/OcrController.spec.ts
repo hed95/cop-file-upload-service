@@ -86,30 +86,5 @@ describe('OcrController', () => {
           });
       });
     });
-    });
-
-  describe('isSupportedFileType()', () => {
-    it('should return true for a supported file type', (done) => {
-      ocrController = new OcrController(ocr, config);
-      const isSupportedFileType: boolean = ocrController.isSupportedFileType('jpeg');
-      expect(isSupportedFileType).to.equal(true);
-      done();
-    });
-
-    it('should return false for an unsupported file type', (done) => {
-      ocrController = new OcrController(ocr, config);
-      const isSupportedFileType: boolean = ocrController.isSupportedFileType('pdf');
-      expect(isSupportedFileType).to.equal(false);
-      done();
-    });
-  });
-
-  describe('getFileType()', () => {
-    it('should return the file type when given a mime type', (done) => {
-      ocrController = new OcrController(ocr, config);
-      const fileType: string = ocrController.getFileType('image/jpeg');
-      expect(fileType).to.equal('jpeg');
-      done();
-    });
   });
 });

@@ -2,6 +2,7 @@ import {NextFunction, Request, Response} from 'express';
 import * as request from 'superagent';
 import IConfig from '../interfaces/IConfig';
 import FileConverter from '../utils/FileConverter';
+import FileType from '../utils/FileType';
 
 class VirusScanController {
   protected fileConverter: FileConverter;
@@ -27,14 +28,15 @@ class VirusScanController {
 
       if (result.text.includes('true')) {
         logger.info('Virus scan passed');
-
-        if (file.mimetype === 'application/pdf') {
-          logger.info('Converting pdf to an image for ocr');
-          req.file = await this.fileConverter.convert(req.file, logger, 1);
+        if (FileType.isValidFileTypeForConversion(file.mimetype)) {
+          logger.info(`File can be converted - ${file.mimetype}`);
+          req.file = await this.fileConverter.convert(req.file, logger, fileConversions.count);
+        } else {
+          logger.info(`File cannot be converted - ${file.mimetype}`);
         }
       } else {
         logger.error('Virus scan failed');
-        req.file = await this.fileConverter.convert(req.file, logger, fileConversions.count);
+        return res.status(400).json({error: 'Virus scan failed'});
       }
 
       req.file.version = fileVersions.clean;

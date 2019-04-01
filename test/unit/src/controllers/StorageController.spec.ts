@@ -86,7 +86,7 @@ describe('StorageController', () => {
 
   describe('uploadFile()', () => {
     it('should log the correct messages and call next() when a file is uploaded successfully and the file version exists', (done) => {
-      testFile.buffer = new Buffer(fs.readFileSync('test/data/test-file.txt'));
+      testFile.buffer = fs.readFileSync('test/data/test-file.pdf');
       s3Service = {
         uploadFile: sinon.stub().returns({Location: 'http://localhost/a-file'})
       };
@@ -108,7 +108,7 @@ describe('StorageController', () => {
     });
 
     it('should log the correct messages and call next() when a file is uploaded successfully and the file version does not exist', (done) => {
-      testFile.buffer = new Buffer(fs.readFileSync('test/data/test-file.txt'));
+      testFile.buffer = fs.readFileSync('test/data/test-file.pdf');
 
       s3Service = {
         uploadFile: sinon.stub().returns({Location: 'http://localhost/a-file'})
@@ -134,7 +134,7 @@ describe('StorageController', () => {
     });
 
     it('should log the correct messages and return an error message when the storage service is not available', (done) => {
-      testFile.buffer = new Buffer(fs.readFileSync('test/data/test-file.txt'));
+      testFile.buffer = fs.readFileSync('test/data/test-file.pdf');
 
       s3Service = {
         uploadFile: sinon.stub().returns(Promise.reject(new Error('Internal Server Error')))

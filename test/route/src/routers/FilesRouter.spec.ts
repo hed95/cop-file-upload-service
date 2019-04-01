@@ -18,7 +18,7 @@ describe('FilesRouter', () => {
       const {virusScan}: IConfig['services'] = services;
       virusScanMock = nock(`http://${virusScan.host}:${virusScan.port}`).post(virusScan.path);
 
-      testFile.buffer = new Buffer(fs.readFileSync('test/data/test-file.txt'));
+      testFile.buffer = fs.readFileSync('test/data/test-file.pdf');
     });
 
     afterEach(() => {
@@ -100,7 +100,7 @@ describe('FilesRouter', () => {
         .get(`${endpoints.files}/${processKey}/${fileVersions.original}/${filename}`)
         .end((err: Error, res: superagent.Response) => {
           expect(res.status).to.equal(200);
-          expect(res.get('Content-Type')).to.equal('text/plain; charset=utf-8');
+          expect(res.get('Content-Type')).to.equal('application/pdf');
           expect(err).to.equal(null);
           done();
         });

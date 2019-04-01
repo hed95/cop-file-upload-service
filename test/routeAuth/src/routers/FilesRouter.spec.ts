@@ -23,7 +23,7 @@ describe('FilesRouter', () => {
 
   describe('post()', () => {
     it('should return the correct status and response when authentication fails', (done) => {
-      testFile.buffer = new Buffer(fs.readFileSync('test/data/test-file.txt'));
+      testFile.buffer = fs.readFileSync('test/data/test-file.pdf');
       chai
         .request(app)
         .post(config.endpoints.files)

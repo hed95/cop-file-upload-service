@@ -1,5 +1,6 @@
 import {NextFunction, Request, Response} from 'express';
 import IConfig from '../interfaces/IConfig';
+import FileType from '../utils/FileType';
 
 class OcrController {
   protected ocr: any;
@@ -13,11 +14,11 @@ class OcrController {
 
   public async parseFile(req: Request, res: Response, next: NextFunction): Promise<void> {
     const {file, logger} = req;
-    const fileType = this.getFileType(file.mimetype);
+    const fileType = FileType.fileType(file.mimetype);
     delete req.file.version;
     logger.info('Parsing file for ocr');
 
-    if (this.isSupportedFileType(fileType)) {
+    if (FileType.isValidFileTypeForOcr(fileType)) {
       try {
         const text = await this.ocr(file.buffer);
         logger.info('Parsed text from file');
@@ -36,14 +37,6 @@ class OcrController {
     }
 
     return next();
-  }
-
-  public isSupportedFileType(fileType: string): boolean {
-    return ['png', 'jpeg', 'tiff', 'bmp', 'x-portable-anymap', 'pipeg'].includes(fileType);
-  }
-
-  public getFileType(mimeType: string): string {
-    return mimeType.split('/')[1];
   }
 }
 
