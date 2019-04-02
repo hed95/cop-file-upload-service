@@ -16,12 +16,12 @@ class OcrController {
     const {file, logger} = req;
     const fileType = FileType.fileType(file.mimetype);
     delete req.file.version;
-    logger.info('Parsing file for ocr');
+    logger('Parsing file for ocr');
 
     if (FileType.isValidFileTypeForOcr(fileType)) {
       try {
         const text = await this.ocr(file.buffer);
-        logger.info('Parsed text from file');
+        logger('Parsed text from file');
         const textFileData = {
           buffer: new Buffer(text.trim()),
           mimetype: 'text/plain',
@@ -29,11 +29,11 @@ class OcrController {
         };
         req.file = {...req.file, ...textFileData};
       } catch (err) {
-        logger.error('Failed to parse text from file');
-        logger.error(err.toString());
+        logger('Failed to parse text from file', 'error');
+        logger(err.toString(), 'error');
       }
     } else {
-      logger.info(`File not parsed - ${fileType} is an unsupported file type`);
+      logger(`File not parsed - ${fileType} is an unsupported file type`);
     }
 
     return next();

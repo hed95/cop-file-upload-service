@@ -14,7 +14,7 @@ class ValidationController {
 
   public validateRoute(req: Request, res: Response, next: NextFunction): void {
     const {logger, method}: Request = req;
-    logger.error(`${method} validation is not configured`);
+    logger(`${method} validation is not configured`, 'error');
     return next();
   }
 
@@ -24,12 +24,12 @@ class ValidationController {
     const {logger, method}: Request = req;
 
     if (error !== null) {
-      logger.error(`${method} validation failed`);
-      logger.error(error.details[0].message);
+      logger(`${method} validation failed`, 'error');
+      logger(error.details[0].message, 'error');
       return res.status(400).json({error: error.details[0].message});
     }
 
-    logger.info(`${method} validation passed`);
+    logger(`${method} validation passed`);
     return next();
   }
 }

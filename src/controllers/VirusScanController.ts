@@ -18,7 +18,7 @@ class VirusScanController {
     const {file, logger} = req;
     const {services, fileVersions, fileConversions} = this.config;
     const {virusScan} = services;
-    logger.info('Virus scanning file');
+    logger('Virus scanning file');
 
     try {
       const result = await request
@@ -27,23 +27,23 @@ class VirusScanController {
         .field('name', file.originalname);
 
       if (result.text.includes('true')) {
-        logger.info('Virus scan passed');
+        logger('Virus scan passed');
         if (FileType.isValidFileTypeForConversion(file.mimetype)) {
-          logger.info(`File can be converted - ${file.mimetype}`);
-          req.file = await this.fileConverter.convert(req.file, logger, fileConversions.count);
+          logger(`File can be converted - ${file.mimetype}`);
+          req.file = await this.fileConverter.convert(req.file, req.logger, fileConversions.count);
         } else {
-          logger.info(`File cannot be converted - ${file.mimetype}`);
+          logger(`File cannot be converted - ${file.mimetype}`);
         }
       } else {
-        logger.error('Virus scan failed');
+        logger('Virus scan failed', 'error');
         return res.status(400).json({error: 'Virus scan failed'});
       }
 
       req.file.version = fileVersions.clean;
       return next();
     } catch (err) {
-      logger.error('Unable to call the virus scanning service');
-      logger.error(err.toString());
+      logger('Unable to call the virus scanning service', 'error');
+      logger(err.toString(), 'error');
       return res.status(500).json({error: 'Unable to call the virus scanning service'});
     }
   }

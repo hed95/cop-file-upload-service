@@ -113,9 +113,7 @@ describe('FileConverter', () => {
 
   describe('convert()', () => {
     it('should return a correctly converted file', (done) => {
-      const logger: any = {
-        info: sinon.spy()
-      };
+      const logger: sinon.SinonSpy = sinon.spy();
       const fileConverter: FileConverter = new FileConverter(gm, util, config);
 
       fileConverter.fetchFile = (res) => {
@@ -128,10 +126,10 @@ describe('FileConverter', () => {
       fileConverter
         .convert(file, logger, config.fileConversions.count)
         .then((res) => {
-          expect(logger.info).to.have.been.calledThrice;
-          expect(logger.info).to.have.been.calledWith('Converting file 2 times');
-          expect(logger.info).to.have.been.calledWith('File converted from image/jpeg to image/png');
-          expect(logger.info).to.have.been.calledWith('File converted from image/png to image/tiff');
+          expect(logger).to.have.been.calledThrice;
+          expect(logger).to.have.been.calledWith('Converting file 2 times');
+          expect(logger).to.have.been.calledWith('File converted from image/jpeg to image/png');
+          expect(logger).to.have.been.calledWith('File converted from image/png to image/tiff');
           expect(res).to.deep.equal({
             ...testFile,
             ...{

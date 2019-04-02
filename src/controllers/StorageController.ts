@@ -17,19 +17,19 @@ class StorageController {
 
   public async downloadFile(req: Request, res: Response): Promise<Response> {
     const {logger, params}: Request = req;
-    logger.info('Downloading file');
+    logger('Downloading file');
 
     try {
       const {Body, ContentType, Metadata}: any = await this.storageService.downloadFile(params);
-      logger.info('File downloaded');
+      logger('File downloaded');
       return res
         .set('Content-Type', ContentType)
         .set('Content-Disposition', `attachment; filename=${Metadata.originalfilename}`)
         .status(200)
         .send(Body);
     } catch (err) {
-      logger.error('Failed to download file');
-      logger.error(err.toString());
+      logger('Failed to download file', 'error');
+      logger(err.toString(), 'error');
       return res.status(500).json({error: 'Failed to download file'});
     }
   }
@@ -43,30 +43,30 @@ class StorageController {
       processKey: params.processKey
     };
 
-    logger.info(`Uploading file - ${file.version} version`);
+    logger(`Uploading file - ${file.version} version`);
 
     try {
       await this.storageService.uploadFile(uploadParams);
-      logger.info(`File uploaded - ${file.version} version`);
+      logger(`File uploaded - ${file.version} version`);
       return next();
     } catch (err) {
-      logger.error(`Failed to upload file - ${file.version} version`);
-      logger.error(err.toString());
+      logger(`Failed to upload file - ${file.version} version`, 'error');
+      logger(err.toString(), 'error');
       return res.status(500).json({error: `Failed to upload file - ${file.version} version`});
     }
   }
 
   public async deleteFiles(req: Request, res: Response): Promise<Response> {
     const {logger, params}: Request = req;
-    logger.info('Deleting files');
+    logger('Deleting files');
 
     try {
       await this.storageService.deleteFiles(params);
-      logger.info('Files deleted');
+      logger('Files deleted');
       return res.status(200).json({message: 'Files deleted successfully'});
     } catch (err) {
-      logger.error('Failed to delete files');
-      logger.error(err.toString());
+      logger('Failed to delete files', 'error');
+      logger(err.toString(), 'error');
       return res.status(500).json({error: 'Failed to delete files'});
     }
   }

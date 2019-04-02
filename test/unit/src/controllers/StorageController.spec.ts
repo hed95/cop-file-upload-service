@@ -14,10 +14,7 @@ describe('StorageController', () => {
     req = requestMock({
       body: {},
       file: testFile,
-      logger: {
-        error: sinon.spy(),
-        info: sinon.spy()
-      },
+      logger: sinon.spy(),
       params: {}
     });
     res = responseMock();
@@ -44,9 +41,9 @@ describe('StorageController', () => {
       storageController
         .downloadFile(req, res)
         .then(() => {
-          expect(req.logger.info).to.have.been.calledTwice;
-          expect(req.logger.info).to.have.been.calledWith('Downloading file');
-          expect(req.logger.info).to.have.been.calledWith('File downloaded');
+          expect(req.logger).to.have.been.calledTwice;
+          expect(req.logger).to.have.been.calledWith('Downloading file');
+          expect(req.logger).to.have.been.calledWith('File downloaded');
           expect(res.status).to.have.been.calledOnce;
           expect(res.status).to.have.been.calledWith(200);
           expect(res.send).to.have.been.calledOnce;
@@ -67,11 +64,10 @@ describe('StorageController', () => {
       storageController
         .downloadFile(req, res)
         .then(() => {
-          expect(req.logger.info).to.have.been.calledOnce;
-          expect(req.logger.info).to.have.been.calledWith('Downloading file');
-          expect(req.logger.error).to.have.been.calledTwice;
-          expect(req.logger.error).to.have.been.calledWith('Failed to download file');
-          expect(req.logger.error).to.have.been.calledWith('Error: Internal Server Error');
+          expect(req.logger).to.have.been.calledThrice;
+          expect(req.logger).to.have.been.calledWith('Downloading file');
+          expect(req.logger).to.have.been.calledWith('Failed to download file');
+          expect(req.logger).to.have.been.calledWith('Error: Internal Server Error');
           expect(res.status).to.have.been.calledOnce;
           expect(res.status).to.have.been.calledWith(500);
           expect(res.json).to.have.been.calledOnce;
@@ -96,9 +92,9 @@ describe('StorageController', () => {
       storageController
         .uploadFile(req, res, next)
         .then(() => {
-          expect(req.logger.info).to.have.been.calledTwice;
-          expect(req.logger.info).to.have.been.calledWith(`Uploading file - ${config.fileVersions.original} version`);
-          expect(req.logger.info).to.have.been.calledWith(`File uploaded - ${config.fileVersions.original} version`);
+          expect(req.logger).to.have.been.calledTwice;
+          expect(req.logger).to.have.been.calledWith(`Uploading file - ${config.fileVersions.original} version`);
+          expect(req.logger).to.have.been.calledWith(`File uploaded - ${config.fileVersions.original} version`);
           expect(next).to.have.been.calledOnce;
           done();
         })
@@ -122,9 +118,9 @@ describe('StorageController', () => {
       storageController
         .uploadFile(req, res, next)
         .then(() => {
-          expect(req.logger.info).to.have.been.calledTwice;
-          expect(req.logger.info).to.have.been.calledWith(`Uploading file - ${config.fileVersions.original} version`);
-          expect(req.logger.info).to.have.been.calledWith(`File uploaded - ${config.fileVersions.original} version`);
+          expect(req.logger).to.have.been.calledTwice;
+          expect(req.logger).to.have.been.calledWith(`Uploading file - ${config.fileVersions.original} version`);
+          expect(req.logger).to.have.been.calledWith(`File uploaded - ${config.fileVersions.original} version`);
           expect(next).to.have.been.calledOnce;
           done();
         })
@@ -145,13 +141,10 @@ describe('StorageController', () => {
       storageController
         .uploadFile(req, res, next)
         .then(() => {
-          expect(req.logger.info).to.have.been.calledOnce;
-          expect(req.logger.info).to.have.been.calledWith(`Uploading file - ${config.fileVersions.original} version`);
-          expect(req.logger.error).to.have.been.calledTwice;
-          expect(req.logger.error).to.have.been.calledWith(
-            `Failed to upload file - ${config.fileVersions.original} version`
-          );
-          expect(req.logger.error).to.have.been.calledWith('Error: Internal Server Error');
+          expect(req.logger).to.have.been.calledThrice;
+          expect(req.logger).to.have.been.calledWith(`Uploading file - ${config.fileVersions.original} version`);
+          expect(req.logger).to.have.been.calledWith(`Failed to upload file - ${config.fileVersions.original} version`);
+          expect(req.logger).to.have.been.calledWith('Error: Internal Server Error');
           expect(res.status).to.have.been.calledOnce;
           expect(res.status).to.have.been.calledWith(500);
           expect(res.json).to.have.been.calledOnce;
@@ -177,9 +170,9 @@ describe('StorageController', () => {
       storageController
         .deleteFiles(req, res)
         .then(() => {
-          expect(req.logger.info).to.have.been.calledTwice;
-          expect(req.logger.info).to.have.been.calledWith('Deleting files');
-          expect(req.logger.info).to.have.been.calledWith('Files deleted');
+          expect(req.logger).to.have.been.calledTwice;
+          expect(req.logger).to.have.been.calledWith('Deleting files');
+          expect(req.logger).to.have.been.calledWith('Files deleted');
           expect(res.status).to.have.been.calledOnce;
           expect(res.status).to.have.been.calledWith(200);
           expect(res.json).to.have.been.calledOnce;
@@ -201,11 +194,10 @@ describe('StorageController', () => {
       storageController
         .deleteFiles(req, res)
         .then(() => {
-          expect(req.logger.info).to.have.been.calledOnce;
-          expect(req.logger.info).to.have.been.calledWith('Deleting files');
-          expect(req.logger.error).to.have.been.calledTwice;
-          expect(req.logger.error).to.have.been.calledWith('Failed to delete files');
-          expect(req.logger.error).to.have.been.calledWith('Error: Internal Server Error');
+          expect(req.logger).to.have.been.calledThrice;
+          expect(req.logger).to.have.been.calledWith('Deleting files');
+          expect(req.logger).to.have.been.calledWith('Failed to delete files');
+          expect(req.logger).to.have.been.calledWith('Error: Internal Server Error');
           expect(res.status).to.have.been.calledOnce;
           expect(res.status).to.have.been.calledWith(500);
           expect(res.json).to.have.been.calledOnce;

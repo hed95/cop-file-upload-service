@@ -1,4 +1,3 @@
-import winston = require('winston');
 import IConfig from '../interfaces/IConfig';
 
 type File = Express.Multer.File;
@@ -52,16 +51,16 @@ class FileConverter {
     return {mimetype: newMimeType, buffer: newBuffer};
   }
 
-  public async convert(file: File, logger: winston.Logger, fileConversionCount: number): Promise<File> {
+  public async convert(file: File, logger: any, fileConversionCount: number): Promise<File> {
     let counter: number;
 
-    logger.info(`Converting file ${fileConversionCount} times`);
+    logger(`Converting file ${fileConversionCount} times`);
 
     file.originalMimeType = file.mimetype;
 
     for (counter = 0; counter < fileConversionCount; counter++) {
       const convertedFile = await this.fetchFile(file);
-      logger.info(`File converted from ${file.mimetype} to ${convertedFile.mimetype}`);
+      logger(`File converted from ${file.mimetype} to ${convertedFile.mimetype}`);
       file = {...file, ...convertedFile};
     }
 

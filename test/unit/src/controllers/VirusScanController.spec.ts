@@ -19,10 +19,7 @@ describe('VirusScanController', () => {
 
       req = requestMock({
         file: testFile,
-        logger: {
-          error: sinon.spy(),
-          info: sinon.spy()
-        }
+        logger: sinon.spy()
       });
       req.file.buffer = fs.readFileSync('test/data/test-file.pdf');
       res = responseMock();
@@ -48,10 +45,10 @@ describe('VirusScanController', () => {
       virusScanController
         .scanFile(req, res, next)
         .then(() => {
-          expect(req.logger.info).to.have.been.calledThrice;
-          expect(req.logger.info).to.have.been.calledWith('Virus scanning file');
-          expect(req.logger.info).to.have.been.calledWith('Virus scan passed');
-          expect(req.logger.info).to.have.been.calledWith('File can be converted - image/jpeg');
+          expect(req.logger).to.have.been.calledThrice;
+          expect(req.logger).to.have.been.calledWith('Virus scanning file');
+          expect(req.logger).to.have.been.calledWith('Virus scan passed');
+          expect(req.logger).to.have.been.calledWith('File can be converted - image/jpeg');
           expect(next).to.have.been.calledOnce;
           expect(req.file).to.deep.equal({
             mimetype: 'image/tiff',
@@ -75,10 +72,10 @@ describe('VirusScanController', () => {
       virusScanController
         .scanFile(req, res, next)
         .then(() => {
-          expect(req.logger.info).to.have.been.calledThrice;
-          expect(req.logger.info).to.have.been.calledWith('Virus scanning file');
-          expect(req.logger.info).to.have.been.calledWith('Virus scan passed');
-          expect(req.logger.info).to.have.been.calledWith('File cannot be converted - text/plain');
+          expect(req.logger).to.have.been.calledThrice;
+          expect(req.logger).to.have.been.calledWith('Virus scanning file');
+          expect(req.logger).to.have.been.calledWith('Virus scan passed');
+          expect(req.logger).to.have.been.calledWith('File cannot be converted - text/plain');
           expect(next).to.have.been.calledOnce;
           expect(req.file).to.deep.equal({
             ...testFile,
@@ -102,10 +99,9 @@ describe('VirusScanController', () => {
       virusScanController
         .scanFile(req, res, next)
         .then(() => {
-          expect(req.logger.info).to.have.been.calledOnce;
-          expect(req.logger.info).to.have.been.calledWith('Virus scanning file');
-          expect(req.logger.error).to.have.been.calledOnce;
-          expect(req.logger.error).to.have.been.calledWith('Virus scan failed');
+          expect(req.logger).to.have.been.calledTwice;
+          expect(req.logger).to.have.been.calledWith('Virus scanning file');
+          expect(req.logger).to.have.been.calledWith('Virus scan failed');
           expect(res.status).to.have.been.calledOnce;
           expect(res.status).to.have.been.calledWith(400);
           expect(res.json).to.have.been.calledOnce;
@@ -125,11 +121,10 @@ describe('VirusScanController', () => {
       virusScanController
         .scanFile(req, res, next)
         .then(() => {
-          expect(req.logger.info).to.have.been.calledOnce;
-          expect(req.logger.info).to.have.been.calledWith('Virus scanning file');
-          expect(req.logger.error).to.have.been.calledTwice;
-          expect(req.logger.error).to.have.been.calledWith('Unable to call the virus scanning service');
-          expect(req.logger.error).to.have.been.calledWith('Error: Internal Server Error');
+          expect(req.logger).to.have.been.calledThrice;
+          expect(req.logger).to.have.been.calledWith('Virus scanning file');
+          expect(req.logger).to.have.been.calledWith('Unable to call the virus scanning service');
+          expect(req.logger).to.have.been.calledWith('Error: Internal Server Error');
           expect(res.status).to.have.been.calledOnce;
           expect(res.status).to.have.been.calledWith(500);
           expect(res.json).to.have.been.calledOnce;

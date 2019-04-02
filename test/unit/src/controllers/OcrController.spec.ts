@@ -17,10 +17,7 @@ describe('OcrController', () => {
         file: {
           version: config.fileVersions.original
         },
-        logger: {
-          error: sinon.spy(),
-          info: sinon.spy()
-        }
+        logger: sinon.spy()
       });
       res = responseMock();
       next = sinon.spy();
@@ -33,9 +30,9 @@ describe('OcrController', () => {
 
         ocrController.parseFile(req, res, next)
           .then(() => {
-            expect(req.logger.info).to.have.been.calledTwice;
-            expect(req.logger.info).to.have.been.calledWith('Parsing file for ocr');
-            expect(req.logger.info).to.have.been.calledWith('Parsed text from file');
+            expect(req.logger).to.have.been.calledTwice;
+            expect(req.logger).to.have.been.calledWith('Parsing file for ocr');
+            expect(req.logger).to.have.been.calledWith('Parsed text from file');
             expect(next).to.have.been.calledOnce;
             expect(req.file.buffer).to.deep.equal(new Buffer('some text from an image'));
             expect(req.file.version).to.equal(config.fileVersions.ocr);
@@ -53,9 +50,9 @@ describe('OcrController', () => {
 
         ocrController.parseFile(req, res, next)
           .then(() => {
-            expect(req.logger.info).to.have.been.calledTwice;
-            expect(req.logger.info).to.have.been.calledWith('Parsing file for ocr');
-            expect(req.logger.info).to.have.been.calledWith('File not parsed - pdf is an unsupported file type');
+            expect(req.logger).to.have.been.calledTwice;
+            expect(req.logger).to.have.been.calledWith('Parsing file for ocr');
+            expect(req.logger).to.have.been.calledWith('File not parsed - pdf is an unsupported file type');
             expect(next).to.have.been.calledOnce;
             expect(req.file.version).to.be.undefined;
             done();
@@ -72,11 +69,10 @@ describe('OcrController', () => {
 
         ocrController.parseFile(req, res, next)
           .then(() => {
-            expect(req.logger.info).to.have.been.calledOnce;
-            expect(req.logger.info).to.have.been.calledWith('Parsing file for ocr');
-            expect(req.logger.error).to.have.been.calledTwice;
-            expect(req.logger.error).to.have.been.calledWith('Failed to parse text from file');
-            expect(req.logger.error).to.have.been.calledWith('Error: Internal Server Error');
+            expect(req.logger).to.have.been.calledThrice;
+            expect(req.logger).to.have.been.calledWith('Parsing file for ocr');
+            expect(req.logger).to.have.been.calledWith('Failed to parse text from file');
+            expect(req.logger).to.have.been.calledWith('Error: Internal Server Error');
             expect(next).to.have.been.calledOnce;
             expect(req.file.version).to.be.undefined;
             done();

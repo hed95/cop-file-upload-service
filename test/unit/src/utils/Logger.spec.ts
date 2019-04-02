@@ -1,4 +1,4 @@
-import {LogEntry} from 'winston';
+import ILogMessage from '../../../../src/interfaces/ILogMessage';
 import Logger from '../../../../src/utils/Logger';
 import {expect, sinon} from '../../../setupTests';
 
@@ -11,6 +11,7 @@ describe('Logger', () => {
     createLogger = sinon.spy();
     format = {
       combine: sinon.stub(),
+      prettyPrint: sinon.spy(),
       printf: sinon.spy(),
       timestamp: sinon.stub().returns('a timestamp')
     };
@@ -33,14 +34,17 @@ describe('Logger', () => {
 
   describe('formatMessage()', () => {
     it('should format a log message correctly when given a message as a string', (done) => {
-      const params: LogEntry = {
+      const params: ILogMessage = {
+        filename: '9e5eb809-bce7-463e-8c2f-b6bd8c4832d9',
         level: 'info',
         message: 'Virus scaning file',
         timestamp: '2019-03-11T15:15:49.983Z'
       };
       const logger: Logger = new Logger(createLogger, format, transports);
       const message: string = logger.formatMessage(params);
-      expect(message).to.equal(`${params.timestamp} - ${params.level}: ${params.message}`);
+      expect(message).to.equal(
+        `{"filename":"9e5eb809-bce7-463e-8c2f-b6bd8c4832d9","level":"${params.level}","message":"${params.message}","timestamp":"${params.timestamp}"}`
+      );
       done();
     });
   });
@@ -48,8 +52,13 @@ describe('Logger', () => {
   describe('logger()', () => {
     it('should call createLogger', (done) => {
       const logger = new Logger(createLogger, format, transports);
+      logger.outputFormat = sinon.spy();
       logger.logger();
       expect(createLogger).to.have.been.calledOnce;
+      expect(format.combine).to.have.been.calledOnce;
+      expect(format.timestamp).to.have.been.calledOnce;
+      expect(logger.outputFormat).to.have.been.calledOnce;
+      expect(format.prettyPrint).to.have.been.calledOnce;
       done();
     });
   });

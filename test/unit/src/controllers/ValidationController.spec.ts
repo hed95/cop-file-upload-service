@@ -14,10 +14,7 @@ describe('ValidationController', () => {
   beforeEach(() => {
     req = requestMock({
       body: {},
-      logger: {
-        error: sinon.spy(),
-        info: sinon.spy()
-      },
+      logger: sinon.spy(),
       method: 'POST'
     });
     res = responseMock();
@@ -38,8 +35,8 @@ describe('ValidationController', () => {
 
       validationController.validateRoute(req, res, next);
 
-      expect(req.logger.error).to.have.been.calledOnce;
-      expect(req.logger.error).to.have.been.calledWith('POST validation is not configured');
+      expect(req.logger).to.have.been.calledOnce;
+      expect(req.logger).to.have.been.calledWith('POST validation is not configured');
       expect(next).to.have.been.calledOnce;
       done();
     });
@@ -51,8 +48,8 @@ describe('ValidationController', () => {
       validationController = new ValidationController(joi);
       validationController.handleValidation(req, res, next, error);
 
-      expect(req.logger.info).to.have.been.calledOnce;
-      expect(req.logger.info).to.have.been.calledWith('POST validation passed');
+      expect(req.logger).to.have.been.calledOnce;
+      expect(req.logger).to.have.been.calledWith('POST validation passed');
       expect(next).to.have.been.calledOnce;
       done();
     });
@@ -64,9 +61,9 @@ describe('ValidationController', () => {
       validationController = new ValidationController(joi);
       validationController.handleValidation(req, res, next, result.error);
 
-      expect(req.logger.error).to.have.been.calledTwice;
-      expect(req.logger.error).to.have.been.calledWith('POST validation failed');
-      expect(req.logger.error).to.have.been.calledWith(result.error.details[0].message);
+      expect(req.logger).to.have.been.calledTwice;
+      expect(req.logger).to.have.been.calledWith('POST validation failed');
+      expect(req.logger).to.have.been.calledWith(result.error.details[0].message);
       expect(res.status).to.have.been.calledOnce;
       expect(res.status).to.have.been.calledWith(400);
       expect(res.json).to.have.been.calledOnce;

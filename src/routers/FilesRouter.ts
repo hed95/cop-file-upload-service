@@ -4,7 +4,6 @@ import * as joi from 'joi';
 import * as multer from 'multer';
 import * as ocr from 'tesseractocr';
 import * as util from 'util';
-import * as uuid from 'uuid/v4';
 import config from '../config';
 import DeleteValidationController from '../controllers/DeleteValidationController';
 import GetValidationController from '../controllers/GetValidationController';
@@ -36,7 +35,7 @@ class FilesRouter {
       `${config.endpoints.files}/:processKey`,
       upload.single('file'),
       new PostValidationController(joi).validateRoute,
-      new MetadataController(uuid, Date.now()).generateMetadata,
+      new MetadataController(Date.now()).generateMetadata,
       storageController.uploadFile,
       new VirusScanController(new FileConverter(gm, util, config), config).scanFile,
       storageController.uploadFile,
