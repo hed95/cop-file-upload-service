@@ -14,6 +14,12 @@ describe('OcrController', () => {
     beforeEach(() => {
       ocr = sinon.stub().returns('   some text from an image     ');
       req = requestMock({
+        allFiles: {
+          [config.fileVersions.clean]: {
+            mimetype: 'image/png',
+            version: config.fileVersions.original
+          }
+        },
         file: {
           version: config.fileVersions.original
         },
@@ -23,64 +29,60 @@ describe('OcrController', () => {
       next = sinon.spy();
     });
 
-    describe('should log the correct messages', () => {
-      it('set file data call next() when a valid file type is given', (done) => {
-        req.file.mimetype = 'image/jpeg';
-        ocrController = new OcrController(ocr, config);
+    it('should log the correct messages and set file data call next() when a valid file type is given', (done) => {
+      req.file.mimetype = 'image/jpeg';
+      ocrController = new OcrController(ocr, config);
 
-        ocrController.parseFile(req, res, next)
-          .then(() => {
-            expect(req.logger).to.have.been.calledTwice;
-            expect(req.logger).to.have.been.calledWith('Parsing file for ocr');
-            expect(req.logger).to.have.been.calledWith('Parsed text from file');
-            expect(next).to.have.been.calledOnce;
-            expect(req.file.buffer).to.deep.equal(new Buffer('some text from an image'));
-            expect(req.file.version).to.equal(config.fileVersions.ocr);
-            expect(req.file.mimetype).to.equal('text/plain');
-            done();
-          })
-          .catch((err) => {
-            done(err);
-          });
-      });
+      ocrController.parseFile(req, res, next)
+        .then(() => {
+          expect(req.logger).to.have.been.calledTwice;
+          expect(req.logger).to.have.been.calledWith('Parsing file for ocr');
+          expect(req.logger).to.have.been.calledWith('Parsed text from file');
+          expect(next).to.have.been.calledOnce;
+          expect(req.allFiles[config.fileVersions.ocr].buffer).to.deep.equal(new Buffer('some text from an image'));
+          expect(req.allFiles[config.fileVersions.ocr].version).to.equal(config.fileVersions.ocr);
+          expect(req.allFiles[config.fileVersions.ocr].mimetype).to.equal('text/plain');
+          done();
+        })
+        .catch((err) => {
+          done(err);
+        });
+    });
 
-      it('delete the file version and call next() when an invalid file type is given', (done) => {
-        req.file.mimetype = 'application/pdf';
-        ocrController = new OcrController(ocr, config);
+    it('should log the correct messages and call next() when an invalid file type is given', (done) => {
+      req.allFiles[config.fileVersions.clean].mimetype = 'application/pdf';
+      ocrController = new OcrController(ocr, config);
 
-        ocrController.parseFile(req, res, next)
-          .then(() => {
-            expect(req.logger).to.have.been.calledTwice;
-            expect(req.logger).to.have.been.calledWith('Parsing file for ocr');
-            expect(req.logger).to.have.been.calledWith('File not parsed - pdf is an unsupported file type');
-            expect(next).to.have.been.calledOnce;
-            expect(req.file.version).to.be.undefined;
-            done();
-          })
-          .catch((err) => {
-            done(err);
-          });
-      });
+      ocrController.parseFile(req, res, next)
+        .then(() => {
+          expect(req.logger).to.have.been.calledTwice;
+          expect(req.logger).to.have.been.calledWith('Parsing file for ocr');
+          expect(req.logger).to.have.been.calledWith('File not parsed - application/pdf is not valid for ocr');
+          expect(next).to.have.been.calledOnce;
+          done();
+        })
+        .catch((err) => {
+          done(err);
+        });
+    });
 
-      it('delete the file version and call next() when the ocr service is not available', (done) => {
-        ocr = sinon.stub().returns(Promise.reject(new Error('Internal Server Error')));
-        req.file.mimetype = 'image/jpeg';
-        ocrController = new OcrController(ocr, config);
+    it('should log the correct messages and call next() when the ocr service is not available', (done) => {
+      ocr = sinon.stub().returns(Promise.reject(new Error('Internal Server Error')));
+      req.allFiles[config.fileVersions.clean].mimetype = 'image/jpeg';
+      ocrController = new OcrController(ocr, config);
 
-        ocrController.parseFile(req, res, next)
-          .then(() => {
-            expect(req.logger).to.have.been.calledThrice;
-            expect(req.logger).to.have.been.calledWith('Parsing file for ocr');
-            expect(req.logger).to.have.been.calledWith('Failed to parse text from file');
-            expect(req.logger).to.have.been.calledWith('Error: Internal Server Error');
-            expect(next).to.have.been.calledOnce;
-            expect(req.file.version).to.be.undefined;
-            done();
-          })
-          .catch((err) => {
-            done(err);
-          });
-      });
+      ocrController.parseFile(req, res, next)
+        .then(() => {
+          expect(req.logger).to.have.been.calledThrice;
+          expect(req.logger).to.have.been.calledWith('Parsing file for ocr');
+          expect(req.logger).to.have.been.calledWith('Failed to parse text from file');
+          expect(req.logger).to.have.been.calledWith('Error: Internal Server Error');
+          expect(next).to.have.been.calledOnce;
+          done();
+        })
+        .catch((err) => {
+          done(err);
+        });
     });
   });
 });

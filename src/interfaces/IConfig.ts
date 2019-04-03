@@ -35,7 +35,6 @@ interface IConfig {
     ocr: string
   };
   fileConversions: {
-    count: number,
     pdfDensity: number
   };
 }

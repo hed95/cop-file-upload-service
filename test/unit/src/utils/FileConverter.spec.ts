@@ -79,16 +79,16 @@ describe('FileConverter', () => {
       const originalMimeType: string = 'image/png';
       const fileConverter: FileConverter = new FileConverter(gm, util, config);
       const newMimeType: string[] = fileConverter.newMimeType(currentMimeType, originalMimeType);
-      expect(newMimeType).to.deep.equal(['image/jpeg', 'jpg']);
+      expect(newMimeType).to.deep.equal(['image/jpeg', 'jpeg']);
       done();
     });
 
-    it('should return the correct MIME type when the new MIME type matches the original MIME type', (done) => {
+    it('should return the original MIME type when the current MIME type does not match the original MIME type', (done) => {
       const currentMimeType: string = 'image/png';
       const originalMimeType: string = 'image/jpeg';
       const fileConverter: FileConverter = new FileConverter(gm, util, config);
       const newMimeType: string[] = fileConverter.newMimeType(currentMimeType, originalMimeType);
-      expect(newMimeType).to.deep.equal(['image/tiff', 'tif']);
+      expect(newMimeType).to.deep.equal(['image/jpeg', 'jpeg']);
       done();
     });
   });
@@ -102,7 +102,11 @@ describe('FileConverter', () => {
       fileConverter
         .fetchFile(file)
         .then((res) => {
-          expect(res).to.deep.equal({mimetype: 'image/tiff', buffer: file.buffer});
+          expect(res).to.deep.equal({
+            buffer: file.buffer,
+            mimetype: 'image/png',
+            version: config.fileVersions.clean
+          });
           done();
         })
         .catch((err) => {
@@ -116,26 +120,25 @@ describe('FileConverter', () => {
       const logger: sinon.SinonSpy = sinon.spy();
       const fileConverter: FileConverter = new FileConverter(gm, util, config);
 
-      fileConverter.fetchFile = (res) => {
-        if (res.mimetype === 'image/jpeg') {
-          return Promise.resolve({mimetype: 'image/png', buffer: res.buffer});
-        }
-        return Promise.resolve({mimetype: 'image/tiff', buffer: res.buffer});
-      };
+      fileConverter.fetchFile = (res) => Promise.resolve({
+        buffer: res.buffer,
+        mimetype: 'image/png',
+        version: config.fileVersions.clean
+      });
 
       fileConverter
-        .convert(file, logger, config.fileConversions.count)
+        .convert(file, logger)
         .then((res) => {
-          expect(logger).to.have.been.calledThrice;
-          expect(logger).to.have.been.calledWith('Converting file 2 times');
+          expect(logger).to.have.been.calledTwice;
+          expect(logger).to.have.been.calledWith('Converting file');
           expect(logger).to.have.been.calledWith('File converted from image/jpeg to image/png');
-          expect(logger).to.have.been.calledWith('File converted from image/png to image/tiff');
           expect(res).to.deep.equal({
             ...testFile,
             ...{
               buffer: new Buffer('some file contents'),
-              mimetype: 'image/tiff',
-              originalMimeType: 'image/jpeg'
+              mimetype: 'image/png',
+              originalMimeType: 'image/png',
+              version: config.fileVersions.clean
             }
           });
           done();

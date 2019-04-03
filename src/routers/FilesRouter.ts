@@ -36,12 +36,13 @@ class FilesRouter {
       `${config.endpoints.files}/:processKey`,
       upload.single('file'),
       new PostValidationController(joi).validateRoute,
-      new MetadataController(Date.now()).generateMetadata,
+      new MetadataController(Date.now(), config).generateMetadata,
       storageController.uploadFile,
       new VirusScanController(config).scanFile,
       new FileConversionController(new FileConverter(gm, util, config), config).convertFile,
-      storageController.uploadFile,
       new OcrController(ocr, config).parseFile,
+      new FileConversionController(new FileConverter(gm, util, config), config).convertFile,
+      storageController.uploadFile,
       storageController.uploadFile,
       new PostResponseController(config).response
     );

@@ -35,24 +35,25 @@ class StorageController {
   }
 
   public async uploadFile(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
-    const {file, logger, params}: Request = req;
-    file.version = file.version || this.config.fileVersions.original;
-
+    const {allFiles, logger, params}: Request = req;
+    const fileVersionToUpload: string = Object.keys(allFiles)[0];
+    const fileToUpload: Express.Multer.File = allFiles[fileVersionToUpload];
     const uploadParams: IPostRequestParams = {
-      file,
+      file: fileToUpload,
       processKey: params.processKey
     };
 
-    logger(`Uploading file - ${file.version} version`);
+    logger(`Uploading file - ${fileToUpload.version} version`);
 
     try {
       await this.storageService.uploadFile(uploadParams);
-      logger(`File uploaded - ${file.version} version`);
+      logger(`File uploaded - ${fileToUpload.version} version`);
+      delete allFiles[fileVersionToUpload];
       return next();
     } catch (err) {
-      logger(`Failed to upload file - ${file.version} version`, 'error');
+      logger(`Failed to upload file - ${fileToUpload.version} version`, 'error');
       logger(err.toString(), 'error');
-      return res.status(500).json({error: `Failed to upload file - ${file.version} version`});
+      return res.status(500).json({error: `Failed to upload file - ${fileToUpload.version} version`});
     }
   }
 

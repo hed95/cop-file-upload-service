@@ -21,7 +21,11 @@ describe('FileConversionController', () => {
       res = responseMock();
       next = sinon.spy();
       image = {
-        convert: sinon.stub().returns({mimetype: 'image/png'})
+        convert: sinon.stub().returns({
+          buffer: new Buffer('some file contents'),
+          mimetype: 'image/png',
+          version: config.fileVersions.clean
+        })
       };
 
       sinon.stub(res, 'status').returns(res);
@@ -37,7 +41,9 @@ describe('FileConversionController', () => {
           expect(req.logger).to.have.been.calledOnce;
           expect(req.logger).to.have.been.calledWith('File can be converted - application/pdf');
           expect(next).to.have.been.calledOnce;
-          expect(req.file).to.deep.equal({
+          expect(req.allFiles).to.have.property(config.fileVersions.clean);
+          expect(req.allFiles[config.fileVersions.clean]).to.deep.equal({
+            buffer: new Buffer('some file contents'),
             mimetype: 'image/png',
             version: config.fileVersions.clean
           });
@@ -48,7 +54,7 @@ describe('FileConversionController', () => {
         });
     });
 
-    it('should log the correct messages and call next() if the scan passes - text file', (done) => {
+    it('should log the correct messages and call next() if the file cannot be converted - text file', (done) => {
       req.file.mimetype = 'text/plain';
       req.file.buffer = fs.readFileSync('test/data/test-file.txt');
 
@@ -60,13 +66,6 @@ describe('FileConversionController', () => {
           expect(req.logger).to.have.been.calledOnce;
           expect(req.logger).to.have.been.calledWith('File cannot be converted - text/plain');
           expect(next).to.have.been.calledOnce;
-          expect(req.file).to.deep.equal({
-            ...testFile,
-            ...{
-              mimetype: 'text/plain',
-              version: config.fileVersions.clean
-            }
-          });
           done();
         })
         .catch((err) => {

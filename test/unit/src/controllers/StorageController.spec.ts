@@ -12,12 +12,12 @@ describe('StorageController', () => {
 
   beforeEach(() => {
     req = requestMock({
+      allFiles: {},
       body: {},
       file: testFile,
       logger: sinon.spy(),
       params: {}
     });
-    req.file.version = config.fileVersions.original;
     res = responseMock();
     next = sinon.spy();
 
@@ -82,37 +82,16 @@ describe('StorageController', () => {
   });
 
   describe('uploadFile()', () => {
-    it('should log the correct messages and call next() when a file is uploaded successfully and the file version exists', (done) => {
+    beforeEach(() => {
       testFile.buffer = fs.readFileSync('test/data/test-file.pdf');
       s3Service = {
         uploadFile: sinon.stub().returns({Location: 'http://localhost/a-file'})
       };
-      req.params.processKey = 'test-process-key';
-      storageController = new StorageController(s3Service, config);
-
-      storageController
-        .uploadFile(req, res, next)
-        .then(() => {
-          expect(req.logger).to.have.been.calledTwice;
-          expect(req.logger).to.have.been.calledWith(`Uploading file - ${config.fileVersions.original} version`);
-          expect(req.logger).to.have.been.calledWith(`File uploaded - ${config.fileVersions.original} version`);
-          expect(next).to.have.been.calledOnce;
-          done();
-        })
-        .catch((err) => {
-          done(err);
-        });
+      req.allFiles[config.fileVersions.original] = testFile;
     });
 
-    it('should log the correct messages and call next() when a file is uploaded successfully and the file version does not exist', (done) => {
-      testFile.buffer = fs.readFileSync('test/data/test-file.pdf');
-
-      s3Service = {
-        uploadFile: sinon.stub().returns({Location: 'http://localhost/a-file'})
-      };
-
+    it('should log the correct messages and call next() when a file is uploaded successfully', (done) => {
       req.params.processKey = 'test-process-key';
-      delete req.file.version;
 
       storageController = new StorageController(s3Service, config);
 
@@ -123,6 +102,7 @@ describe('StorageController', () => {
           expect(req.logger).to.have.been.calledWith(`Uploading file - ${config.fileVersions.original} version`);
           expect(req.logger).to.have.been.calledWith(`File uploaded - ${config.fileVersions.original} version`);
           expect(next).to.have.been.calledOnce;
+          expect(req.allFiles).to.be.empty;
           done();
         })
         .catch((err) => {
@@ -131,8 +111,6 @@ describe('StorageController', () => {
     });
 
     it('should log the correct messages and return an error message when the storage service is not available', (done) => {
-      testFile.buffer = fs.readFileSync('test/data/test-file.pdf');
-
       s3Service = {
         uploadFile: sinon.stub().returns(Promise.reject(new Error('Internal Server Error')))
       };

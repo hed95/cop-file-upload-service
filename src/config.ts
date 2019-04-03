@@ -13,7 +13,6 @@ const config: IConfig = {
     readiness: '/readiness'
   },
   fileConversions: {
-    count: 2,
     pdfDensity: 300
   },
   fileVersions: {

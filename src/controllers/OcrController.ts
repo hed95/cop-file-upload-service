@@ -13,27 +13,30 @@ class OcrController {
   }
 
   public async parseFile(req: Request, res: Response, next: NextFunction): Promise<void> {
-    const {file, logger} = req;
-    const fileType = FileType.fileType(file.mimetype);
-    delete req.file.version;
+    const {logger}: Request = req;
+    const {fileVersions}: IConfig = this.config;
+    const file: Express.Multer.File = req.allFiles[fileVersions.clean];
+    const fileType: string = FileType.fileType(file.mimetype);
     logger('Parsing file for ocr');
 
     if (FileType.isValidFileTypeForOcr(fileType)) {
       try {
-        const text = await this.ocr(file.buffer);
+        const text: string = await this.ocr(file.buffer);
         logger('Parsed text from file');
-        const textFileData = {
-          buffer: new Buffer(text.trim()),
-          mimetype: 'text/plain',
-          version: this.config.fileVersions.ocr
+        req.allFiles[fileVersions.ocr] = {
+          ...req.file,
+          ...{
+            buffer: new Buffer(text.trim()),
+            mimetype: 'text/plain',
+            version: fileVersions.ocr
+          }
         };
-        req.file = {...req.file, ...textFileData};
       } catch (err) {
         logger('Failed to parse text from file', 'error');
         logger(err.toString(), 'error');
       }
     } else {
-      logger(`File not parsed - ${fileType} is an unsupported file type`);
+      logger(`File not parsed - ${file.mimetype} is not valid for ocr`);
     }
 
     return next();

@@ -1,4 +1,6 @@
 import IConfig from '../interfaces/IConfig';
+import IFileConversionReturnParams from '../interfaces/IFileConversionReturnParams';
+import FileType from './FileType';
 
 type File = Express.Multer.File;
 
@@ -26,45 +28,33 @@ class FileConverter {
   }
 
   public newMimeType(currentMimeType: string, originalMimeType: string): string[] {
-    let newMimeType: string[];
-
-    switch (currentMimeType) {
-      case 'image/jpeg':
-      case 'application/pdf':
-        newMimeType = ['image/png', 'png'];
-        break;
-      default:
-        newMimeType = ['image/jpeg', 'jpg'];
+    if (currentMimeType === originalMimeType) {
+      const mimeTypeMap: {[key: string]: string[]} = {
+        'application/pdf': ['image/png', 'png'],
+        'image/jpeg': ['image/png', 'png']
+      };
+      return mimeTypeMap[currentMimeType] || ['image/jpeg', 'jpeg'];
     }
 
-    if (newMimeType[0] === originalMimeType) {
-      return ['image/tiff', 'tif'];
-    }
-
-    return newMimeType;
+    return [originalMimeType, FileType.fileType(originalMimeType)];
   }
 
-  public async fetchFile(file: File): Promise<{mimetype: string, buffer: Buffer}> {
-    const {mimetype, originalMimeType} = file;
-    const [newMimeType, newExtension] = this.newMimeType(mimetype, originalMimeType);
-    const newBuffer = await this.fetchFileBuffer(file, newExtension);
-    return {mimetype: newMimeType, buffer: newBuffer};
+  public async fetchFile(file: File): Promise<IFileConversionReturnParams> {
+    const {mimetype, originalMimeType}: File = file;
+    const [newMimeType, newExtension]: string[] = this.newMimeType(mimetype, originalMimeType);
+    const newBuffer: Buffer = await this.fetchFileBuffer(file, newExtension);
+    return {
+      buffer: newBuffer,
+      mimetype: newMimeType,
+      version: this.config.fileVersions.clean
+    };
   }
 
-  public async convert(file: File, logger: any, fileConversionCount: number): Promise<File> {
-    let counter: number;
-
-    logger(`Converting file ${fileConversionCount} times`);
-
-    file.originalMimeType = file.mimetype;
-
-    for (counter = 0; counter < fileConversionCount; counter++) {
-      const convertedFile = await this.fetchFile(file);
-      logger(`File converted from ${file.mimetype} to ${convertedFile.mimetype}`);
-      file = {...file, ...convertedFile};
-    }
-
-    return file;
+  public async convert(file: File, logger: any): Promise<File> {
+    logger('Converting file');
+    const convertedFile: IFileConversionReturnParams = await this.fetchFile(file);
+    logger(`File converted from ${file.mimetype} to ${convertedFile.mimetype}`);
+    return {...file, ...convertedFile};
   }
 }
 
