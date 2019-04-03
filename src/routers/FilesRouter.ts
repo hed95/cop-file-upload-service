@@ -6,6 +6,7 @@ import * as ocr from 'tesseractocr';
 import * as util from 'util';
 import config from '../config';
 import DeleteValidationController from '../controllers/DeleteValidationController';
+import FileConversionController from '../controllers/FileConversionController';
 import GetValidationController from '../controllers/GetValidationController';
 import MetadataController from '../controllers/MetadataController';
 import OcrController from '../controllers/OcrController';
@@ -37,7 +38,8 @@ class FilesRouter {
       new PostValidationController(joi).validateRoute,
       new MetadataController(Date.now()).generateMetadata,
       storageController.uploadFile,
-      new VirusScanController(new FileConverter(gm, util, config), config).scanFile,
+      new VirusScanController(config).scanFile,
+      new FileConversionController(new FileConverter(gm, util, config), config).convertFile,
       storageController.uploadFile,
       new OcrController(ocr, config).parseFile,
       storageController.uploadFile,

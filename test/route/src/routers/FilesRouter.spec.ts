@@ -32,7 +32,7 @@ describe('FilesRouter', () => {
         .request(app)
         .post(postUrl)
         .attach(testFile.fieldname, testFile.buffer, testFile.originalname)
-        .end((err: Error, res: superagent.Response) => {
+        .end((err: any, res: any) => {
           expect(res.status).to.equal(201);
           expect(res.body).to.have.property('url');
           expect(res.body).to.have.property('name');

@@ -17,6 +17,7 @@ describe('StorageController', () => {
       logger: sinon.spy(),
       params: {}
     });
+    req.file.version = config.fileVersions.original;
     res = responseMock();
     next = sinon.spy();
 
