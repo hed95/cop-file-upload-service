@@ -161,11 +161,11 @@ spec:
             secretKeyRef:
               name: {{.NAME}}
               key: sseKmsKeyId
-          - name: AWS_BUCKET
-            valueFrom:
-              secretKeyRef:
-                name: {{.NAME}}
-                key: awsS3Bucket
+        - name: AWS_BUCKET
+          valueFrom:
+            secretKeyRef:
+              name: {{.NAME}}
+              key: awsS3Bucket
         - name: AWS_ACCESS_KEY
           valueFrom:
             secretKeyRef:
