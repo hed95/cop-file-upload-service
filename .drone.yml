@@ -138,6 +138,7 @@ pipeline:
       - TEST_SSE_KMS_KEY_ID
       - TEST_AWS_ACCESS_KEY
       - TEST_AWS_SECRET_ACCESS_KEY
+      - TEST_AWS_BUCKET
     commands:
       - export NAME=$${TEST_NAME}
       - export KUBE_NAMESPACE=$${TEST_KUBE_NAMESPACE}
@@ -157,6 +158,7 @@ pipeline:
       - export SSE_KMS_KEY_ID=$${TEST_SSE_KMS_KEY_ID}
       - export AWS_ACCESS_KEY=$${TEST_AWS_ACCESS_KEY}
       - export AWS_SECRET_ACCESS_KEY=$${TEST_AWS_SECRET_ACCESS_KEY}
+      - export AWS_BUCKET=$${TEST_AWS_BUCKET}
       - export IMAGE_TAG=$${DRONE_BUILD_NUMBER}
       - kd --insecure-skip-tls-verify -f kube/network-policy.yml
       - kd --insecure-skip-tls-verify -f kube/secret.yml
@@ -189,6 +191,7 @@ pipeline:
       - DEMO_SSE_KMS_KEY_ID
       - DEMO_AWS_ACCESS_KEY
       - DEMO_AWS_SECRET_ACCESS_KEY
+      - DEMO_AWS_BUCKET
     commands:
       - export NAME=$${DEMO_NAME}
       - export KUBE_NAMESPACE=$${DEMO_KUBE_NAMESPACE}
@@ -208,6 +211,7 @@ pipeline:
       - export SSE_KMS_KEY_ID=$${DEMO_SSE_KMS_KEY_ID}
       - export AWS_ACCESS_KEY=$${DEMO_AWS_ACCESS_KEY}
       - export AWS_SECRET_ACCESS_KEY=$${DEMO_AWS_SECRET_ACCESS_KEY}
+      - export AWS_BUCKET=$${DEMO_AWS_BUCKET}
       - export IMAGE_TAG=$${IMAGE_TAG}
       - kd --insecure-skip-tls-verify -f kube/network-policy.yml
       - kd --insecure-skip-tls-verify -f kube/secret.yml
