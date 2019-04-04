@@ -9,7 +9,7 @@ pipeline:
     commands:
       - npm install
       - npm run linter
-      - npm test
+      - npm run test:unit
       - npm run coverage
     when:
       event:

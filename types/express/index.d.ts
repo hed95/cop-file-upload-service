@@ -4,6 +4,7 @@ declare module Express {
     logger: any;
     file: Multer.File;
     uuid: any;
+    kauth: any;
   }
 
   namespace Multer {
