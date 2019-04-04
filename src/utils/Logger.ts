@@ -23,8 +23,8 @@ class Logger {
     return this.printf(this.formatMessage);
   }
 
-  public formatMessage({level, message, timestamp, filename}: ILogMessage): string {
-    return JSON.stringify(LogMessage.create({filename, level, message, timestamp}));
+  public formatMessage({level, message, timestamp, filename, email}: ILogMessage): string {
+    return JSON.stringify(LogMessage.create({email, filename, level, message, timestamp}));
   }
 
   public logger(): winston.Logger {

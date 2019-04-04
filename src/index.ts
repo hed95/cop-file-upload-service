@@ -32,8 +32,9 @@ app.use((req, res, next) => {
 });
 
 app.use((req, res, next) => {
+  const email: string = req.kauth && req.kauth.grant && req.kauth.grant.access_token.content.email;
   req.logger = (message: string, level: string): void => {
-    logger.log(LogMessage.create({filename: req.uuid, message, level}));
+    logger.log(LogMessage.create({email, filename: req.uuid, message, level}));
   };
   next();
 });

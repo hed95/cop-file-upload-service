@@ -3,9 +3,10 @@ import ILogMessage from '../interfaces/ILogMessage';
 
 class LogMessage {
   public static create(params: ILogMessage): LogEntry {
-    const {filename, message, level, timestamp}: ILogMessage = params;
+    const {email, filename, message, level, timestamp}: ILogMessage = params;
 
     const logMessage: LogEntry = {
+      email: email || 'user@example.com',
       filename,
       level: level || 'info',
       message
