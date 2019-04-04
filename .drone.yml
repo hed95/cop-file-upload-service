@@ -1,24 +1,16 @@
 pipeline:
   test:
-    image: node:8
-    secrets:
-      - aws_bucket
-      - aws_access_key
-      - aws_secret_access_key
-      - sse_kms_key_id
-    commands:
-      - npm install
-      - npm run linter
-      - npm run test:unit
-      - npm run coverage
-    when:
-      event:
-      - push
-      - pull_request
-      - tag
-      branch:
-      - master
-      - develop
+      image: node:11
+      commands:
+        - npm install
+        - npm run linter
+        - npm run test:unit
+        - npm run coverage
+      when:
+        event:
+        - push
+        - pull_request
+
   sonar-scanner:
     image: quay.io/ukhomeofficedigital/sonar-scanner:v3.0.1
     when:
@@ -28,50 +20,201 @@ pipeline:
       event:
         - push
         - pull_request
-        - tag
+
+## Image building
   build:
-    image: docker:17.09.1
-    environment:
-      - DOCKER_HOST=tcp://172.17.0.1:2375
-    secrets:
-      - docker_name
+    image: quay.io/ukhomeofficedigital/drone-docker
     commands:
-      - docker build -t $${DOCKER_NAME} .
+      - docker build -t file-upload-service:$${DRONE_BUILD_NUMBER} .
     when:
       event:
         - push
         - pull_request
-        - tag
+
+## Vulnerability Scanning
+  vulnerability-scan:
+    image: quay.io/ukhomeofficedigital/anchore-submission:latest
+    image_name: file-upload-service:${DRONE_BUILD_NUMBER}
+    tolarates: medium
+    # An optional whitelist (comman separated list of CVE's)
+    # whitelist: CVE_SOMENAME_1,CVE_SOMENAME_2
+    # An optional whitelist file containing a list of CSV relative to the repo path
+    # whitelist_file: <PATH>
+    fail_on_detection: false
+    when:
+      event:
+        - push
+        - pull_request
+
+## Build Public Image
   image_to_quay:
-    image: docker:17.09.1
-    environment:
-      - DOCKER_HOST=tcp://172.17.0.1:2375
+    image: quay.io/ukhomeofficedigital/drone-docker
     secrets:
-      - docker_username
-      - docker_password
-      - docker_server
-      - docker_group
-      - docker_name
-    commands:
-    - docker login -u=$${DOCKER_USERNAME} -p=$${DOCKER_PASSWORD} $${DOCKER_SERVER}
-    - docker tag $${DOCKER_NAME} $${DOCKER_SERVER}/$${DOCKER_GROUP}/$${DOCKER_NAME}:$${DRONE_COMMIT_BRANCH}
-    - docker push $${DOCKER_SERVER}/$${DOCKER_GROUP}/$${DOCKER_NAME}:$${DRONE_COMMIT_BRANCH}
+      - DOCKER_USERNAME
+      - DOCKER_PASSWORD
+    registry: quay.io
+    repo: quay.io/ukhomeofficedigital/file-upload-service
+    tags:
+      - ${DRONE_BUILD_NUMBER}
+      - ${DRONE_COMMIT_SHA}
+      - latest
     when:
-      event: push
-  tag_image_to_quay:
-    image: docker:17.09.1
-    environment:
-      - DOCKER_HOST=tcp://172.17.0.1:2375
+      branch:
+        - master
+      event:
+        - push
+
+  deploy_to_dev:
+    image: quay.io/ukhomeofficedigital/kd
     secrets:
-      - docker_username
-      - docker_password
-      - docker_server
-      - docker_group
-      - docker_name
+      - DEV_NAME
+      - DEV_KUBE_NAMESPACE
+      - DEV_KUBE_SERVER
+      - DEV_KUBE_TOKEN
+      - DEV_INTERNAL_CA_URL
+      - DEV_NO_LOGGING_URL_PARAMS
+      - DEV_NO_LOGGING_BODY
+      - DEV_NO_LOGGING_RESPONSE
+      - DEV_KEYCLOAK_URL
+      - DEV_KEYCLOAK_REALM
+      - DEV_KEYCLOAK_SECRET
+      - DEV_INT_DOMAIN
+      - DEV_EXT_DOMAIN
+      - DEV_PROTOCOL
+      - DEV_PRIVATE_UI_NAME
+      - DEV_SSE_KMS_KEY_ID
+      - DEV_AWS_ACCESS_KEY
+      - DEV_AWS_SECRET_ACCESS_KEY
+      - DEV_AWS_BUCKET
     commands:
-    - docker login -u=$${DOCKER_USERNAME} -p=$${DOCKER_PASSWORD} $${DOCKER_SERVER}
-    - docker tag $${DOCKER_NAME} $${DOCKER_SERVER}/$${DOCKER_GROUP}/$${DOCKER_NAME}:$${DRONE_COMMIT_SHA}
-    - docker push $${DOCKER_SERVER}/$${DOCKER_GROUP}/$${DOCKER_NAME}:$${DRONE_COMMIT_SHA}
+      - export NAME=$${DEV_NAME}
+      - export KUBE_NAMESPACE=$${DEV_KUBE_NAMESPACE}
+      - export KUBE_SERVER=$${DEV_KUBE_SERVER}
+      - export KUBE_TOKEN=$${DEV_KUBE_TOKEN}
+      - export INTERNAL_CA_URL=$${DEV_INTERNAL_CA_URL}
+      - export NO_LOGGING_URL_PARAMS=$${DEV_NO_LOGGING_URL_PARAMS}
+      - export NO_LOGGING_BODY=$${DEV_NO_LOGGING_BODY}
+      - export NO_LOGGING_RESPONSE=$${DEV_NO_LOGGING_RESPONSE}
+      - export KEYCLOAK_URL=$${DEV_KEYCLOAK_URL}
+      - export KEYCLOAK_REALM=$${DEV_KEYCLOAK_REALM}
+      - export KEYCLOAK_SECRET=$${DEV_KEYCLOAK_SECRET}
+      - export INT_DOMAIN=$${DEV_INT_DOMAIN}
+      - export EXT_DOMAIN=$${DEV_EXT_DOMAIN}
+      - export PROTOCOL=$${DEV_PROTOCOL}
+      - export PRIVATE_UI_NAME=$${DEV_PRIVATE_UI_NAME}
+      - export SSE_KMS_KEY_ID=$${DEV_SSE_KMS_KEY_ID}
+      - export AWS_ACCESS_KEY=$${DEV_AWS_ACCESS_KEY}
+      - export AWS_SECRET_ACCESS_KEY=$${DEV_AWS_SECRET_ACCESS_KEY}
+      - export AWS_BUCKET=$${DEV_AWS_BUCKET}
+      - export IMAGE_TAG=$${DRONE_BUILD_NUMBER}
+      - kd --insecure-skip-tls-verify -f kube/network-policy.yml
+      - kd --insecure-skip-tls-verify -f kube/secret.yml
+      - kd --insecure-skip-tls-verify -f kube/service.yml
+      - kd --insecure-skip-tls-verify -f kube/deployment.yml --timeout=5m
     when:
-      event: tag
-      branch: develop
+      branch:
+        - master
+      event:
+        - push
+
+  deploy_to_test:
+    image: quay.io/ukhomeofficedigital/kd
+    secrets:
+      - TEST_NAME
+      - TEST_KUBE_NAMESPACE
+      - TEST_KUBE_SERVER
+      - TEST_KUBE_TOKEN
+      - TEST_INTERNAL_CA_URL
+      - TEST_NO_LOGGING_URL_PARAMS
+      - TEST_NO_LOGGING_BODY
+      - TEST_NO_LOGGING_RESPONSE
+      - TEST_KEYCLOAK_URL
+      - TEST_KEYCLOAK_REALM
+      - TEST_KEYCLOAK_SECRET
+      - TEST_INT_DOMAIN
+      - TEST_EXT_DOMAIN
+      - TEST_PROTOCOL
+      - TEST_PRIVATE_UI_NAME
+      - TEST_SSE_KMS_KEY_ID
+      - TEST_AWS_ACCESS_KEY
+      - TEST_AWS_SECRET_ACCESS_KEY
+    commands:
+      - export NAME=$${TEST_NAME}
+      - export KUBE_NAMESPACE=$${TEST_KUBE_NAMESPACE}
+      - export KUBE_SERVER=$${TEST_KUBE_SERVER}
+      - export KUBE_TOKEN=$${TEST_KUBE_TOKEN}
+      - export INTERNAL_CA_URL=$${TEST_INTERNAL_CA_URL}
+      - export NO_LOGGING_URL_PARAMS=$${TEST_NO_LOGGING_URL_PARAMS}
+      - export NO_LOGGING_BODY=$${TEST_NO_LOGGING_BODY}
+      - export NO_LOGGING_RESPONSE=$${TEST_NO_LOGGING_RESPONSE}
+      - export KEYCLOAK_URL=$${TEST_KEYCLOAK_URL}
+      - export KEYCLOAK_REALM=$${TEST_KEYCLOAK_REALM}
+      - export KEYCLOAK_SECRET=$${TEST_KEYCLOAK_SECRET}
+      - export INT_DOMAIN=$${TEST_INT_DOMAIN}
+      - export EXT_DOMAIN=$${TEST_EXT_DOMAIN}
+      - export PROTOCOL=$${TEST_PROTOCOL}
+      - export PRIVATE_UI_NAME=$${TEST_PRIVATE_UI_NAME}
+      - export SSE_KMS_KEY_ID=$${TEST_SSE_KMS_KEY_ID}
+      - export AWS_ACCESS_KEY=$${TEST_AWS_ACCESS_KEY}
+      - export AWS_SECRET_ACCESS_KEY=$${TEST_AWS_SECRET_ACCESS_KEY}
+      - export IMAGE_TAG=$${DRONE_BUILD_NUMBER}
+      - kd --insecure-skip-tls-verify -f kube/network-policy.yml
+      - kd --insecure-skip-tls-verify -f kube/secret.yml
+      - kd --insecure-skip-tls-verify -f kube/service.yml
+      - kd --insecure-skip-tls-verify -f kube/deployment.yml --timeout=5m
+    when:
+      branch:
+        - master
+      event:
+        - push
+
+  deploy_to_demo:
+    image: quay.io/ukhomeofficedigital/kd
+    secrets:
+      - DEMO_NAME
+      - DEMO_KUBE_NAMESPACE
+      - DEMO_KUBE_SERVER
+      - DEMO_KUBE_TOKEN
+      - DEMO_INTERNAL_CA_URL
+      - DEMO_NO_LOGGING_URL_PARAMS
+      - DEMO_NO_LOGGING_BODY
+      - DEMO_NO_LOGGING_RESPONSE
+      - DEMO_KEYCLOAK_URL
+      - DEMO_KEYCLOAK_REALM
+      - DEMO_KEYCLOAK_SECRET
+      - DEMO_INT_DOMAIN
+      - DEMO_EXT_DOMAIN
+      - DEMO_PROTOCOL
+      - DEMO_PRIVATE_UI_NAME
+      - DEMO_SSE_KMS_KEY_ID
+      - DEMO_AWS_ACCESS_KEY
+      - DEMO_AWS_SECRET_ACCESS_KEY
+    commands:
+      - export NAME=$${DEMO_NAME}
+      - export KUBE_NAMESPACE=$${DEMO_KUBE_NAMESPACE}
+      - export KUBE_SERVER=$${DEMO_KUBE_SERVER}
+      - export KUBE_TOKEN=$${DEMO_KUBE_TOKEN}
+      - export INTERNAL_CA_URL=$${DEMO_INTERNAL_CA_URL}
+      - export NO_LOGGING_URL_PARAMS=$${DEMO_NO_LOGGING_URL_PARAMS}
+      - export NO_LOGGING_BODY=$${DEMO_NO_LOGGING_BODY}
+      - export NO_LOGGING_RESPONSE=$${DEMO_NO_LOGGING_RESPONSE}
+      - export KEYCLOAK_URL=$${DEMO_KEYCLOAK_URL}
+      - export KEYCLOAK_REALM=$${DEMO_KEYCLOAK_REALM}
+      - export KEYCLOAK_SECRET=$${DEMO_KEYCLOAK_SECRET}
+      - export INT_DOMAIN=$${DEMO_INT_DOMAIN}
+      - export EXT_DOMAIN=$${DEMO_EXT_DOMAIN}
+      - export PROTOCOL=$${DEMO_PROTOCOL}
+      - export PRIVATE_UI_NAME=$${DEMO_PRIVATE_UI_NAME}
+      - export SSE_KMS_KEY_ID=$${DEMO_SSE_KMS_KEY_ID}
+      - export AWS_ACCESS_KEY=$${DEMO_AWS_ACCESS_KEY}
+      - export AWS_SECRET_ACCESS_KEY=$${DEMO_AWS_SECRET_ACCESS_KEY}
+      - export IMAGE_TAG=$${IMAGE_TAG}
+      - kd --insecure-skip-tls-verify -f kube/network-policy.yml
+      - kd --insecure-skip-tls-verify -f kube/secret.yml
+      - kd --insecure-skip-tls-verify -f kube/service.yml
+      - kd --insecure-skip-tls-verify -f kube/deployment.yml --timeout=5m
+    when:
+      environment:
+        - demo
+      event:
+        - deployment
