@@ -171,11 +171,11 @@ spec:
             secretKeyRef:
               name: {{.NAME}}
               key: awsAccessKey
-          - name: AWS_SECRET_ACCESS_KEY
-            valueFrom:
-              secretKeyRef:
-                name: {{.NAME}}
-                key: awsSecretAccessKey
+        - name: AWS_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: {{.NAME}}
+              key: awsSecretAccessKey
       volumes:
       - name: bundle
         configMap:
