@@ -9,8 +9,8 @@
     "dev": "NODE_ENV=dev nodemon --watch 'src/**/*.ts' --exec 'ts-node' --files src/index.ts",
     "linter": "tslint -c tslint.json 'src/**/*.ts' -c test/tslint.json 'test/**/*.ts'",
     "test:unit": "mocha --require 'ts-node/register/transpile-only' test/unit/**/*.spec.ts",
-    "test:route": "NODE_ENV=test mocha --require 'ts-node/register/transpile-only' test/route/**/*.spec.ts",
-    "test:route-auth": "mocha --require 'ts-node/register/transpile-only' test/routeAuth/**/*.spec.ts",
+    "test:route": "NODE_ENV=test PORT=8182 mocha --require 'ts-node/register/transpile-only' test/route/**/*.spec.ts",
+    "test:route-auth": "PORT=8182 mocha --require 'ts-node/register/transpile-only' test/routeAuth/**/*.spec.ts",
     "test": "npm run test:unit && npm run test:route && npm run test:route-auth",
     "coverage": "nyc npm run test:unit",
     "mocks": "dyson mocks 8080"

@@ -2,7 +2,7 @@ import * as dotenv from 'dotenv';
 import IConfig from './interfaces/IConfig';
 import Environment from './utils/Environment';
 
-if (Environment.isNotProd(process.env.NODE_ENV)) {
+if (Environment.isDev(process.env.NODE_ENV)) {
   dotenv.config();
 }
 
@@ -32,12 +32,12 @@ const config: IConfig = {
       sslRequired: 'external'
     },
     s3: {
-      accessKeyId: process.env.AWS_ACCESS_KEY,
-      bucket: process.env.AWS_BUCKET,
-      region: process.env.AWS_REGION,
-      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+      accessKeyId: process.env.AWS_ACCESS_KEY || 'dummy-access-key',
+      bucket: process.env.AWS_BUCKET || 'dummy-bucket',
+      region: process.env.AWS_REGION || 'dummy-region',
+      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || 'dummy-secret-access-key',
       serverSideEncryption: 'aws:kms',
-      sseKmsKeyId: process.env.SSE_KMS_KEY_ID
+      sseKmsKeyId: process.env.SSE_KMS_KEY_ID || 'dummy-sse-kms-key-id'
     },
     virusScan: {
       host: process.env.VIRUS_SCAN_HOST || 'localhost',
