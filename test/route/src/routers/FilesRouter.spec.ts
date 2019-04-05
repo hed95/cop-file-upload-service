@@ -14,23 +14,13 @@ describe('FilesRouter', () => {
   beforeEach(() => {
     const pathRegex: RegExp = new RegExp(`/${validation.filenamePattern}`);
 
-    nock(`https://dummy-bucket.s3.dummy-region.amazonaws.com/test-process-key/${config.fileVersions.original}`)
+    Object.keys(config.fileVersions).forEach((fileVersion) => {
+      nock(`https://dummy-bucket.s3.dummy-region.amazonaws.com/test-process-key/${fileVersion}`)
       .put(pathRegex)
       .reply(200)
       .get(pathRegex)
       .reply(200, {}, {'Content-type': 'application/pdf'});
-
-    nock(`https://dummy-bucket.s3.dummy-region.amazonaws.com/test-process-key/${config.fileVersions.clean}`)
-      .put(pathRegex)
-      .reply(200)
-      .get(pathRegex)
-      .reply(200, {}, {'Content-type': 'application/pdf'});
-
-    nock(`https://dummy-bucket.s3.dummy-region.amazonaws.com/test-process-key/${config.fileVersions.ocr}`)
-      .put(pathRegex)
-      .reply(200)
-      .get(pathRegex)
-      .reply(200, {}, {'Content-type': 'application/pdf'});
+    });
 
     nock('https://dummy-bucket.s3.dummy-region.amazonaws.com')
       .post('/?delete')
