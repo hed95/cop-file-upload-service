@@ -20,7 +20,7 @@ class S3Service {
   }
 
   public init(config: IConfig): AWS.S3 {
-    const {s3}: any = config.services;
+    const {s3}: IConfig['services'] = config.services;
     return new AWS.S3({
       accessKeyId: s3.accessKeyId,
       region: s3.region,

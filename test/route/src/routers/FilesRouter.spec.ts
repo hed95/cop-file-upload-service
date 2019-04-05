@@ -2,13 +2,44 @@ import * as fs from 'fs';
 import * as superagent from 'superagent';
 import app from '../../../../src/index';
 import IConfig from '../../../../src/interfaces/IConfig';
-import GetValidation from '../../../../src/validation/GetValidation';
+import Validation from '../../../../src/validation/Validation';
 import {chai, config, expect, nock, testFile} from '../../../setupTests';
 
 describe('FilesRouter', () => {
   const processKey: string = 'test-process-key';
   const {endpoints, fileVersions, services}: IConfig = config;
+  const validation: Validation = new Validation();
   let filename: string;
+
+  beforeEach(() => {
+    const pathRegex: RegExp = new RegExp(`/${validation.filenamePattern}`);
+
+    nock(`https://dummy-bucket.s3.dummy-region.amazonaws.com/test-process-key/${config.fileVersions.original}`)
+      .put(pathRegex)
+      .reply(200)
+      .get(pathRegex)
+      .reply(200, {}, {'Content-type': 'application/pdf'});
+
+    nock(`https://dummy-bucket.s3.dummy-region.amazonaws.com/test-process-key/${config.fileVersions.clean}`)
+      .put(pathRegex)
+      .reply(200)
+      .get(pathRegex)
+      .reply(200, {}, {'Content-type': 'application/pdf'});
+
+    nock(`https://dummy-bucket.s3.dummy-region.amazonaws.com/test-process-key/${config.fileVersions.ocr}`)
+      .put(pathRegex)
+      .reply(200)
+      .get(pathRegex)
+      .reply(200, {}, {'Content-type': 'application/pdf'});
+
+    nock('https://dummy-bucket.s3.dummy-region.amazonaws.com')
+      .post('/?delete')
+      .reply(200);
+  });
+
+  afterEach(() => {
+    nock.cleanAll();
+  });
 
   describe('post()', () => {
     const postUrl: string = `${endpoints.files}/${processKey}`;
@@ -19,10 +50,6 @@ describe('FilesRouter', () => {
       virusScanMock = nock(`http://${virusScan.host}:${virusScan.port}`).post(virusScan.path);
 
       testFile.buffer = fs.readFileSync('test/data/test-file.pdf');
-    });
-
-    afterEach(() => {
-      nock.restore();
     });
 
     it('should return the correct status and response when the correct data is given', (done) => {
@@ -41,7 +68,7 @@ describe('FilesRouter', () => {
 
           filename = res.body.url.split('/')[2];
 
-          expect(filename).to.match(new GetValidation().filenameRegex);
+          expect(filename).to.match(validation.filenameRegex);
           expect(res.body.url).to.match(new RegExp(`/${fileVersions.clean}/`));
           expect(res.body.name).to.equal(testFile.originalname);
           expect(res.body.size).to.equal(testFile.size);
