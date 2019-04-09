@@ -1,6 +1,7 @@
 import {NextFunction, Request, Response} from 'express';
 import IConfig from '../interfaces/IConfig';
 import IPostRequestParams from '../interfaces/IPostRequestParams';
+import FileService from '../services/FileService';
 import S3Service from '../services/S3Service';
 
 class StorageController {
@@ -38,6 +39,9 @@ class StorageController {
     const {allFiles, logger, params}: Request = req;
     const fileVersionToUpload: string = Object.keys(allFiles)[0];
     const fileToUpload: Express.Multer.File = allFiles[fileVersionToUpload];
+
+    fileToUpload.buffer = new FileService().readFile(fileVersionToUpload, req.uuid);
+
     const uploadParams: IPostRequestParams = {
       file: fileToUpload,
       processKey: params.processKey

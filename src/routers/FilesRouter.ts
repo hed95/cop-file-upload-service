@@ -17,7 +17,12 @@ import VirusScanController from '../controllers/VirusScanController';
 import S3Service from '../services/S3Service';
 import FileConverter from '../utils/FileConverter';
 
-const storage: multer.StorageEngine = multer.memoryStorage();
+const storage: multer.StorageEngine = multer.diskStorage({
+  destination: config.uploadDirectory,
+  filename: (req: any, file: any, cb: any) => {
+    cb(null, config.fileVersions.original + config.fileConversions.token + req.uuid);
+  }
+});
 const upload: multer.Instance = multer({storage});
 const s3Service: S3Service = new S3Service(config, util);
 const storageController: StorageController = new StorageController(s3Service, config);

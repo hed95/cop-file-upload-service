@@ -1,10 +1,19 @@
 interface IConfig {
-  port: string | number;
   endpoints: {
     files: string,
     health: string,
     readiness: string
   };
+  fileConversions: {
+    pdfDensity: number,
+    token: string
+  };
+  fileVersions: {
+    original: string,
+    clean: string,
+    ocr: string
+  };
+  port: string | number;
   services: {
     virusScan: {
       host: string,
@@ -29,14 +38,7 @@ interface IConfig {
       sslRequired: string
     }
   };
-  fileVersions: {
-    original: string,
-    clean: string,
-    ocr: string
-  };
-  fileConversions: {
-    pdfDensity: number
-  };
+  uploadDirectory: string;
 }
 
 export default IConfig;

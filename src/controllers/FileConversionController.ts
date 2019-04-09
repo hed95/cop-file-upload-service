@@ -1,5 +1,6 @@
 import {NextFunction, Request, Response} from 'express';
 import IConfig from '../interfaces/IConfig';
+import FileService from '../services/FileService';
 import FileConverter from '../utils/FileConverter';
 import FileType from '../utils/FileType';
 
@@ -16,6 +17,7 @@ class FileConversionController {
   public async convertFile(req: Request, res: Response, next: NextFunction) {
     const {file, logger}: Request = req;
     const {fileVersions}: IConfig = this.config;
+    const fileService: FileService = new FileService();
 
     if (!req.allFiles) {
       req.allFiles = {};
@@ -26,7 +28,17 @@ class FileConversionController {
     try {
       if (FileType.isValidFileTypeForConversion(fileToConvert.mimetype)) {
         logger(`File can be converted - ${fileToConvert.mimetype}`);
+
+        const fileVersion: string = (req.allFiles[fileVersions.clean]) ? fileVersions.clean : fileVersions.original;
+
+        fileToConvert.buffer = fileService.readFile(fileVersion, req.uuid);
+
         const convertedFile: Express.Multer.File = await this.fileConverter.convert(fileToConvert, req.logger);
+
+        fileService.writeFile(this.config.fileVersions.clean, req.uuid, convertedFile.buffer);
+
+        delete convertedFile.buffer;
+
         req.allFiles[fileVersions.clean] = convertedFile;
       } else {
         logger(`File cannot be converted - ${file.mimetype}`);

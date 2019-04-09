@@ -13,7 +13,8 @@ const config: IConfig = {
     readiness: '/readiness'
   },
   fileConversions: {
-    pdfDensity: 300
+    pdfDensity: 300,
+    token: '_'
   },
   fileVersions: {
     clean: 'clean',
@@ -44,7 +45,8 @@ const config: IConfig = {
       path: '/scan',
       port: process.env.VIRUS_SCAN_PORT || 8080
     }
-  }
+  },
+  uploadDirectory: '/tmp'
 };
 
 export default config;

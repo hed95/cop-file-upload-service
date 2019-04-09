@@ -1,5 +1,6 @@
 import {NextFunction, Request, Response} from 'express';
 import IConfig from '../interfaces/IConfig';
+import FileService from '../services/FileService';
 import FileType from '../utils/FileType';
 
 class OcrController {
@@ -17,16 +18,18 @@ class OcrController {
     const {fileVersions}: IConfig = this.config;
     const file: Express.Multer.File = req.allFiles[fileVersions.clean];
     const fileType: string = FileType.fileType(file.mimetype);
+    const fileService: FileService = new FileService();
     logger('Parsing file for ocr');
 
     if (FileType.isValidFileTypeForOcr(fileType)) {
       try {
-        const text: string = await this.ocr(file.buffer);
+        const fileContents: Buffer = fileService.readFile(fileVersions.clean, req.uuid);
+        const text: string = await this.ocr(fileContents);
         logger('Parsed text from file');
+        fileService.writeFile(fileVersions.ocr, req.uuid, new Buffer(text.trim()));
         req.allFiles[fileVersions.ocr] = {
           ...req.file,
           ...{
-            buffer: new Buffer(text.trim()),
             mimetype: 'text/plain',
             version: fileVersions.ocr
           }
