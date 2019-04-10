@@ -14,13 +14,14 @@ import PostResponseController from '../controllers/PostResponseController';
 import PostValidationController from '../controllers/PostValidationController';
 import StorageController from '../controllers/StorageController';
 import VirusScanController from '../controllers/VirusScanController';
+import FileService from '../services/FileService';
 import S3Service from '../services/S3Service';
 import FileConverter from '../utils/FileConverter';
 
 const storage: multer.StorageEngine = multer.diskStorage({
   destination: config.uploadDirectory,
   filename: (req: any, file: any, cb: any) => {
-    cb(null, config.fileVersions.original + config.fileConversions.token + req.uuid);
+    cb(null, new FileService().formatFilename(config.fileVersions.original, req.uuid));
   }
 });
 const upload: multer.Instance = multer({storage});
