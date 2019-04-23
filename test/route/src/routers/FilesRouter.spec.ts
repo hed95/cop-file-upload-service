@@ -9,22 +9,18 @@ describe('FilesRouter', () => {
   const processKey: string = 'test-process-key';
   const {endpoints, fileVersions, services}: IConfig = config;
   const validation: Validation = new Validation();
+  const pathRegex: RegExp = new RegExp(`/${validation.filenamePattern}`);
+  const testS3Hostname: string = 'https://dummy-bucket.s3.dummy-region.amazonaws.com';
   let filename: string;
 
   beforeEach(() => {
-    const pathRegex: RegExp = new RegExp(`/${validation.filenamePattern}`);
-
     Object.keys(config.fileVersions).forEach((fileVersion) => {
-      nock(`https://dummy-bucket.s3.dummy-region.amazonaws.com/test-process-key/${fileVersion}`)
+      nock(`${testS3Hostname}/test-process-key/${fileVersion}`)
       .put(pathRegex)
       .reply(200)
       .get(pathRegex)
       .reply(200, {}, {'Content-type': 'application/pdf'});
     });
-
-    nock('https://dummy-bucket.s3.dummy-region.amazonaws.com')
-      .post('/?delete')
-      .reply(200);
   });
 
   afterEach(() => {
@@ -81,19 +77,6 @@ describe('FilesRouter', () => {
         });
     });
 
-    it('should return the correct status and response when the route is not found', (done) => {
-      chai
-        .request(app)
-        .post('/uploads')
-        .attach(testFile.fieldname, testFile.buffer, testFile.originalname)
-        .end((err: Error, res: superagent.Response) => {
-          expect(res.status).to.equal(404);
-          expect(res.body).to.deep.equal({error: 'Route not found'});
-          expect(err).to.equal(null);
-          done();
-        });
-    });
-
     it('should return the correct status and response when the virus scanning service is not available', (done) => {
       virusScanMock.reply(500, 'Internal Server Error');
 
@@ -108,16 +91,17 @@ describe('FilesRouter', () => {
           done();
         });
     });
-  });
 
-  describe('get()', () => {
-    it('should return the correct status and response', (done) => {
+    it('should return the correct status and response when the S3 service is not available', (done) => {
+      nock.cleanAll();
+
       chai
         .request(app)
-        .get(`${endpoints.files}/${processKey}/${fileVersions.original}/${filename}`)
+        .post(postUrl)
+        .attach(testFile.fieldname, testFile.buffer, testFile.originalname)
         .end((err: Error, res: superagent.Response) => {
-          expect(res.status).to.equal(200);
-          expect(res.get('Content-Type')).to.equal('application/pdf');
+          expect(res.status).to.equal(500);
+          expect(res.body).to.deep.equal({error: 'Failed to upload file - orig version'});
           expect(err).to.equal(null);
           done();
         });
@@ -126,7 +110,50 @@ describe('FilesRouter', () => {
     it('should return the correct status and response when the route is not found', (done) => {
       chai
         .request(app)
-        .get(`${endpoints.files}/does-not-exist.txt`)
+        .post(`${postUrl}/does-not/exist`)
+        .attach(testFile.fieldname, testFile.buffer, testFile.originalname)
+        .end((err: Error, res: superagent.Response) => {
+          expect(res.status).to.equal(404);
+          expect(res.body).to.deep.equal({error: 'Route not found'});
+          expect(err).to.equal(null);
+          done();
+        });
+    });
+  });
+
+  describe('get()', () => {
+    const getUrl = `${endpoints.files}/${processKey}/${fileVersions.original}`;
+
+    it('should return the correct status and response', (done) => {
+      chai
+        .request(app)
+        .get(`${getUrl}/${filename}`)
+        .end((err: Error, res: superagent.Response) => {
+          expect(res.status).to.equal(200);
+          expect(res.get('Content-Type')).to.equal('application/pdf');
+          expect(err).to.equal(null);
+          done();
+        });
+    });
+
+    it('should return the correct status and response when the S3 service is not available', (done) => {
+      nock.cleanAll();
+
+      chai
+        .request(app)
+        .get(`${getUrl}/${filename}`)
+        .end((err: Error, res: superagent.Response) => {
+          expect(res.status).to.equal(500);
+          expect(res.body).to.deep.equal({error: 'Failed to download file'});
+          expect(err).to.equal(null);
+          done();
+        });
+    });
+
+    it('should return the correct status and response when the route is not found', (done) => {
+      chai
+        .request(app)
+        .get(`${getUrl}/does-not/exist`)
         .end((err: Error, res: superagent.Response) => {
           expect(res.status).to.equal(404);
           expect(res.body).to.deep.equal({error: 'Route not found'});
@@ -137,10 +164,16 @@ describe('FilesRouter', () => {
   });
 
   describe('delete()', () => {
+    const deleteUrl = `${endpoints.files}/${processKey}`;
+
     it('should return the correct status and response', (done) => {
+      nock(testS3Hostname)
+        .post('/?delete')
+        .reply(200);
+
       chai
         .request(app)
-        .delete(`${endpoints.files}/${processKey}/${filename}`)
+        .delete(`${deleteUrl}/${filename}`)
         .end((err: Error, res: superagent.Response) => {
           expect(res.status).to.equal(200);
           expect(res.body).to.deep.equal({message: 'Files deleted successfully'});
@@ -149,10 +182,24 @@ describe('FilesRouter', () => {
         });
     });
 
+    it('should return the correct status and response when the S3 service is not available', (done) => {
+      nock.cleanAll();
+
+      chai
+        .request(app)
+        .delete(`${deleteUrl}/${filename}`)
+        .end((err: Error, res: superagent.Response) => {
+          expect(res.status).to.equal(500);
+          expect(res.body).to.deep.equal({error: 'Failed to delete files'});
+          expect(err).to.equal(null);
+          done();
+        });
+    });
+
     it('should return the correct status and response when the route is not found', (done) => {
       chai
         .request(app)
-        .delete(`${endpoints.files}/${processKey}`)
+        .delete(`${deleteUrl}/does-not/exist`)
         .end((err: Error, res: superagent.Response) => {
           expect(res.status).to.equal(404);
           expect(res.body).to.deep.equal({error: 'Route not found'});
