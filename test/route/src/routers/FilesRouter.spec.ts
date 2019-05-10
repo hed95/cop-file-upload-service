@@ -11,11 +11,11 @@ describe('FilesRouter', () => {
   const validation: Validation = new Validation();
   const pathRegex: RegExp = new RegExp(`/${validation.filenamePattern}`);
   const testS3Hostname: string = 'https://dummy-bucket.s3.dummy-region.amazonaws.com';
-  let filename: string;
+  const testFilename: string = '9e5eb809-bce7-463e-8c2f-b6bd8c4832d9';
 
   beforeEach(() => {
     Object.keys(config.fileVersions).forEach((fileVersion) => {
-      nock(`${testS3Hostname}/test-process-key/${fileVersion}`)
+      nock(`${testS3Hostname}/${processKey}/${fileVersion}`)
       .put(pathRegex)
       .reply(200)
       .get(pathRegex)
@@ -46,14 +46,12 @@ describe('FilesRouter', () => {
         .post(postUrl)
         .attach(testFile.fieldname, testFile.buffer, testFile.originalname)
         .end((err: any, res: any) => {
+          const filename: string = res.body.url.split('/')[2];
           expect(res.status).to.equal(201);
           expect(res.body).to.have.property('url');
           expect(res.body).to.have.property('name');
           expect(res.body).to.have.property('size');
           expect(res.body).to.have.property('processedTime');
-
-          filename = res.body.url.split('/')[2];
-
           expect(filename).to.match(validation.filenameRegex);
           expect(res.body.url).to.match(new RegExp(`/${fileVersions.clean}/`));
           expect(res.body.name).to.equal(testFile.originalname);
@@ -69,6 +67,7 @@ describe('FilesRouter', () => {
       chai
         .request(app)
         .post(postUrl)
+
         .end((err: Error, res: superagent.Response) => {
           expect(res.status).to.equal(400);
           expect(res.body).to.deep.equal({error: '"file" is required'});
@@ -127,7 +126,7 @@ describe('FilesRouter', () => {
     it('should return the correct status and response', (done) => {
       chai
         .request(app)
-        .get(`${getUrl}/${filename}`)
+        .get(`${getUrl}/${testFilename}`)
         .end((err: Error, res: superagent.Response) => {
           expect(res.status).to.equal(200);
           expect(res.get('Content-Type')).to.equal('application/pdf');
@@ -141,7 +140,7 @@ describe('FilesRouter', () => {
 
       chai
         .request(app)
-        .get(`${getUrl}/${filename}`)
+        .get(`${getUrl}/${testFilename}`)
         .end((err: Error, res: superagent.Response) => {
           expect(res.status).to.equal(500);
           expect(res.body).to.deep.equal({error: 'Failed to download file'});
@@ -173,7 +172,7 @@ describe('FilesRouter', () => {
 
       chai
         .request(app)
-        .delete(`${deleteUrl}/${filename}`)
+        .delete(`${deleteUrl}/${testFilename}`)
         .end((err: Error, res: superagent.Response) => {
           expect(res.status).to.equal(200);
           expect(res.body).to.deep.equal({message: 'Files deleted successfully'});
@@ -187,7 +186,7 @@ describe('FilesRouter', () => {
 
       chai
         .request(app)
-        .delete(`${deleteUrl}/${filename}`)
+        .delete(`${deleteUrl}/${testFilename}`)
         .end((err: Error, res: superagent.Response) => {
           expect(res.status).to.equal(500);
           expect(res.body).to.deep.equal({error: 'Failed to delete files'});
