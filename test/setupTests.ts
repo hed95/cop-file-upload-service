@@ -15,7 +15,7 @@ const testFile: Express.Multer.File = {
   encoding: '7bit',
   fieldname: 'file',
   filename: '',
-  mimetype: 'application/octet-stream',
+  mimetype: 'application/pdf',
   originalMimeType: 'application/pdf',
   originalname: 'test-file.pdf',
   path: '',
@@ -30,6 +30,16 @@ const validateMock = class {
   }
 };
 
+const fileServiceMock = class {
+  public readFile() {
+    return new Buffer('some file contents');
+  }
+
+  public writeFile() {
+    return true;
+  }
+};
+
 const requestMock = httpMocks.createRequest;
 const responseMock = httpMocks.createResponse;
 
@@ -37,6 +47,7 @@ export {
   chai,
   config,
   expect,
+  fileServiceMock,
   nock,
   requestMock,
   responseMock,
