@@ -1,10 +1,11 @@
 import {NextFunction, Request, Response} from 'express';
 import * as fs from 'fs';
 import FileConversionController from '../../../../src/controllers/FileConversionController';
-import {config, expect, requestMock, responseMock, sinon, testFile} from '../../../setupTests';
+import {config, expect, fileServiceMock, requestMock, responseMock, sinon, testFile} from '../../../setupTests';
 
 describe('FileConversionController', () => {
   describe('convertFile()', () => {
+    const fileService: any = new fileServiceMock();
     let req: Request;
     let res: Response;
     let next: NextFunction;
@@ -13,11 +14,11 @@ describe('FileConversionController', () => {
 
     beforeEach(() => {
       req = requestMock({
+        allFiles: {original: {}},
         file: testFile,
         logger: sinon.spy()
       });
       req.file.buffer = fs.readFileSync('test/data/test-file.pdf');
-      req.file.mimetype = 'application/pdf';
       res = responseMock();
       next = sinon.spy();
       image = {
@@ -32,8 +33,8 @@ describe('FileConversionController', () => {
       sinon.stub(res, 'json').returns(res);
     });
 
-    it('should log the correct messages and call next() if the file can be converted - image or pdf file', (done) => {
-      fileConversionController = new FileConversionController(image, config);
+    it('should log the correct messages and call next() if an original file can be converted', (done) => {
+      fileConversionController = new FileConversionController(image, config, fileService);
 
       fileConversionController
         .convertFile(req, res, next)
@@ -43,7 +44,6 @@ describe('FileConversionController', () => {
           expect(next).to.have.been.calledOnce;
           expect(req.allFiles).to.have.property(config.fileVersions.clean);
           expect(req.allFiles[config.fileVersions.clean]).to.deep.equal({
-            buffer: new Buffer('some file contents'),
             mimetype: 'image/png',
             version: config.fileVersions.clean
           });
@@ -54,11 +54,33 @@ describe('FileConversionController', () => {
         });
     });
 
-    it('should log the correct messages and call next() if the file cannot be converted - text file', (done) => {
+    it('should log the correct messages and call next() if a clean file can be converted', (done) => {
+      req.allFiles.clean = testFile;
+      fileConversionController = new FileConversionController(image, config, fileService);
+
+      fileConversionController
+        .convertFile(req, res, next)
+        .then(() => {
+          expect(req.logger).to.have.been.calledOnce;
+          expect(req.logger).to.have.been.calledWith('File can be converted - application/pdf');
+          expect(next).to.have.been.calledOnce;
+          expect(req.allFiles).to.have.property(config.fileVersions.clean);
+          expect(req.allFiles[config.fileVersions.clean]).to.deep.equal({
+            mimetype: 'image/png',
+            version: config.fileVersions.clean
+          });
+          done();
+        })
+        .catch((err) => {
+          done(err);
+        });
+    });
+
+    it('should log the correct messages and call next() if a file cannot be converted', (done) => {
       req.file.mimetype = 'text/plain';
       req.file.buffer = fs.readFileSync('test/data/test-file.txt');
 
-      fileConversionController = new FileConversionController(image, config);
+      fileConversionController = new FileConversionController(image, config, fileService);
 
       fileConversionController
         .convertFile(req, res, next)
@@ -74,13 +96,14 @@ describe('FileConversionController', () => {
     });
 
     it('should log the correct messages and return an error if the file conversion fails', (done) => {
+      req.file.mimetype = 'application/pdf';
       image = {
         convert: () => {
           throw new Error('Internal Server Error');
         }
       };
 
-      fileConversionController = new FileConversionController(image, config);
+      fileConversionController = new FileConversionController(image, config, fileService);
 
       fileConversionController
         .convertFile(req, res, next)
