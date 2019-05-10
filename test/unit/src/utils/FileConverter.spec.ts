@@ -2,15 +2,15 @@ import FileConverter from '../../../../src/utils/FileConverter';
 import {config, expect, sinon, testFile} from '../../../setupTests';
 
 describe('FileConverter', () => {
-  let gm: any;
   let util: any;
   let file: Express.Multer.File;
+  const fileConverterMock: any = class {
+    public fetchFileBuffer() {
+      return new Buffer('some file contents');
+    }
+  };
 
   beforeEach(() => {
-    gm = sinon.stub().returns({
-      density: sinon.spy(),
-      toBuffer: sinon.spy()
-    });
     util = {
       promisify: sinon.stub().returns(() => true)
     };
@@ -24,87 +24,57 @@ describe('FileConverter', () => {
     };
   });
 
-  describe('initGm()', () => {
-    it('should call gm() when given a MIME type other than application/pdf', (done) => {
-      const fileConverter: FileConverter = new FileConverter(gm, util, config);
-      fileConverter.initGm(file);
-      expect(fileConverter.gm).to.have.been.calledOnce;
-      expect(fileConverter.gm).to.have.been.calledWith(file.buffer, file.originalname);
-      done();
-    });
-
-    it('should call gm() when given a MIME type of application/pdf', (done) => {
-      file.mimetype = 'application/pdf';
-      const fileConverter: FileConverter = new FileConverter(gm, util, config);
-      fileConverter.initGm(file);
-      expect(fileConverter.gm).to.have.been.calledOnce;
-      expect(fileConverter.gm).to.have.been.calledWith(file.buffer, file.originalname);
-      done();
-    });
-  });
-
-  describe('fetchFileBuffer()', () => {
-    it('should call gm() and util.promisify()', (done) => {
-      const newFileType: string = 'png';
-      const fileConverter: FileConverter = new FileConverter(gm, util, config);
-      fileConverter.fetchFileBuffer(file, newFileType);
-      expect(fileConverter.gm).to.have.been.calledOnce;
-      expect(fileConverter.gm).to.have.been.calledWith(file.buffer, file.originalname);
-      expect(fileConverter.util.promisify).to.have.been.calledOnce;
-      done();
-    });
-  });
-
   describe('newMimeType()', () => {
-    it('should return the correct MIME type when the current MIME type is image/jpeg', (done) => {
-      const currentMimeType: string = 'image/jpeg';
-      const originalMimeType: string = 'image/jpeg';
-      const fileConverter: FileConverter = new FileConverter(gm, util, config);
-      const newMimeType: string[] = fileConverter.newMimeType(currentMimeType, originalMimeType);
-      expect(newMimeType).to.deep.equal(['image/png', 'png']);
-      done();
-    });
-
-    it('should return the correct MIME type when the current MIME type is application/pdf', (done) => {
+    it('should return the correct MIME type when currentMimeType matches originalMimeType and there is a mapped value', (done) => {
       const currentMimeType: string = 'application/pdf';
       const originalMimeType: string = 'application/pdf';
-      const fileConverter: FileConverter = new FileConverter(gm, util, config);
+      const fileConverter: FileConverter = new FileConverter(util, config, fileConverterMock, fileConverterMock);
       const newMimeType: string[] = fileConverter.newMimeType(currentMimeType, originalMimeType);
-      expect(newMimeType).to.deep.equal(['image/png', 'png']);
+      expect(newMimeType).to.deep.equal(['image/tiff', 'tiff', fileConverterMock]);
       done();
     });
 
-    it('should return the correct MIME type when the current MIME type is neither image/jpeg or application/pdf', (done) => {
-      const currentMimeType: string = 'image/png';
-      const originalMimeType: string = 'image/png';
-      const fileConverter: FileConverter = new FileConverter(gm, util, config);
+    it('should return the correct MIME type when currentMimeType matches originalMimeType and there is no mapped value', (done) => {
+      const currentMimeType: string = 'image/tiff';
+      const originalMimeType: string = 'image/tiff';
+      const fileConverter: FileConverter = new FileConverter(util, config, fileConverterMock, fileConverterMock);
       const newMimeType: string[] = fileConverter.newMimeType(currentMimeType, originalMimeType);
-      expect(newMimeType).to.deep.equal(['image/jpeg', 'jpeg']);
+      expect(newMimeType).to.deep.equal(['image/jpeg', 'jpeg', fileConverterMock]);
       done();
     });
 
-    it('should return the original MIME type when the current MIME type does not match the original MIME type', (done) => {
-      const currentMimeType: string = 'image/png';
-      const originalMimeType: string = 'image/jpeg';
-      const fileConverter: FileConverter = new FileConverter(gm, util, config);
+    it('should return the correct MIME type when currentMimeType does not match originalMimeType', (done) => {
+      const currentMimeType: string = 'image/tiff';
+      const originalMimeType: string = 'application/pdf';
+      const fileConverter: FileConverter = new FileConverter(util, config, fileConverterMock, fileConverterMock);
       const newMimeType: string[] = fileConverter.newMimeType(currentMimeType, originalMimeType);
-      expect(newMimeType).to.deep.equal(['image/jpeg', 'jpeg']);
+      expect(newMimeType).to.deep.equal(['application/pdf', 'pdf', fileConverterMock]);
+      done();
+    });
+
+    it('should return the correct MIME type when currentMimeType does not match originalMimeType and originalMimeType includes word', (done) => {
+      const currentMimeType: string = 'application/pdf';
+      const originalMimeType: string = 'application/msword';
+      const fileConverter: FileConverter = new FileConverter(util, config, fileConverterMock, fileConverterMock);
+      const newMimeType: string[] = fileConverter.newMimeType(currentMimeType, originalMimeType);
+      expect(newMimeType).to.deep.equal(['image/tiff', 'tiff', fileConverterMock]);
       done();
     });
   });
 
   describe('fetchFile()', () => {
     it('should return the correct file', (done) => {
-      const fileConverter: FileConverter = new FileConverter(gm, util, config);
+      const fileConverter: any = new FileConverter(util, config, fileConverterMock, fileConverterMock);
 
-      fileConverter.fetchFileBuffer = sinon.stub().returns(file.buffer);
+      fileConverter.newMimeType = sinon.stub().returns(['application/pdf', 'pdf', fileConverterMock]);
+      fileConverterMock.fetchFileBuffer = sinon.stub().returns(file.buffer);
 
       fileConverter
         .fetchFile(file)
         .then((res) => {
           expect(res).to.deep.equal({
             buffer: file.buffer,
-            mimetype: 'image/png',
+            mimetype: 'application/pdf',
             version: config.fileVersions.clean
           });
           done();
@@ -118,7 +88,7 @@ describe('FileConverter', () => {
   describe('convert()', () => {
     it('should return a correctly converted file', (done) => {
       const logger: sinon.SinonSpy = sinon.spy();
-      const fileConverter: FileConverter = new FileConverter(gm, util, config);
+      const fileConverter: FileConverter = new FileConverter(util, config, fileConverterMock, fileConverterMock);
 
       fileConverter.fetchFile = (res) => Promise.resolve({
         buffer: res.buffer,
