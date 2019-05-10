@@ -1,13 +1,14 @@
 import {NextFunction, Request, Response} from 'express';
 import * as request from 'superagent';
 import IConfig from '../interfaces/IConfig';
-import FileService from '../services/FileService';
 
 class VirusScanController {
   protected config: IConfig;
+  protected fileService: any;
 
-  constructor(config: IConfig) {
+  constructor(config: IConfig, fileService: any) {
     this.config = config;
+    this.fileService = fileService;
     this.scanFile = this.scanFile.bind(this);
   }
 
@@ -18,7 +19,7 @@ class VirusScanController {
     logger('Virus scanning file');
 
     try {
-      const fileContents: Buffer = new FileService().readFile(this.config.fileVersions.original, req.uuid);
+      const fileContents: Buffer = this.fileService.readFile(this.config.fileVersions.original, req.uuid);
       const result = await request
         .post(`http://${virusScan.host}:${virusScan.port}${virusScan.path}`)
         .attach('file', fileContents, file.originalname)

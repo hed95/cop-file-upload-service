@@ -1,15 +1,21 @@
 import {NextFunction, Request, Response} from 'express';
+import * as pdfParse from 'pdf-parse';
+import * as tesseract from 'tesseractocr';
 import IConfig from '../interfaces/IConfig';
-import FileService from '../services/FileService';
+import IOcr from '../interfaces/IOcr';
 import FileType from '../utils/FileType';
 
 class OcrController {
-  protected ocr: any;
   protected config: IConfig;
+  protected imageOcr: any;
+  protected pdfOcr: any;
+  protected fileService: any;
 
-  constructor(ocr: any, config: IConfig) {
-    this.ocr = ocr;
+  constructor(config: IConfig, imageOcr: any, pdfOcr: any, fileService: any) {
     this.config = config;
+    this.imageOcr = imageOcr;
+    this.pdfOcr = pdfOcr;
+    this.fileService = fileService;
     this.parseFile = this.parseFile.bind(this);
   }
 
@@ -18,17 +24,21 @@ class OcrController {
     const {fileVersions}: IConfig = this.config;
     const file: Express.Multer.File = req.allFiles[fileVersions.clean];
     const fileType: string = FileType.fileType(file.mimetype);
-    const fileService: FileService = new FileService();
+
     logger('Parsing file for ocr');
 
     if (FileType.isValidFileTypeForOcr(fileType)) {
       try {
-        const fileContents: Buffer = fileService.readFile(fileVersions.clean, req.uuid);
-        const text: string = await this.ocr(fileContents);
+        const fileContents: Buffer = this.fileService.readFile(fileVersions.clean, req.uuid);
+        const ocr: IOcr = (fileType === 'pdf') ? new this.pdfOcr(pdfParse) : new this.imageOcr(tesseract);
+        const text: string = await ocr.getText(fileContents);
+
         logger('Parsed text from file');
-        fileService.writeFile(fileVersions.ocr, req.uuid, new Buffer(text.trim()));
+
+        this.fileService.writeFile(fileVersions.ocr, req.uuid, new Buffer(text));
+
         req.allFiles[fileVersions.ocr] = {
-          ...req.file,
+          ...file,
           ...{
             mimetype: 'text/plain',
             version: fileVersions.ocr

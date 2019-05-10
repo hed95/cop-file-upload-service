@@ -1,8 +1,6 @@
 import * as express from 'express';
-import * as gm from 'gm';
 import * as joi from 'joi';
 import * as multer from 'multer';
-import * as ocr from 'tesseractocr';
 import * as util from 'util';
 import config from '../config';
 import DeleteValidationController from '../controllers/DeleteValidationController';
@@ -17,16 +15,21 @@ import VirusScanController from '../controllers/VirusScanController';
 import FileService from '../services/FileService';
 import S3Service from '../services/S3Service';
 import FileConverter from '../utils/FileConverter';
+import ImageFileConverter from '../utils/ImageFileConverter';
+import ImageOcr from '../utils/ImageOcr';
+import PdfOcr from '../utils/PdfOcr';
+import TextFileConverter from '../utils/TextFileConverter';
 
+const fileService = new FileService();
 const storage: multer.StorageEngine = multer.diskStorage({
   destination: config.uploadDirectory,
   filename: (req: any, file: any, cb: any) => {
-    cb(null, new FileService().formatFilename(config.fileVersions.original, req.uuid));
+    cb(null, fileService.formatFilename(config.fileVersions.original, req.uuid));
   }
 });
 const upload: multer.Instance = multer({storage});
 const s3Service: S3Service = new S3Service(config, util);
-const storageController: StorageController = new StorageController(s3Service, config);
+const storageController: StorageController = new StorageController(s3Service, config, fileService);
 
 class FilesRouter {
   public static router(): express.Router {
@@ -44,10 +47,14 @@ class FilesRouter {
       new PostValidationController(joi).validateRoute,
       new MetadataController(Date.now(), config).generateMetadata,
       storageController.uploadFile,
-      new VirusScanController(config).scanFile,
-      new FileConversionController(new FileConverter(gm, util, config), config).convertFile,
-      new OcrController(ocr, config).parseFile,
-      new FileConversionController(new FileConverter(gm, util, config), config).convertFile,
+      new VirusScanController(config, fileService).scanFile,
+      new FileConversionController(
+        new FileConverter(util, config, ImageFileConverter, TextFileConverter), config, fileService
+      ).convertFile,
+      new OcrController(config, ImageOcr, PdfOcr, fileService).parseFile,
+      new FileConversionController(
+        new FileConverter(util, config, ImageFileConverter, TextFileConverter), config, fileService
+      ).convertFile,
       storageController.uploadFile,
       storageController.uploadFile,
       new PostResponseController(config).response

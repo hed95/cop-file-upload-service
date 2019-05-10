@@ -1,16 +1,17 @@
 import {NextFunction, Request, Response} from 'express';
 import IConfig from '../interfaces/IConfig';
 import IPostRequestParams from '../interfaces/IPostRequestParams';
-import FileService from '../services/FileService';
 import S3Service from '../services/S3Service';
 
 class StorageController {
   protected storageService: S3Service;
   protected config: IConfig;
+  protected fileService: any;
 
-  constructor(storageService: S3Service, config: IConfig) {
+  constructor(storageService: S3Service, config: IConfig, fileService: any) {
     this.storageService = storageService;
     this.config = config;
+    this.fileService = fileService;
     this.downloadFile = this.downloadFile.bind(this);
     this.uploadFile = this.uploadFile.bind(this);
     this.deleteFiles = this.deleteFiles.bind(this);
@@ -40,7 +41,7 @@ class StorageController {
     const fileVersionToUpload: string = Object.keys(allFiles)[0];
     const fileToUpload: Express.Multer.File = allFiles[fileVersionToUpload];
 
-    fileToUpload.buffer = new FileService().readFile(fileVersionToUpload, req.uuid);
+    fileToUpload.buffer = this.fileService.readFile(fileVersionToUpload, req.uuid);
 
     const uploadParams: IPostRequestParams = {
       file: fileToUpload,
