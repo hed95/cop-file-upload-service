@@ -20,7 +20,7 @@ spec:
         name: {{.FILE_UPLOAD_SERVICE_NAME}}
     spec:
       containers:
-      - name: {{.FILE_UPLOAD_SERVICE_NAME}-proxy
+      - name: {{.FILE_UPLOAD_SERVICE_NAME}}-proxy
         image: "{{.NGINX_IMAGE}}:{{.NGINX_TAG}}"
         imagePullPolicy: Always
         securityContext:
