@@ -2,7 +2,7 @@
 apiVersion: extensions/v1beta1
 kind: NetworkPolicy
 metadata:
-  name: {{.NAME}}
+  name: {{.FILE_UPLOAD_SERVICE_NAME}}
 spec:
   egress:
     - {}
@@ -10,13 +10,13 @@ spec:
     - from:
         - podSelector:
             matchLabels:
-              name: {{.PRIVATE_UI_NAME}}
+              name: {{.FILE_UPLOAD_SERVICE_NAME}}
       ports:
         - port: 10443
           protocol: TCP
   podSelector:
     matchLabels:
-      name: {{.NAME}}
+      name: {{.FILE_UPLOAD_SERVICE_NAME}}
   policyTypes:
     - Ingress
     - Egress

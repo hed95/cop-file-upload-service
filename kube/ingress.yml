@@ -2,7 +2,7 @@
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: {{.NAME}}
+  name: {{.FILE_UPLOAD_SERVICE_NAME}}
   labels:
     stable.k8s.psg.io/kcm.class: default
   annotations:
@@ -12,18 +12,18 @@ metadata:
     ingress.kubernetes.io/force-ssl-redirect: "true"
     ingress.kubernetes.io/proxy-send-timeout: "3600"
     ingress.kubernetes.io/proxy-read-timeout: "3600"
-    ingress.kubernetes.io/whitelist-source-range: {{.WHITELIST}}
+#    ingress.kubernetes.io/whitelist-source-range: {{.WHITELIST}}
     stable.k8s.psg.io/kcm.provider: http
 spec:
   rules:
-  - host: {{.NAME}}.{{.EXT_DOMAIN}}
+  - host: {{.FILE_UPLOAD_SERVICE_URL}}
     http:
       paths:
       - backend:
-          serviceName: {{.NAME}}
+          serviceName: {{.FILE_UPLOAD_SERVICE_NAME}}
           servicePort: 10443
         path: /
   tls:
   - hosts:
-    - {{.NAME}}.{{.EXT_DOMAIN}}
-    secretName: {{.NAME}}.{{.EXT_DOMAIN}}-tls
+    - {{.FILE_UPLOAD_SERVICE_URL}}
+    secretName: {{.FILE_UPLOAD_SERVICE_NAME}}-tls

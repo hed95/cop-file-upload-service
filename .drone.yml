@@ -107,46 +107,42 @@ pipeline:
   deploy_to_dev:
     image: quay.io/ukhomeofficedigital/kd
     secrets:
-      - source: DEV_NAME
-        target: NAME
       - source: DEV_KUBE_NAMESPACE_PRIVATE_COP
         target: KUBE_NAMESPACE
       - source: DEV_KUBE_SERVER
         target: KUBE_SERVER
       - source: DEV_KUBE_TOKEN
         target: KUBE_TOKEN
-      - source: DEV_INTERNAL_CA_URL
-        target: INTERNAL_CA_URL
-      - source: DEV_NO_LOGGING_URL_PARAMS
-        target: NO_LOGGING_URL_PARAMS
-      - source: DEV_NO_LOGGING_BODY
-        target: NO_LOGGING_BODY
-      - source: DEV_NO_LOGGING_RESPONSE
-        target: NO_LOGGING_RESPONSE
       - source: DEV_KEYCLOAK_URL
         target: KEYCLOAK_URL
       - source: DEV_KEYCLOAK_REALM
         target: KEYCLOAK_REALM
-      - source: DEV_KEYCLOAK_SECRET
-        target: KEYCLOAK_SECRET
-      - source: DEV_INT_DOMAIN
-        target: INT_DOMAIN
-      - source: DEV_EXT_DOMAIN
-        target: EXT_DOMAIN
       - source: PROTOCOL_HTTPS
         target: PROTOCOL
       - source: DEV_WHITELIST
         target: WHITELIST
-      - source: DEV_PRIVATE_UI_NAME
-        target: PRIVATE_UI_NAME
-      - source: DEV_SSE_KMS_KEY_ID
-        target: SSE_KMS_KEY_ID
-      - source: DEV_AWS_ACCESS_KEY
+      - source: DEV_WWW_URL
+        target: WWW_URL
+      - source: DEV_FILE_UPLOAD_SERVICE_AWS_SSE_KMS_KEY_ID
+        target: AWS_SSE_KMS_KEY_ID
+      - source: DEV_FILE_UPLOAD_SERVICE_AWS_ACCESS_KEY
         target: AWS_ACCESS_KEY
-      - source: DEV_AWS_SECRET_ACCESS_KEY
+      - source: DEV_FILE_UPLOAD_SERVICE_AWS_SECRET_ACCESS_KEY
         target: AWS_SECRET_ACCESS_KEY
-      - source: DEV_AWS_BUCKET
+      - source: DEV_FILE_UPLOAD_SERVICE_AWS_BUCKET
         target: AWS_BUCKET
+      - source: FILE_UPLOAD_SERVICE_KEYCLOAK_CLIENT_ID
+        target: FILE_UPLOAD_SERVICE_KEYCLOAK_CLIENT_ID
+      - source: FILE_UPLOAD_SERVICE_NAME
+        target: FILE_UPLOAD_SERVICE_NAME
+      - source: FILE_UPLOAD_SERVICE_PORT
+        target: FILE_UPLOAD_SERVICE_PORT
+      - source: FILE_UPLOAD_SERVICE_URL
+        target: FILE_UPLOAD_SERVICE_URL
+      - source: NGINX_IMAGE
+        target: NGINX_IMAGE
+      - source: NGINX_TAG
+        target: NGINX_TAG
     commands:
       - export IMAGE_TAG=$${DRONE_COMMIT_SHA}
       - kd --insecure-skip-tls-verify -f kube/network-policy.yml

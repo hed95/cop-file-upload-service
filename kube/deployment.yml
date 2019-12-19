@@ -1,43 +1,27 @@
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{.NAME}}
+  name: {{.FILE_UPLOAD_SERVICE_NAME}}
 spec:
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 33%
+      maxSurge: 1
+  revisionHistoryLimit: 3
   selector:
     matchLabels:
-      name: {{.NAME}}
-  replicas: 3
-  revisionHistoryLimit: 3
+      name: {{.FILE_UPLOAD_SERVICE_NAME}}
   template:
     metadata:
       labels:
-        name: {{.NAME}}
+        name: {{.FILE_UPLOAD_SERVICE_NAME}}
     spec:
-      securityContext:
-        runAsUser: 1000
-        fsGroup: 1000
       containers:
-      - name: certs
-        image: quay.io/ukhomeofficedigital/borders-cfssl-sidekick:bd4901b5a28c
-        securityContext:
-          runAsNonRoot: true
-          capabilities:
-            drop:
-             - SETUID
-             - SETGID
-        args:
-          - --domain={{.NAME}}.{{.KUBE_NAMESPACE}}.svc.cluster.local
-          - --url={{.INTERNAL_CA_URL}}
-          - --verbose=True
-        volumeMounts:
-          - name: certs
-            mountPath: /certs
-          - name: bundle
-            mountPath: /etc/ssl/certs
-            readOnly: true
-      - name: proxy
-        image: quay.io/ukhomeofficedigital/nginx-proxy
+      - name: {{.FILE_UPLOAD_SERVICE_NAME}-proxy
+        image: "{{.NGINX_IMAGE}}:{{.NGINX_TAG}}"
         imagePullPolicy: Always
         securityContext:
           runAsNonRoot: true
@@ -79,15 +63,15 @@ spec:
             proxy_buffer_size         128k;
             proxy_buffers             4 256k;
             proxy_busy_buffers_size   256k;
-            add_header       X-Frame-Options 'ALLOW-FROM {{.PROTOCOL}}{{.PRIVATE_UI_NAME}}.{{.EXT_DOMAIN}}' always;
+            add_header       X-Frame-Options 'ALLOW-FROM {{.PROTOCOL}}{{.WWW_URL}}' always;
         - name: LOG_FORMAT_NAME
           value: "json"
         - name: NO_LOGGING_URL_PARAMS
-          value: "{{.NO_LOGGING_URL_PARAMS}}"
+          value: "false"
         - name: NO_LOGGING_BODY
-          value: "{{.NO_LOGGING_BODY}}"
+          value: "false"
         - name: NO_LOGGING_RESPONSE
-          value: "{{.NO_LOGGING_RESPONSE}}"
+          value: "false"
         - name: STATSD_METRICS
           value: "FALSE"
         ports:
@@ -96,9 +80,6 @@ spec:
         volumeMounts:
           - name: certs
             mountPath: /certs
-          - name: bundle
-            mountPath: /etc/ssl/certs
-            readOnly: true
       - name: clamav
         image: quay.io/ukhomeofficedigital/clamav:v1.6.1
         ports:
@@ -124,25 +105,29 @@ spec:
           limits:
             memory: "4096M"
             cpu: "1"
-      - name: {{.NAME}}
-        image: quay.io/ukhomeofficedigital/file-upload-service:{{.IMAGE_TAG}}
+
+      - name: {{.FILE_UPLOAD_SERVICE_NAME}}
+        image: quay.io/ukhomeofficedigital/cop-file-upload-service:{{.IMAGE_TAG}}
         imagePullPolicy: Always
         securityContext:
           runAsNonRoot: true
         readinessProbe:
           httpGet:
             path: /readiness
-            port: 8181
+            port: {{.FILE_UPLOAD_SERVICE_PORT}}
             scheme: HTTP
           initialDelaySeconds: 20
           periodSeconds: 10
         livenessProbe:
           httpGet:
             path: /healthz
-            port: 8181
+            port: {{.FILE_UPLOAD_SERVICE_PORT}}
             scheme: HTTP
           initialDelaySeconds: 20
           periodSeconds: 10
+        ports:
+          - name: {{.FILE_UPLOAD_SERVICE_NAME}}
+            containerPort: {{.FILE_UPLOAD_SERVICE_PORT}}
         volumeMounts:
           - name: bundle
             mountPath: /etc/ssl/certs
@@ -151,30 +136,30 @@ spec:
         - name: VIRUS_SCAN_HOST
           value: localhost
         - name: AUTH_CLIENT_ID
-          value: {{.NAME}}
+          value: {{.FILE_UPLOAD_SERVICE_KEYCLOAK_CLIENT_ID}}
         - name: AUTH_URL
           value: {{.KEYCLOAK_URL}}
         - name: AUTH_REALM
           value: {{.KEYCLOAK_REALM}}
-        - name: SSE_KMS_KEY_ID
+        - name: AWS_SSE_KMS_KEY_ID
           valueFrom:
             secretKeyRef:
-              name: {{.NAME}}
-              key: sseKmsKeyId
+              name: {{.FILE_UPLOAD_SERVICE_NAME}}
+              key: awsSseKmsKeyId
         - name: AWS_BUCKET
           valueFrom:
             secretKeyRef:
-              name: {{.NAME}}
+              name: {{.FILE_UPLOAD_SERVICE_NAME}}
               key: awsS3Bucket
         - name: AWS_ACCESS_KEY
           valueFrom:
             secretKeyRef:
-              name: {{.NAME}}
+              name: {{.FILE_UPLOAD_SERVICE_NAME}}
               key: awsAccessKey
         - name: AWS_SECRET_ACCESS_KEY
           valueFrom:
             secretKeyRef:
-              name: {{.NAME}}
+              name: {{.FILE_UPLOAD_SERVICE_NAME}}
               key: awsSecretAccessKey
       volumes:
       - name: bundle
