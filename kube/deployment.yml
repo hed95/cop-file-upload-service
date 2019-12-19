@@ -128,10 +128,6 @@ spec:
         ports:
           - name: {{.FILE_UPLOAD_SERVICE_NAME}}
             containerPort: {{.FILE_UPLOAD_SERVICE_PORT}}
-        volumeMounts:
-          - name: bundle
-            mountPath: /etc/ssl/certs
-            readOnly: true
         env:
         - name: VIRUS_SCAN_HOST
           value: localhost
