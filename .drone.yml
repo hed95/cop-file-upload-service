@@ -15,37 +15,37 @@ pipeline:
       environment: secrets
       event: deployment
 
-  synch_staging_secrets:
-    image: quay.io/ukhomeofficedigital/cop-secrets
-    environment:
-      - DRONE_SERVER=https://drone.acp.homeoffice.gov.uk
-      - DEPLOY_ENV=staging
-    secrets:
-      - source: STAGING_DRONE_AWS_ACCESS_KEY_ID
-        target: AWS_ACCESS_KEY_ID
-      - source: STAGING_DRONE_AWS_SECRET_ACCESS_KEY
-        target: AWS_SECRET_ACCESS_KEY
-      - source: DRONE_PUBLIC_TOKEN
-        target: DRONE_TOKEN
-    when:
-      environment: secrets
-      event: deployment
-
-  synch_production_secrets:
-    image: quay.io/ukhomeofficedigital/cop-secrets
-    environment:
-      - DRONE_SERVER=https://drone.acp.homeoffice.gov.uk
-      - DEPLOY_ENV=production
-    secrets:
-      - source: PRODUCTION_DRONE_AWS_ACCESS_KEY_ID
-        target: AWS_ACCESS_KEY_ID
-      - source: PRODUCTION_DRONE_AWS_SECRET_ACCESS_KEY
-        target: AWS_SECRET_ACCESS_KEY
-      - source: DRONE_PUBLIC_TOKEN
-        target: DRONE_TOKEN
-    when:
-      environment: secrets
-      event: deployment
+#  synch_staging_secrets:
+#    image: quay.io/ukhomeofficedigital/cop-secrets
+#    environment:
+#      - DRONE_SERVER=https://drone.acp.homeoffice.gov.uk
+#      - DEPLOY_ENV=staging
+#    secrets:
+#      - source: STAGING_DRONE_AWS_ACCESS_KEY_ID
+#        target: AWS_ACCESS_KEY_ID
+#      - source: STAGING_DRONE_AWS_SECRET_ACCESS_KEY
+#        target: AWS_SECRET_ACCESS_KEY
+#      - source: DRONE_PUBLIC_TOKEN
+#        target: DRONE_TOKEN
+#    when:
+#      environment: secrets
+#      event: deployment
+#
+#  synch_production_secrets:
+#    image: quay.io/ukhomeofficedigital/cop-secrets
+#    environment:
+#      - DRONE_SERVER=https://drone.acp.homeoffice.gov.uk
+#      - DEPLOY_ENV=production
+#    secrets:
+#      - source: PRODUCTION_DRONE_AWS_ACCESS_KEY_ID
+#        target: AWS_ACCESS_KEY_ID
+#      - source: PRODUCTION_DRONE_AWS_SECRET_ACCESS_KEY
+#        target: AWS_SECRET_ACCESS_KEY
+#      - source: DRONE_PUBLIC_TOKEN
+#        target: DRONE_TOKEN
+#    when:
+#      environment: secrets
+#      event: deployment
 
   test:
       image: node:11
