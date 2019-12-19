@@ -20,6 +20,8 @@ COPY . .
 # Build app
 RUN npm run build
 
+USER 1000
+
 EXPOSE 8181
 
 CMD [ "npm", "start" ]
