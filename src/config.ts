@@ -37,7 +37,7 @@ const config: IConfig = {
       region: process.env.AWS_REGION || 'dummy-region',
       secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || 'dummy-secret-access-key',
       serverSideEncryption: 'aws:kms',
-      sseKmsKeyId: process.env.SSE_KMS_KEY_ID || 'dummy-sse-kms-key-id'
+      sseKmsKeyId: process.env.AWS_SSE_KMS_KEY_ID || 'dummy-sse-kms-key-id'
     },
     virusScan: {
       host: process.env.VIRUS_SCAN_HOST || 'localhost',
