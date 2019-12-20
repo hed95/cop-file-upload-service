@@ -9,8 +9,8 @@ describe('DeleteValidationController', () => {
     it('should call validate.validateFields() and handleValidation()', (done) => {
       const req: Request = requestMock({
         params: {
-          filename: '9e5eb809-bce7-463e-8c2f-b6bd8c4832d9',
-          processKey: 'test-process-key'
+          businessKey: 'BF-20191218-798',
+          filename: '9e5eb809-bce7-463e-8c2f-b6bd8c4832d9'
         }
       });
       const res: Response = responseMock({});

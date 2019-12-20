@@ -4,14 +4,14 @@ import app from '../../../../src/index';
 import {chai, config, expect, testFile} from '../../../setupTests';
 
 describe('FilesRouter', () => {
-  const processKey: string = 'test-process-key';
+  const businessKey: string = 'BF-20191218-798';
   const filename: string = 'c0569d57-59a0-4c39-8379-03e5a261f954';
 
   describe('get()', () => {
     it('should return the correct status and response when authentication fails', (done) => {
       chai
         .request(app)
-        .get(`${config.endpoints.files}/${processKey}/${config.fileVersions.original}/${filename}`)
+        .get(`${config.endpoints.files}/${businessKey}/${config.fileVersions.original}/${filename}`)
         .end((err: Error, res: superagent.Response) => {
           expect(res.status).to.equal(403);
           expect(res.text).to.equal('Access denied');
@@ -28,7 +28,7 @@ describe('FilesRouter', () => {
         .request(app)
         .post(config.endpoints.files)
         .attach(testFile.fieldname, testFile.buffer, testFile.originalname)
-        .field('processKey', processKey)
+        .field('businessKey', businessKey)
         .end((err: Error, res: superagent.Response) => {
           expect(res.status).to.equal(403);
           expect(res.text).to.equal('Access denied');
@@ -42,7 +42,7 @@ describe('FilesRouter', () => {
     it('should return the correct status and response when authentication fails', (done) => {
       chai
         .request(app)
-        .get(`${config.endpoints.files}/${processKey}/${filename}`)
+        .get(`${config.endpoints.files}/${businessKey}/${filename}`)
         .end((err: Error, res: superagent.Response) => {
           expect(res.status).to.equal(403);
           expect(res.text).to.equal('Access denied');

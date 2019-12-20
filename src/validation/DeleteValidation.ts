@@ -6,12 +6,12 @@ class DeleteValidation extends Validation {
     return this.joi
       .object()
       .keys({
+        businessKey: this.joi
+        .string()
+        .required(),
         filename: this.joi
           .string()
           .regex(this.filenameRegex)
-          .required(),
-        processKey: this.joi
-          .string()
           .required()
       });
   }

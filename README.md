@@ -17,14 +17,14 @@ The service performs the following actions on the uploaded files:
 ### Uploading a file
 
 ```
-POST /files/{processKey}
+POST /files/{businessKey}
 ```
 
 #### Parameters
 
 file: The file to be uploaded
 
-processKey: The process key of the uploaded file
+businessKey: The business key of the process of the uploaded file
 
 #### Responses
 
@@ -57,12 +57,12 @@ processKey: The process key of the uploaded file
 ### Downloading a file
 
 ```
-GET /files/{processKey}/{fileVersion}/{filename}
+GET /files/{businessKey}/{fileVersion}/{filename}
 ```
 
 #### Parameters
 
-processKey: The process key of the file to be downloaded
+businessKey: The business key of the process of the file to be downloaded
 
 fileVersion: The version of the file to be downloaded. Will be one of: `orig`, `clean` or `ocr`
 
@@ -91,12 +91,12 @@ filename: The name of the file to be downloaded
 ### Deleting a file
 
 ```
-DELETE /files/{processKey}/{filename}
+DELETE /files/{businessKey}/{filename}
 ```
 
 #### Parameters
 
-processKey: The process key of the file to be deleted
+businessKey: The business key of the process of the file to be deleted
 
 filename: The name of the file to be deleted
 

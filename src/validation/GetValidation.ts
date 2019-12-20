@@ -7,6 +7,9 @@ class GetValidation extends Validation {
     return this.joi
       .object()
       .keys({
+        businessKey: this.joi
+          .string()
+          .required(),
         fileVersion: this.joi
           .any()
           .valid(Object.values(config.fileVersions))
@@ -14,9 +17,6 @@ class GetValidation extends Validation {
         filename: this.joi
           .string()
           .regex(this.filenameRegex)
-          .required(),
-        processKey: this.joi
-          .string()
           .required()
       });
   }

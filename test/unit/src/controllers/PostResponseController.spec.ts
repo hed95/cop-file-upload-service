@@ -11,7 +11,7 @@ describe('PostResponseController', () => {
           info: sinon.spy()
         },
         params: {
-          processKey: 'test-process-key'
+          businessKey: 'BF-20191218-798'
         }
       });
       const res: Response = responseMock();

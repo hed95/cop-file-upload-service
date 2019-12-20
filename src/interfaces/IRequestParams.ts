@@ -1,5 +1,5 @@
 interface IRequestParams {
-  processKey: string;
+  businessKey: string;
 }
 
 export default IRequestParams;

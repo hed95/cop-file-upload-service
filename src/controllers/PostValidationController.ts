@@ -8,8 +8,8 @@ class PostValidationController extends ValidationController {
   public validateRoute(req: Request, res: Response, next: NextFunction): Response | void {
     const {file, params}: Request = req;
     const data: IPostRequestParams = {
-      file,
-      processKey: params.processKey
+      businessKey: params.businessKey,
+      file
     };
     const error: ValidationError | null = this.validate.validateFields(new PostValidation(), this.joi, data);
     return this.handleValidation(req, res, next, error);

@@ -91,7 +91,7 @@ describe('StorageController', () => {
     });
 
     it('should log the correct messages and call next() when a file is uploaded successfully', (done) => {
-      req.params.processKey = 'test-process-key';
+      req.params.businessKey = 'BF-20191218-798';
 
       storageController = new StorageController(s3Service, config);
 

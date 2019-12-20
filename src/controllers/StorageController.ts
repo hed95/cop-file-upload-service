@@ -39,8 +39,8 @@ class StorageController {
     const fileVersionToUpload: string = Object.keys(allFiles)[0];
     const fileToUpload: Express.Multer.File = allFiles[fileVersionToUpload];
     const uploadParams: IPostRequestParams = {
-      file: fileToUpload,
-      processKey: params.processKey
+      businessKey: params.businessKey,
+      file: fileToUpload
     };
 
     logger(`Uploading file - ${fileToUpload.version} version`);

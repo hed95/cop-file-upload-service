@@ -26,9 +26,9 @@ describe('S3Service', () => {
   describe('downloadParams()', () => {
     it('should return the correct params', (done) => {
       const requestParams: IGetRequestParams = {
+        businessKey: 'BF-20191218-798',
         fileVersion: 'clean',
-        filename: '9e5eb809-bce7-463e-8c2f-b6bd8c4832d9',
-        processKey: 'test-process-key'
+        filename: '9e5eb809-bce7-463e-8c2f-b6bd8c4832d9'
       };
       s3 = new S3Service(config, util);
       const downloadParams: S3DownloadParamsInterface = s3.downloadParams(config, requestParams);
@@ -47,14 +47,14 @@ describe('S3Service', () => {
       config.services.s3.sseKmsKeyId = 'keyid123';
 
       const requestParams: IPostRequestParams = {
+        businessKey: 'BF-20191218-798',
         file: {
           ...testFile,
           ...{
             buffer: new Buffer('some file contents'),
             filename: '9e5eb809-bce7-463e-8c2f-b6bd8c4832d9'
           }
-        },
-        processKey: 'test-process-key'
+        }
       };
 
       s3 = new S3Service(config, util);
@@ -65,9 +65,9 @@ describe('S3Service', () => {
         Bucket: config.services.s3.bucket,
         ContentType: requestParams.file.mimetype,
         Key: StorageKey.format({
+          businessKey: requestParams.businessKey,
           fileVersion: requestParams.file.version,
-          filename: requestParams.file.filename,
-          processKey: requestParams.processKey
+          filename: requestParams.file.filename
         }),
         Metadata: {
           originalfilename: requestParams.file.originalname,
@@ -84,8 +84,8 @@ describe('S3Service', () => {
   describe('deleteParams()', () => {
     it('should return the correct params', (done) => {
       const requestParams: IDeleteRequestParams = {
-        filename: '9e5eb809-bce7-463e-8c2f-b6bd8c4832d9',
-        processKey: 'test-process-key'
+        businessKey: 'BF-20191218-798',
+        filename: '9e5eb809-bce7-463e-8c2f-b6bd8c4832d9'
       };
 
       s3 = new S3Service(config, util);
@@ -96,9 +96,9 @@ describe('S3Service', () => {
         Delete: {
           Objects: Object.values(config.fileVersions).map((version) => ({
             Key: StorageKey.format({
+              businessKey: requestParams.businessKey,
               fileVersion: version,
-              filename: requestParams.filename,
-              processKey: requestParams.processKey
+              filename: requestParams.filename
             })
           })),
           Quiet: true
@@ -112,9 +112,9 @@ describe('S3Service', () => {
   describe('downloadFile()', () => {
     it('should call fetchAsync() with the correct params', (done) => {
       const requestParams: IGetRequestParams = {
+        businessKey: 'BF-20191218-798',
         fileVersion: 'orig',
-        filename: '9e5eb809-bce7-463e-8c2f-b6bd8c4832d9',
-        processKey: 'test-process-key'
+        filename: '9e5eb809-bce7-463e-8c2f-b6bd8c4832d9'
       };
 
       s3 = new S3Service(config, util);
@@ -134,8 +134,8 @@ describe('S3Service', () => {
   describe('uploadFile()', () => {
     it('should call fetchAsync() with the correct params', (done) => {
       const requestParams: IPostRequestParams = {
-        file: testFile,
-        processKey: 'test-process-key'
+        businessKey: 'BF-20191218-798',
+        file: testFile
       };
 
       s3 = new S3Service(config, util);
@@ -155,8 +155,8 @@ describe('S3Service', () => {
   describe('deleteFiles()', () => {
     it('should call fetchAsync() with the correct params', (done) => {
       const requestParams: IDeleteRequestParams = {
-        filename: '9e5eb809-bce7-463e-8c2f-b6bd8c4832d9',
-        processKey: 'test-process-key'
+        businessKey: 'BF-20191218-798',
+        filename: '9e5eb809-bce7-463e-8c2f-b6bd8c4832d9'
       };
 
       s3 = new S3Service(config, util);

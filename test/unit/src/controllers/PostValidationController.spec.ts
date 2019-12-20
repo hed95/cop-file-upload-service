@@ -10,7 +10,7 @@ describe('PostValidationController', () => {
       const req: Request = requestMock({
         file: testFile,
         params: {
-          processKey: 'test-process-key'
+          businessKey: 'BF-20191218-798'
         }
       });
       const res: Response = responseMock();
@@ -25,8 +25,8 @@ describe('PostValidationController', () => {
 
       expect(postValidationController.validate.validateFields).to.have.been.calledOnce;
       expect(postValidationController.validate.validateFields).to.have.been.calledWith(new PostValidation(), Joi, {
-        file: testFile,
-        processKey: 'test-process-key'
+        businessKey: 'BF-20191218-798',
+        file: testFile
       });
       expect(postValidationController.handleValidation).to.have.been.calledOnce;
       expect(postValidationController.handleValidation).to.have.been.calledWith(req, res, next, null);
