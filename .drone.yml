@@ -137,7 +137,7 @@ pipeline:
         target: FILE_UPLOAD_SERVICE_NAME
       - source: FILE_UPLOAD_SERVICE_PORT
         target: FILE_UPLOAD_SERVICE_PORT
-      - source: FILE_UPLOAD_SERVICE_URL
+      - source: DEV_FILE_UPLOAD_SERVICE_URL
         target: FILE_UPLOAD_SERVICE_URL
       - source: NGINX_IMAGE
         target: NGINX_IMAGE
