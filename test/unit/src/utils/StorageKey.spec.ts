@@ -6,9 +6,9 @@ describe('StorageKey', () => {
     it('should return a storage key in the correct format', (done) => {
       const fileVersion = config.fileVersions.clean;
       const filename = '9e5eb809-bce7-463e-8c2f-b6bd8c4832d9';
-      const processKey = 'test-process-key';
-      const storageKey = StorageKey.format({fileVersion, filename, processKey});
-      expect(storageKey).to.equal(`${processKey}/${fileVersion}/${filename}`);
+      const businessKey = 'BF-20191218-798';
+      const storageKey = StorageKey.format({fileVersion, filename, businessKey});
+      expect(storageKey).to.equal(`${businessKey}/${fileVersion}/${filename}`);
       done();
     });
   });

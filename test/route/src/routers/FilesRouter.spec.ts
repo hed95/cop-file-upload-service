@@ -6,7 +6,7 @@ import Validation from '../../../../src/validation/Validation';
 import {chai, config, expect, nock, testFile} from '../../../setupTests';
 
 describe('FilesRouter', () => {
-  const processKey: string = 'test-process-key';
+  const businessKey: string = 'BF-20191218-798';
   const {endpoints, fileVersions, services}: IConfig = config;
   const validation: Validation = new Validation();
   const pathRegex: RegExp = new RegExp(`/${validation.filenamePattern}`);
@@ -15,7 +15,7 @@ describe('FilesRouter', () => {
 
   beforeEach(() => {
     Object.keys(config.fileVersions).forEach((fileVersion) => {
-      nock(`${testS3Hostname}/test-process-key/${fileVersion}`)
+      nock(`${testS3Hostname}/BF-20191218-798/${fileVersion}`)
       .put(pathRegex)
       .reply(200)
       .get(pathRegex)
@@ -28,7 +28,7 @@ describe('FilesRouter', () => {
   });
 
   describe('post()', () => {
-    const postUrl: string = `${endpoints.files}/${processKey}`;
+    const postUrl: string = `${endpoints.files}/${businessKey}`;
     let virusScanMock: nock.Interceptor;
 
     beforeEach(() => {
@@ -122,7 +122,7 @@ describe('FilesRouter', () => {
   });
 
   describe('get()', () => {
-    const getUrl = `${endpoints.files}/${processKey}/${fileVersions.original}`;
+    const getUrl = `${endpoints.files}/${businessKey}/${fileVersions.original}`;
 
     it('should return the correct status and response', (done) => {
       chai
@@ -164,7 +164,7 @@ describe('FilesRouter', () => {
   });
 
   describe('delete()', () => {
-    const deleteUrl = `${endpoints.files}/${processKey}`;
+    const deleteUrl = `${endpoints.files}/${businessKey}`;
 
     it('should return the correct status and response', (done) => {
       nock(testS3Hostname)

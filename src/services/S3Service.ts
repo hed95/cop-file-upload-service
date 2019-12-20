@@ -38,12 +38,12 @@ class S3Service {
 
   public uploadParams(config: IConfig, params: IPostRequestParams): IS3UploadParams {
     const {s3}: IConfig['services'] = config.services;
-    const {file, processKey}: IPostRequestParams = params;
+    const {businessKey, file}: IPostRequestParams = params;
     return {
       Body: file.buffer,
       Bucket: s3.bucket,
       ContentType: file.mimetype,
-      Key: StorageKey.format({processKey, fileVersion: file.version, filename: file.filename}),
+      Key: StorageKey.format({businessKey, fileVersion: file.version, filename: file.filename}),
       Metadata: {
         originalfilename: file.originalname,
         processedtime: file.processedTime.toString()
@@ -55,12 +55,12 @@ class S3Service {
 
   public deleteParams(config: IConfig, params: IDeleteRequestParams): IS3DeleteParams {
     const {s3}: IConfig['services'] = config.services;
-    const {filename, processKey}: IDeleteRequestParams = params;
+    const {businessKey, filename}: IDeleteRequestParams = params;
     return {
       Bucket: s3.bucket,
       Delete: {
         Objects: Object.values(config.fileVersions).map((fileVersion) => ({
-          Key: StorageKey.format({processKey, fileVersion, filename})
+          Key: StorageKey.format({businessKey, fileVersion, filename})
         })),
         Quiet: true
       }

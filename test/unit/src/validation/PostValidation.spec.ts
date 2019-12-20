@@ -4,7 +4,7 @@ import {expect, testFile} from '../../../setupTests';
 
 interface ITestPostRequest {
   file: Express.Multer.File | string;
-  processKey: string | string[];
+  businessKey: string | string[];
 }
 
 describe('PostValidation', () => {
@@ -14,8 +14,8 @@ describe('PostValidation', () => {
 
   beforeEach(() => {
     data = {
-      file: testFile,
-      processKey: 'test-process-key'
+      businessKey: 'BF-20191218-798',
+      file: testFile
     };
     schema = new PostValidation().schema();
   });
@@ -41,17 +41,17 @@ describe('PostValidation', () => {
       done();
     });
 
-    it('should return an error when processKey is not a string', (done) => {
-      data.processKey = ['test-process-key'];
+    it('should return an error when businessKey is not a string', (done) => {
+      data.businessKey = ['BF-20191218-798'];
       result = Joi.validate(data, schema);
-      expect(result).to.have.property('error').and.match(/"processKey" must be a string/);
+      expect(result).to.have.property('error').and.match(/"businessKey" must be a string/);
       done();
     });
 
-    it('should return an error when processKey is not given', (done) => {
-      delete data.processKey;
+    it('should return an error when businessKey is not given', (done) => {
+      delete data.businessKey;
       result = Joi.validate(data, schema);
-      expect(result).to.have.property('error').and.match(/"processKey" is required/);
+      expect(result).to.have.property('error').and.match(/"businessKey" is required/);
       done();
     });
   });

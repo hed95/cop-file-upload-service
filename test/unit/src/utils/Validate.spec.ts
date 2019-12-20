@@ -13,8 +13,8 @@ describe('Validate', () => {
         validate: sinon.stub().returns({error: null})
       };
       const data: PostRequestInterface = {
-        file: testFile,
-        processKey: 'test-process-key'
+        businessKey: 'BF-20191218-798',
+        file: testFile
       };
       const error: ValidationError | null = new Validate().validateFields(rules, validator, data);
 

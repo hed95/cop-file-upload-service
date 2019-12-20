@@ -6,11 +6,11 @@ class PostValidation extends Validation {
     return this.joi
       .object()
       .keys({
+        businessKey: this.joi
+          .string()
+          .required(),
         file: this.joi
           .object()
-          .required(),
-        processKey: this.joi
-          .string()
           .required()
       });
   }

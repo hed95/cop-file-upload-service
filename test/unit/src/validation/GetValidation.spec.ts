@@ -5,7 +5,7 @@ import {expect} from '../../../setupTests';
 interface ITestGetRequest {
   filename: string | string[];
   fileVersion: string;
-  processKey: string | string[];
+  businessKey: string | string[];
 }
 
 describe('GetValidation', () => {
@@ -15,9 +15,9 @@ describe('GetValidation', () => {
 
   beforeEach(() => {
     data = {
+      businessKey: 'BF-20191218-798',
       fileVersion: 'orig',
-      filename: '9e5eb809-bce7-463e-8c2f-b6bd8c4832d9',
-      processKey: 'test-process-key'
+      filename: '9e5eb809-bce7-463e-8c2f-b6bd8c4832d9'
     };
     schema = new GetValidation().schema();
   });
@@ -29,17 +29,17 @@ describe('GetValidation', () => {
       done();
     });
 
-    it('should return an error when processKey is not a string', (done) => {
-      data.processKey = ['test-process-key'];
+    it('should return an error when businessKey is not a string', (done) => {
+      data.businessKey = ['BF-20191218-798'];
       result = Joi.validate(data, schema);
-      expect(result).to.have.property('error').and.match(/"processKey" must be a string/);
+      expect(result).to.have.property('error').and.match(/"businessKey" must be a string/);
       done();
     });
 
-    it('should return an error when processKey is not given', (done) => {
-      delete data.processKey;
+    it('should return an error when businessKey is not given', (done) => {
+      delete data.businessKey;
       result = Joi.validate(data, schema);
-      expect(result).to.have.property('error').and.match(/"processKey" is required/);
+      expect(result).to.have.property('error').and.match(/"businessKey" is required/);
       done();
     });
 

@@ -27,13 +27,13 @@ class FilesRouter {
     const router: express.Router = express.Router();
 
     router.get(
-      `${config.endpoints.files}/:processKey/:fileVersion/:filename`,
+      `${config.endpoints.files}/:businessKey/:fileVersion/:filename`,
       new GetValidationController(joi).validateRoute,
       storageController.downloadFile
     );
 
     router.post(
-      `${config.endpoints.files}/:processKey`,
+      `${config.endpoints.files}/:businessKey`,
       upload.single('file'),
       new PostValidationController(joi).validateRoute,
       new MetadataController(Date.now(), config).generateMetadata,
@@ -48,7 +48,7 @@ class FilesRouter {
     );
 
     router.delete(
-      `${config.endpoints.files}/:processKey/:filename`,
+      `${config.endpoints.files}/:businessKey/:filename`,
       new DeleteValidationController(joi).validateRoute,
       storageController.deleteFiles
     );
