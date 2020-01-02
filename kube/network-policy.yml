@@ -1,5 +1,5 @@
 ---
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: {{.FILE_UPLOAD_SERVICE_NAME}}
@@ -8,9 +8,12 @@ spec:
     - {}
   ingress:
     - from:
-        - podSelector:
-            matchLabels:
-              name: {{.FILE_UPLOAD_SERVICE_NAME}}
+      - namespaceSelector:
+          matchLabels:
+            name: ingress-external
+      - podSelector:
+          matchLabels:
+            name: {{.FILE_UPLOAD_SERVICE_NAME}}
       ports:
         - port: 10443
           protocol: TCP
