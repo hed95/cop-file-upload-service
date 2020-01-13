@@ -134,7 +134,7 @@ spec:
         - name: AUTH_CLIENT_ID
           value: {{.FILE_UPLOAD_SERVICE_KEYCLOAK_CLIENT_ID}}
         - name: AUTH_URL
-          value: {{.KEYCLOAK_URL}}
+          value: "{{.KEYCLOAK_PROTOCOL}}{{.KEYCLOAK_URL}}"
         - name: AUTH_REALM
           value: {{.KEYCLOAK_REALM}}
         - name: AWS_SSE_KMS_KEY_ID
