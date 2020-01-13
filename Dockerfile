@@ -1,4 +1,4 @@
-FROM node:11
+FROM quay.io/ukhomeofficedigital/cop-node:11
 
 # Create app directory
 WORKDIR /usr/src/app
