@@ -48,7 +48,7 @@ pipeline:
 #      event: deployment
 
   test:
-      image: node:11
+      image: quay.io/ukhomeofficedigital/cop-node:11
       commands:
         - npm install
         - npm run linter
@@ -152,7 +152,7 @@ pipeline:
       - kd --insecure-skip-tls-verify -f kube/network-policy.yml
       - kd --insecure-skip-tls-verify -f kube/secret.yml
       - kd --insecure-skip-tls-verify -f kube/service.yml
-      - kd --insecure-skip-tls-verify -f kube/deployment.yml --timeout=5m
+      - kd --insecure-skip-tls-verify -f kube/deployment.yml --timeout=6m
       - kd --insecure-skip-tls-verify -f kube/ingress.yml
     when:
       branch:
