@@ -81,7 +81,7 @@ spec:
           - name: certs
             mountPath: /certs
       - name: clamav
-        image: quay.io/ukhomeofficedigital/clamav:v1.6.1
+        image: quay.io/ukhomeofficedigital/clamav:v0.101.3
         ports:
           - containerPort: 3310
         resources:
@@ -137,21 +137,15 @@ spec:
           value: "{{.KEYCLOAK_PROTOCOL}}{{.KEYCLOAK_URL}}"
         - name: AUTH_REALM
           value: {{.KEYCLOAK_REALM}}
-        - name: AWS_SSE_KMS_KEY_ID
-          valueFrom:
-            secretKeyRef:
-              name: {{.FILE_UPLOAD_SERVICE_NAME}}
-              key: awsSseKmsKeyId
-        - name: AWS_BUCKET
-          valueFrom:
-            secretKeyRef:
-              name: {{.FILE_UPLOAD_SERVICE_NAME}}
-              key: awsS3Bucket
         - name: AWS_ACCESS_KEY
           valueFrom:
             secretKeyRef:
               name: {{.FILE_UPLOAD_SERVICE_NAME}}
               key: awsAccessKey
+        - name: AWS_BUCKET
+          value: "{{.BUCKET_NAME_PREFIX}}-attachment"
+        - name: AWS_REGION
+          value: {{.AWS_REGION}}
         - name: AWS_SECRET_ACCESS_KEY
           valueFrom:
             secretKeyRef:

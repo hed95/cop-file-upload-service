@@ -15,37 +15,37 @@ pipeline:
       environment: secrets
       event: deployment
 
-#  synch_staging_secrets:
-#    image: quay.io/ukhomeofficedigital/cop-secrets
-#    environment:
-#      - DRONE_SERVER=https://drone.acp.homeoffice.gov.uk
-#      - DEPLOY_ENV=staging
-#    secrets:
-#      - source: STAGING_DRONE_AWS_ACCESS_KEY_ID
-#        target: AWS_ACCESS_KEY_ID
-#      - source: STAGING_DRONE_AWS_SECRET_ACCESS_KEY
-#        target: AWS_SECRET_ACCESS_KEY
-#      - source: DRONE_PUBLIC_TOKEN
-#        target: DRONE_TOKEN
-#    when:
-#      environment: secrets
-#      event: deployment
-#
-#  synch_production_secrets:
-#    image: quay.io/ukhomeofficedigital/cop-secrets
-#    environment:
-#      - DRONE_SERVER=https://drone.acp.homeoffice.gov.uk
-#      - DEPLOY_ENV=production
-#    secrets:
-#      - source: PRODUCTION_DRONE_AWS_ACCESS_KEY_ID
-#        target: AWS_ACCESS_KEY_ID
-#      - source: PRODUCTION_DRONE_AWS_SECRET_ACCESS_KEY
-#        target: AWS_SECRET_ACCESS_KEY
-#      - source: DRONE_PUBLIC_TOKEN
-#        target: DRONE_TOKEN
-#    when:
-#      environment: secrets
-#      event: deployment
+  synch_staging_secrets:
+    image: quay.io/ukhomeofficedigital/cop-secrets
+    environment:
+      - DRONE_SERVER=https://drone.acp.homeoffice.gov.uk
+      - DEPLOY_ENV=staging
+    secrets:
+      - source: STAGING_DRONE_AWS_ACCESS_KEY_ID
+        target: AWS_ACCESS_KEY_ID
+      - source: STAGING_DRONE_AWS_SECRET_ACCESS_KEY
+        target: AWS_SECRET_ACCESS_KEY
+      - source: DRONE_PUBLIC_TOKEN
+        target: DRONE_TOKEN
+    when:
+      environment: secrets
+      event: deployment
+
+  synch_production_secrets:
+    image: quay.io/ukhomeofficedigital/cop-secrets
+    environment:
+      - DRONE_SERVER=https://drone.acp.homeoffice.gov.uk
+      - DEPLOY_ENV=production
+    secrets:
+      - source: PRODUCTION_DRONE_AWS_ACCESS_KEY_ID
+        target: AWS_ACCESS_KEY_ID
+      - source: PRODUCTION_DRONE_AWS_SECRET_ACCESS_KEY
+        target: AWS_SECRET_ACCESS_KEY
+      - source: DRONE_PUBLIC_TOKEN
+        target: DRONE_TOKEN
+    when:
+      environment: secrets
+      event: deployment
 
   test:
       image: quay.io/ukhomeofficedigital/cop-node:11
@@ -108,6 +108,8 @@ pipeline:
     environment:
       - AWS_REGION=eu-west-2
     secrets:
+      - source: DEV_BUCKET_NAME_PREFIX
+        target: BUCKET_NAME_PREFIX
       - source: DEV_KUBE_NAMESPACE_PRIVATE_COP
         target: KUBE_NAMESPACE
       - source: DEV_KUBE_SERVER
@@ -118,20 +120,16 @@ pipeline:
         target: KEYCLOAK_URL
       - source: DEV_KEYCLOAK_REALM
         target: KEYCLOAK_REALM
+      - source: DEV_S3_AWS_ACCESS_KEY_ID
+        target: AWS_ACCESS_KEY
+      - source: DEV_S3_AWS_SECRET_ACCESS_KEY
+        target: AWS_SECRET_ACCESS_KEY
       - source: PROTOCOL_HTTPS
         target: PROTOCOL
       - source: DEV_WHITELIST
         target: WHITELIST
       - source: DEV_WWW_URL
         target: WWW_URL
-      - source: DEV_FILE_UPLOAD_SERVICE_AWS_SSE_KMS_KEY_ID
-        target: AWS_SSE_KMS_KEY_ID
-      - source: DEV_FILE_UPLOAD_SERVICE_AWS_ACCESS_KEY
-        target: AWS_ACCESS_KEY
-      - source: DEV_FILE_UPLOAD_SERVICE_AWS_SECRET_ACCESS_KEY
-        target: AWS_SECRET_ACCESS_KEY
-      - source: DEV_FILE_UPLOAD_SERVICE_AWS_BUCKET
-        target: AWS_BUCKET
       - source: FILE_UPLOAD_SERVICE_KEYCLOAK_CLIENT_ID
         target: FILE_UPLOAD_SERVICE_KEYCLOAK_CLIENT_ID
       - source: FILE_UPLOAD_SERVICE_NAME
