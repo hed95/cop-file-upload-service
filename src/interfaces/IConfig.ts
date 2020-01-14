@@ -14,10 +14,8 @@ interface IConfig {
     s3: {
       accessKeyId?: string,
       secretAccessKey?: string,
-      sseKmsKeyId?: string,
       bucket?: string,
-      region?: string,
-      serverSideEncryption?: string
+      region?: string
     },
     keycloak: {
       authServerUrl?: string,
