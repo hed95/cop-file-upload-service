@@ -32,7 +32,7 @@ describe('FileConversionController', () => {
       sinon.stub(res, 'json').returns(res);
     });
 
-    it('should log the correct messages and call next() if the file can be converted - image or pdf file', (done) => {
+    it('should log the correct messages and call next() if the file can be converted - image or pdf file and req.allFiles does not exist', (done) => {
       fileConversionController = new FileConversionController(image, config);
 
       fileConversionController
@@ -46,6 +46,32 @@ describe('FileConversionController', () => {
             buffer: new Buffer('some file contents'),
             mimetype: 'image/png',
             version: config.fileVersions.clean
+          });
+          done();
+        })
+        .catch((err) => {
+          done(err);
+        });
+    });
+
+    it('should set req.allFiles correctly when req.allFiles exists', (done) => {
+      req.allFiles = {
+        orig: {}
+      };
+
+      fileConversionController = new FileConversionController(image, config);
+
+      fileConversionController
+        .convertFile(req, res, next)
+        .then(() => {
+          expect(req.allFiles).to.have.property(config.fileVersions.clean);
+          expect(req.allFiles).to.deep.equal({
+            clean: {
+              buffer: new Buffer('some file contents'),
+              mimetype: 'image/png',
+              version: config.fileVersions.clean
+            },
+            orig: {}
           });
           done();
         })
