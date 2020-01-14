@@ -44,8 +44,6 @@ describe('S3Service', () => {
 
   describe('uploadParams()', () => {
     it('should return the correct params', (done) => {
-      config.services.s3.sseKmsKeyId = 'keyid123';
-
       const requestParams: IPostRequestParams = {
         businessKey: 'BF-20191218-798',
         file: {
@@ -72,9 +70,7 @@ describe('S3Service', () => {
         Metadata: {
           originalfilename: requestParams.file.originalname,
           processedtime: requestParams.file.processedTime.toString()
-        },
-        SSEKMSKeyId: config.services.s3.sseKmsKeyId,
-        ServerSideEncryption: config.services.s3.serverSideEncryption
+        }
       });
 
       done();

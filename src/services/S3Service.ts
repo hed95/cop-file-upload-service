@@ -47,9 +47,7 @@ class S3Service {
       Metadata: {
         originalfilename: file.originalname,
         processedtime: file.processedTime.toString()
-      },
-      SSEKMSKeyId: s3.sseKmsKeyId,
-      ServerSideEncryption: s3.serverSideEncryption
+      }
     };
   }
 
