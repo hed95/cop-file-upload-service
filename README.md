@@ -20,6 +20,8 @@ The service performs the following actions on the uploaded files:
 POST /files/{businessKey}
 ```
 
+In Postman, select `Body`, then `form-data`. Add a key called `file`. In the drop down change the key to `file` then select the file in the value.
+
 #### Parameters
 
 file: The file to be uploaded
@@ -134,61 +136,7 @@ filename: The name of the file to be deleted
   git clone git@github.com:UKHomeOffice/file-upload-service.git
   ```
 
-- Change the directory to `file-upload-service`:
-
-  ```
-  cd file-upload-service
-  ```
-
-- Copy `.env.example` to `.env` and replace the default values with sensible ones
-
-## Running the app with docker
-
-- Install [Docker](https://www.docker.com)
-
-- Start the docker containers with:
-
-  ```
-  docker-compose up
-  ```
-
-## Running the app manually
-
-- Install the dependencies:
-
-  ```
-  npm install
-  ```
-
-- Install [Tesseract OCR](https://github.com/tesseract-ocr/tesseract)
-
-  ```
-  brew install tesseract
-  ```
-
-- Install [GraphicsMagick](http://www.graphicsmagick.org)
-
-  ```
-  brew install graphicsmagick
-  ```
-
-- Install [Ghostscript](https://www.ghostscript.com)
-
-  ```
-  brew install gs
-  ```
-
-- Start the app:
-
-  ```
-  npm start
-  ```
-
-- Run the virus scanning mock service in a new terminal window:
-
-  ```
-  npm run mocks
-  ```
+- See https://gitlab.digital.homeoffice.gov.uk/cop/manifest/blob/master/README.md for running services locally.
 
 ## Code quality
 
