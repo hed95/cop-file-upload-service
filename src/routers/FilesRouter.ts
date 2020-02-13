@@ -39,9 +39,9 @@ class FilesRouter {
       new MetadataController(Date.now(), config).generateMetadata,
       storageController.uploadFile,
       new VirusScanController(config).scanFile,
-      new FileConversionController(new FileConverter(gm, util, config), config).convertFile,
-      new OcrController(ocr, config).parseFile,
-      new FileConversionController(new FileConverter(gm, util, config), config).convertFile,
+      // new FileConversionController(new FileConverter(gm, util, config), config).convertFile,
+      // new OcrController(ocr, config).parseFile,
+      // new FileConversionController(new FileConverter(gm, util, config), config).convertFile,
       storageController.uploadFile,
       storageController.uploadFile,
       new PostResponseController(config).response
