@@ -11,6 +11,7 @@ import config from './config';
 import IConfig from './interfaces/IConfig';
 import FilesRouter from './routers/FilesRouter';
 import HealthRouter from './routers/HealthRouter';
+import Environment from './utils/Environment';
 import Logger from './utils/Logger';
 import LogMessage from './utils/LogMessage';
 
@@ -25,9 +26,11 @@ const corsConfiguration = {
 app.use(cors(corsConfiguration));
 app.options('*', cors(corsConfiguration));
 
-const keycloak: Keycloak = new Keycloak({}, services.keycloak);
-app.use(keycloak.middleware());
-app.use(endpoints.files, keycloak.protect());
+if (Environment.isProd(process.env.NODE_ENV)) {
+  const keycloak: Keycloak = new Keycloak({}, services.keycloak);
+  app.use(keycloak.middleware());
+  app.use(endpoints.files, keycloak.protect());
+}
 
 app.use(helmet());
 
