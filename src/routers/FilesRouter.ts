@@ -42,7 +42,7 @@ class FilesRouter {
       // new FileConversionController(new FileConverter(gm, util, config), config).convertFile,
       // new OcrController(ocr, config).parseFile,
       // new FileConversionController(new FileConverter(gm, util, config), config).convertFile,
-      storageController.uploadFile,
+      // storageController.uploadFile,
       storageController.uploadFile,
       new PostResponseController(config).response
     );
