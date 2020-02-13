@@ -1,3 +1,4 @@
+import cors from 'cors';
 import * as express from 'express';
 import {Express} from 'express';
 import * as helmet from 'helmet';
@@ -13,7 +14,7 @@ import HealthRouter from './routers/HealthRouter';
 import Environment from './utils/Environment';
 import Logger from './utils/Logger';
 import LogMessage from './utils/LogMessage';
-import cors from 'cors';
+
 const {endpoints, port, services}: IConfig = config;
 const logger: winston.Logger = new Logger(createLogger, format, transports).logger();
 const app: Express = express();
@@ -25,8 +26,8 @@ app.use(endpoints.files, keycloak.protect());
 app.use(helmet());
 
 const corsConfiguration = {
-  origin: '*',
-  methods: ['GET', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
+  methods: ['DELETE', 'GET', 'PUT', 'PATCH', 'POST', 'OPTIONS'],
+  origin: '*'
 };
 app.use(cors(corsConfiguration));
 app.options('*', cors(corsConfiguration));
