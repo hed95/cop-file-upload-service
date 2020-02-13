@@ -13,18 +13,23 @@ import HealthRouter from './routers/HealthRouter';
 import Environment from './utils/Environment';
 import Logger from './utils/Logger';
 import LogMessage from './utils/LogMessage';
-
+import cors from 'cors';
 const {endpoints, port, services}: IConfig = config;
 const logger: winston.Logger = new Logger(createLogger, format, transports).logger();
 const app: Express = express();
 
-if (Environment.isProd(process.env.NODE_ENV)) {
-  const keycloak: Keycloak = new Keycloak({}, services.keycloak);
-  app.use(keycloak.middleware());
-  app.use(endpoints.files, keycloak.protect());
-}
+const keycloak: Keycloak = new Keycloak({}, services.keycloak);
+app.use(keycloak.middleware());
+app.use(endpoints.files, keycloak.protect());
 
 app.use(helmet());
+
+const corsConfiguration = {
+  origin: '*',
+  methods: ['GET', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
+};
+app.use(cors(corsConfiguration));
+app.options('*', cors(corsConfiguration));
 
 app.use((req, res, next) => {
   req.uuid = uuid();

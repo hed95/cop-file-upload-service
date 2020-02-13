@@ -5,12 +5,7 @@ class LogMessage {
   public static create(params: ILogMessage): LogEntry {
     const {email, filename, message, level, timestamp}: ILogMessage = params;
 
-    const logMessage: LogEntry = {
-      email: email || 'user@example.com',
-      filename,
-      level: level || 'info',
-      message
-    };
+    const logMessage: LogEntry = { email: email || 'user@example.com', filename, level: level || 'info', message };
 
     if (timestamp) {
       logMessage.timestamp = timestamp;

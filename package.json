@@ -16,7 +16,9 @@
     "mocks": "dyson mocks 8080"
   },
   "dependencies": {
+    "@types/cors": "^2.8.6",
     "aws-sdk": "^2.404.0",
+    "cors": "^2.8.5",
     "express": "^4.16.4",
     "gm": "^1.23.1",
     "helmet": "^3.21.2",
