@@ -1,4 +1,4 @@
-import cors from 'cors';
+import * as cors from 'cors';
 import * as express from 'express';
 import {Express} from 'express';
 import * as helmet from 'helmet';
