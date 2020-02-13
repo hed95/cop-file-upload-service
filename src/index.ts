@@ -11,7 +11,6 @@ import config from './config';
 import IConfig from './interfaces/IConfig';
 import FilesRouter from './routers/FilesRouter';
 import HealthRouter from './routers/HealthRouter';
-import Environment from './utils/Environment';
 import Logger from './utils/Logger';
 import LogMessage from './utils/LogMessage';
 
