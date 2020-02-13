@@ -18,18 +18,18 @@ const {endpoints, port, services}: IConfig = config;
 const logger: winston.Logger = new Logger(createLogger, format, transports).logger();
 const app: Express = express();
 
-const keycloak: Keycloak = new Keycloak({}, services.keycloak);
-app.use(keycloak.middleware());
-app.use(endpoints.files, keycloak.protect());
-
-app.use(helmet());
-
 const corsConfiguration = {
   methods: ['DELETE', 'GET', 'PUT', 'PATCH', 'POST', 'OPTIONS'],
   origin: '*'
 };
 app.use(cors(corsConfiguration));
 app.options('*', cors(corsConfiguration));
+
+const keycloak: Keycloak = new Keycloak({}, services.keycloak);
+app.use(keycloak.middleware());
+app.use(endpoints.files, keycloak.protect());
+
+app.use(helmet());
 
 app.use((req, res, next) => {
   req.uuid = uuid();
