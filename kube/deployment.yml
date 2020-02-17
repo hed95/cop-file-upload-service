@@ -151,6 +151,10 @@ spec:
             secretKeyRef:
               name: {{.FILE_UPLOAD_SERVICE_NAME}}
               key: awsSecretAccessKey
+        - name: FILE_UPLOAD_SERVICE_URL
+          value: {{FILE_UPLOAD_SERVICE_URL}}
+        - name: PROTOCOL
+          value: {{PROTOCOL}}
       volumes:
       - name: certs
         secret:
