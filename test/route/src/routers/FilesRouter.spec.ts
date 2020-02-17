@@ -52,7 +52,8 @@ describe('FilesRouter', () => {
           expect(res.body).to.have.property('size');
           expect(res.body).to.have.property('processedTime');
 
-          filename = res.body.url.split('/')[2];
+          const filenameParts = res.body.url.split('/');
+          filename = filenameParts[filenameParts.length - 1];
 
           expect(filename).to.match(validation.filenameRegex);
           expect(res.body.url).to.match(new RegExp(`/${fileVersions.clean}/`));

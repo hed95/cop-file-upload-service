@@ -1,21 +1,21 @@
 import * as express from 'express';
-// import * as gm from 'gm';
+import * as gm from 'gm';
 import * as joi from 'joi';
 import * as multer from 'multer';
-// import * as ocr from 'tesseractocr';
+import * as ocr from 'tesseractocr';
 import * as util from 'util';
 import config from '../config';
 import DeleteValidationController from '../controllers/DeleteValidationController';
-// import FileConversionController from '../controllers/FileConversionController';
+import FileConversionController from '../controllers/FileConversionController';
 import GetValidationController from '../controllers/GetValidationController';
 import MetadataController from '../controllers/MetadataController';
-// import OcrController from '../controllers/OcrController';
+import OcrController from '../controllers/OcrController';
 import PostResponseController from '../controllers/PostResponseController';
 import PostValidationController from '../controllers/PostValidationController';
 import StorageController from '../controllers/StorageController';
 import VirusScanController from '../controllers/VirusScanController';
 import S3Service from '../services/S3Service';
-// import FileConverter from '../utils/FileConverter';
+import FileConverter from '../utils/FileConverter';
 
 const storage: multer.StorageEngine = multer.memoryStorage();
 const upload: multer.Instance = multer({storage});
@@ -39,11 +39,11 @@ class FilesRouter {
       new MetadataController(Date.now(), config).generateMetadata,
       storageController.uploadFile,
       new VirusScanController(config).scanFile,
-      // new FileConversionController(new FileConverter(gm, util, config), config).convertFile,
-      // new OcrController(ocr, config).parseFile,
-      // new FileConversionController(new FileConverter(gm, util, config), config).convertFile,
-      // storageController.uploadFile,
-      // storageController.uploadFile,
+      new FileConversionController(new FileConverter(gm, util, config), config).convertFile,
+      new OcrController(ocr, config).parseFile,
+      new FileConversionController(new FileConverter(gm, util, config), config).convertFile,
+      storageController.uploadFile,
+      storageController.uploadFile,
       new PostResponseController(config).response
     );
 

@@ -11,12 +11,13 @@ class PostResponseController {
   }
 
   public response(req: Request, res: Response): Response {
-    const {file} = req;
+    const {file, params} = req;
+    const {hostname, fileVersions} = this.config;
     const responseParams: IPostResponseParams = {
       name: file.originalname,
       processedTime: file.processedTime,
       size: file.size,
-      url: `/${this.config.fileVersions.clean}/${file.filename}`
+      url: `${hostname}/${params.businessKey}/${fileVersions.clean}/${file.filename}`
     };
     return res.status(201).json(responseParams);
   }

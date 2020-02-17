@@ -1,5 +1,6 @@
 interface IConfig {
   port: string | number;
+  hostname: string;
   endpoints: {
     files: string,
     health: string,
