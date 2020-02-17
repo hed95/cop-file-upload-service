@@ -32,7 +32,7 @@ describe('PostResponseController', () => {
         name: testFile.originalname,
         processedTime: testFile.processedTime,
         size: testFile.size,
-        url: `/${config.fileVersions.clean}/${testFile.filename}`
+        url: `${config.hostname}/${req.params.businessKey}/${config.fileVersions.clean}/${testFile.filename}`
       });
 
       done();
