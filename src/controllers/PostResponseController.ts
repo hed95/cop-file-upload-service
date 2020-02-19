@@ -17,7 +17,7 @@ class PostResponseController {
       name: file.originalname,
       processedTime: file.processedTime,
       size: file.size,
-      url: `${hostname}/${endpoints.files}/${params.businessKey}/${fileVersions.clean}/${file.filename}`
+      url: `${hostname}${endpoints.files}/${params.businessKey}/${fileVersions.clean}/${file.filename}`
     };
     return res.status(201).json(responseParams);
   }
