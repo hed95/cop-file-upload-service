@@ -74,6 +74,8 @@ spec:
             value: "false"
           - name: STATSD_METRICS
             value: "FALSE"
+          - name: CLIENT_MAX_BODY_SIZE
+            value: "25"
         ports:
         - name: https
           containerPort: 10443
