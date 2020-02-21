@@ -48,7 +48,7 @@ class FilesRouter {
     );
 
     router.delete(
-      `${config.endpoints.files}/:businessKey/:filename`,
+      `${config.endpoints.files}/:businessKey/:fileVersion/:filename`,
       new DeleteValidationController(joi).validateRoute,
       storageController.deleteFiles
     );
