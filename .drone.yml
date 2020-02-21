@@ -206,8 +206,8 @@ pipeline:
       - kd --insecure-skip-tls-verify -f kube/deployment.yml --timeout=6m
       - kd --insecure-skip-tls-verify -f kube/ingress.yml
     when:
-      branch: master
-      event: push
+      environment: staging
+      event: deployment
 
   deploy_to_production:
     image: quay.io/ukhomeofficedigital/kd
@@ -259,8 +259,8 @@ pipeline:
       - kd --insecure-skip-tls-verify -f kube/deployment.yml --timeout=6m
       - kd --insecure-skip-tls-verify -f kube/ingress.yml
     when:
-      branch: master
-      event: push
+      environment: production
+      event: deployment
 
   notify:
     image: plugins/slack
