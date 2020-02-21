@@ -93,12 +93,14 @@ filename: The name of the file to be downloaded
 ### Deleting a file
 
 ```
-DELETE /files/{businessKey}/{filename}
+DELETE /files/{businessKey}/{fileVersion}/{filename}
 ```
 
 #### Parameters
 
 businessKey: The business key of the process of the file to be deleted
+
+fileVersion: The version of the file to be downloaded. Will be one of: `orig`, `clean` or `ocr`
 
 filename: The name of the file to be deleted
 

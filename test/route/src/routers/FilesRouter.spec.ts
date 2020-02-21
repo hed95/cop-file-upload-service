@@ -166,6 +166,7 @@ describe('FilesRouter', () => {
 
   describe('delete()', () => {
     const deleteUrl = `${endpoints.files}/${businessKey}`;
+    const fileVersion = 'clean';
 
     it('should return the correct status and response', (done) => {
       nock(testS3Hostname)
@@ -174,7 +175,7 @@ describe('FilesRouter', () => {
 
       chai
         .request(app)
-        .delete(`${deleteUrl}/${filename}`)
+        .delete(`${deleteUrl}/${fileVersion}/${filename}`)
         .end((err: Error, res: superagent.Response) => {
           expect(res.status).to.equal(200);
           expect(res.body).to.deep.equal({message: 'Files deleted successfully'});
@@ -188,7 +189,7 @@ describe('FilesRouter', () => {
 
       chai
         .request(app)
-        .delete(`${deleteUrl}/${filename}`)
+        .delete(`${deleteUrl}/${fileVersion}/${filename}`)
         .end((err: Error, res: superagent.Response) => {
           expect(res.status).to.equal(500);
           expect(res.body).to.deep.equal({error: 'Failed to delete files'});
@@ -200,7 +201,7 @@ describe('FilesRouter', () => {
     it('should return the correct status and response when the route is not found', (done) => {
       chai
         .request(app)
-        .delete(`${deleteUrl}/does-not/exist`)
+        .delete(`${deleteUrl}/${filename}`)
         .end((err: Error, res: superagent.Response) => {
           expect(res.status).to.equal(404);
           expect(res.body).to.deep.equal({error: 'Route not found'});
