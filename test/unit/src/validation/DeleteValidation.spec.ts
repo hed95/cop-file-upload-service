@@ -3,8 +3,9 @@ import DeleteValidation from '../../../../src/validation/DeleteValidation';
 import {expect} from '../../../setupTests';
 
 interface ITestDeleteRequest {
-  filename: string | string[];
   businessKey: string | string[];
+  fileVersion: string | string[];
+  filename: string | string[];
 }
 
 describe('DeleteValidation', () => {
@@ -15,6 +16,7 @@ describe('DeleteValidation', () => {
   beforeEach(() => {
     data = {
       businessKey: 'BF-20191218-798',
+      fileVersion: 'clean',
       filename: '9e5eb809-bce7-463e-8c2f-b6bd8c4832d9'
     };
     schema = new DeleteValidation().schema();
@@ -38,6 +40,20 @@ describe('DeleteValidation', () => {
       delete data.businessKey;
       result = Joi.validate(data, schema);
       expect(result).to.have.property('error').and.match(/"businessKey" is required/);
+      done();
+    });
+
+    it('should return an error when fileVersion is not a string', (done) => {
+      data.fileVersion = ['clean'];
+      result = Joi.validate(data, schema);
+      expect(result).to.have.property('error').and.match(/"fileVersion" must be a string/);
+      done();
+    });
+
+    it('should return an error when fileVersion is not given', (done) => {
+      delete data.fileVersion;
+      result = Joi.validate(data, schema);
+      expect(result).to.have.property('error').and.match(/"fileVersion" is required/);
       done();
     });
 

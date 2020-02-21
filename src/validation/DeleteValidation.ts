@@ -7,8 +7,11 @@ class DeleteValidation extends Validation {
       .object()
       .keys({
         businessKey: this.joi
-        .string()
-        .required(),
+          .string()
+          .required(),
+        fileVersion: this.joi
+          .string()
+          .required(),
         filename: this.joi
           .string()
           .regex(this.filenameRegex)
