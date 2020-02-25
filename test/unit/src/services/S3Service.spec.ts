@@ -46,6 +46,7 @@ describe('S3Service', () => {
     it('should return the correct params', (done) => {
       const requestParams: IPostRequestParams = {
         businessKey: 'BF-20191218-798',
+        email: 'officer@homeoffice.gov.uk',
         file: {
           ...testFile,
           ...{
@@ -68,6 +69,7 @@ describe('S3Service', () => {
           filename: requestParams.file.filename
         }),
         Metadata: {
+          email: requestParams.email,
           originalfilename: requestParams.file.originalname,
           processedtime: requestParams.file.processedTime.toString()
         }

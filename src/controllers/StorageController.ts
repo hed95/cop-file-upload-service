@@ -40,6 +40,7 @@ class StorageController {
     const fileToUpload: Express.Multer.File = allFiles[fileVersionToUpload];
     const uploadParams: IPostRequestParams = {
       businessKey: params.businessKey,
+      email: req.kauth && req.kauth.grant && req.kauth.grant.access_token.content.email,
       file: fileToUpload
     };
 

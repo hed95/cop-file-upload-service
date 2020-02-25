@@ -38,7 +38,7 @@ class S3Service {
 
   public uploadParams(config: IConfig, params: IPostRequestParams): IS3UploadParams {
     const {s3}: IConfig['services'] = config.services;
-    const {businessKey, file}: IPostRequestParams = params;
+    const {businessKey, email = '', file}: IPostRequestParams = params;
     return {
       Body: file.buffer,
       Bucket: s3.bucket,
@@ -46,7 +46,8 @@ class S3Service {
       Key: StorageKey.format({businessKey, fileVersion: file.version, filename: file.filename}),
       Metadata: {
         originalfilename: file.originalname,
-        processedtime: file.processedTime.toString()
+        processedtime: file.processedTime.toString(),
+        email
       }
     };
   }
