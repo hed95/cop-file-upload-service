@@ -130,6 +130,7 @@ describe('FilesRouter', () => {
         .request(app)
         .get(`${getUrl}/${filename}`)
         .end((err: Error, res: superagent.Response) => {
+          console.log('res =', res);
           expect(res.status).to.equal(200);
           expect(res.get('Content-Type')).to.equal('application/pdf');
           expect(err).to.equal(null);

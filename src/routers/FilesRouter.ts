@@ -7,7 +7,7 @@ import * as util from 'util';
 import config from '../config';
 import DeleteValidationController from '../controllers/DeleteValidationController';
 import FileConversionController from '../controllers/FileConversionController';
-import GetValidationController from '../controllers/GetValidationController';
+import GetFileValidationController from '../controllers/GetFileValidationController';
 import MetadataController from '../controllers/MetadataController';
 import OcrController from '../controllers/OcrController';
 import PostResponseController from '../controllers/PostResponseController';
@@ -28,7 +28,7 @@ class FilesRouter {
 
     router.get(
       `${config.endpoints.files}/:businessKey/:fileVersion/:filename`,
-      new GetValidationController(joi).validateRoute,
+      new GetFileValidationController(joi).validateRoute,
       storageController.downloadFile
     );
 

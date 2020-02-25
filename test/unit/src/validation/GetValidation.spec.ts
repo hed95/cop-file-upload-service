@@ -1,5 +1,5 @@
 import * as Joi from 'joi';
-import GetValidation from '../../../../src/validation/GetValidation';
+import GetFileValidation from '../../../../src/validation/GetFileValidation';
 import {expect} from '../../../setupTests';
 
 interface ITestGetRequest {
@@ -8,7 +8,7 @@ interface ITestGetRequest {
   businessKey: string | string[];
 }
 
-describe('GetValidation', () => {
+describe('GetFileValidation', () => {
   let data: ITestGetRequest;
   let result: Joi.ValidationResult<ITestGetRequest>;
   let schema: Joi.ObjectSchema;
@@ -19,7 +19,7 @@ describe('GetValidation', () => {
       fileVersion: 'orig',
       filename: '9e5eb809-bce7-463e-8c2f-b6bd8c4832d9'
     };
-    schema = new GetValidation().schema();
+    schema = new GetFileValidation().schema();
   });
 
   describe('schema()', () => {
