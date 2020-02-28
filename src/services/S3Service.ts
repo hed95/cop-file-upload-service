@@ -3,8 +3,11 @@ import IConfig from '../interfaces/IConfig';
 import IDeleteRequestParams from '../interfaces/IDeleteRequestParams';
 import IGetRequestParams from '../interfaces/IGetRequestParams';
 import IPostRequestParams from '../interfaces/IPostRequestParams';
+import IRequestParams from '../interfaces/IRequestParams';
 import IS3DeleteParams from '../interfaces/IS3DeleteParams';
 import IS3DownloadParams from '../interfaces/IS3DownloadParams';
+import IS3ListMetadataParams from '../interfaces/IS3ListMetadataParams';
+import IS3ListParams from '../interfaces/IS3ListParams';
 import IS3UploadParams from '../interfaces/IS3UploadParams';
 import StorageKey from '../utils/StorageKey';
 
@@ -45,9 +48,9 @@ class S3Service {
       ContentType: file.mimetype,
       Key: StorageKey.format({businessKey, fileVersion: file.version, filename: file.filename}),
       Metadata: {
+        email,
         originalfilename: file.originalname,
-        processedtime: file.processedTime.toString(),
-        email
+        processedtime: file.processedTime.toString()
       }
     };
   }
@@ -66,6 +69,15 @@ class S3Service {
     };
   }
 
+  public listParams(config: IConfig, params: IRequestParams): IS3ListParams {
+    const {fileVersions}: IConfig = config;
+    const {businessKey}: IRequestParams = params;
+    return {
+      Bucket: this.config.services.s3.bucket,
+      Prefix: `${businessKey}/${fileVersions.clean}`
+    };
+  }
+
   public downloadFile(params: IGetRequestParams): Promise<AWS.S3.Object> {
     const downloadParams: IS3DownloadParams = this.downloadParams(this.config, params);
     return this.fetchAsync('getObject', downloadParams);
@@ -79,6 +91,20 @@ class S3Service {
   public deleteFiles(params: IDeleteRequestParams): Promise<AWS.S3.Object> {
     const deleteParams: IS3DeleteParams = this.deleteParams(this.config, params);
     return this.fetchAsync('deleteObjects', deleteParams);
+  }
+
+  public listFiles(params: IRequestParams): Promise<AWS.S3.Object> {
+    const listParams: IS3ListParams = this.listParams(this.config, params);
+    return this.fetchAsync('listObjectsV2', listParams);
+  }
+
+  public listMetadata(key: string): Promise<AWS.S3.Object> {
+    const listParams: IS3ListMetadataParams = {
+      Bucket: this.config.services.s3.bucket,
+      Key: key
+    };
+
+    return this.fetchAsync('headObject', listParams);
   }
 
   public fetchAsync(method: string, params: object): Promise<AWS.S3.Object> {

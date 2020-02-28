@@ -2,8 +2,10 @@ import * as AWS from 'aws-sdk';
 import IDeleteRequestParams from '../../../../src/interfaces/IDeleteRequestParams';
 import IGetRequestParams from '../../../../src/interfaces/IGetRequestParams';
 import IPostRequestParams from '../../../../src/interfaces/IPostRequestParams';
-import S3DeleteParamsInterface from '../../../../src/interfaces/IS3DeleteParams';
+import IRequestParams from '../../../../src/interfaces/IRequestParams';
+import IS3DeleteParams from '../../../../src/interfaces/IS3DeleteParams';
 import S3DownloadParamsInterface from '../../../../src/interfaces/IS3DownloadParams';
+import IS3ListParams from '../../../../src/interfaces/IS3ListParams';
 import S3UploadParamsInterface from '../../../../src/interfaces/IS3UploadParams';
 import S3Service from '../../../../src/services/S3Service';
 import StorageKey from '../../../../src/utils/StorageKey';
@@ -87,7 +89,7 @@ describe('S3Service', () => {
       };
 
       s3 = new S3Service(config, util);
-      const params: S3DeleteParamsInterface = s3.deleteParams(config, requestParams);
+      const params: IS3DeleteParams = s3.deleteParams(config, requestParams);
 
       expect(params).to.deep.equal({
         Bucket: config.services.s3.bucket,
@@ -101,6 +103,24 @@ describe('S3Service', () => {
           })),
           Quiet: true
         }
+      });
+
+      done();
+    });
+  });
+
+  describe('listParams()', () => {
+    it('should return the correct params', (done) => {
+      const requestParams: IRequestParams = {
+        businessKey: 'BF-20191218-798'
+      };
+
+      s3 = new S3Service(config, util);
+      const params: IS3ListParams = s3.listParams(config, requestParams);
+
+      expect(params).to.deep.equal({
+        Bucket: config.services.s3.bucket,
+        Prefix: 'BF-20191218-798/clean'
       });
 
       done();
@@ -167,6 +187,30 @@ describe('S3Service', () => {
       expect(s3.deleteParams).to.have.been.calledWith(config, requestParams);
       expect(s3.fetchAsync).to.have.been.calledOnce;
       expect(s3.fetchAsync).to.have.been.calledWith('deleteObjects', {Bucket: config.services.s3.bucket});
+      done();
+    });
+  });
+
+  describe('listFiles()', () => {
+    it('should call fetchAsync() with the correct params', (done) => {
+      const requestParams: IRequestParams = {
+        businessKey: 'BF-20191218-798'
+      };
+
+      s3 = new S3Service(config, util);
+
+      s3.listParams = sinon.stub().returns({
+        Bucket: 'awsbucket',
+        Prefix: 'BF-20191218-798/clean'
+      });
+      s3.fetchAsync = sinon.spy();
+
+      s3.listFiles(requestParams);
+      expect(s3.listParams).to.have.been.calledOnceWithExactly(config, requestParams);
+      expect(s3.fetchAsync).to.have.been.calledOnceWithExactly('listObjectsV2', {
+        Bucket: 'awsbucket',
+        Prefix: 'BF-20191218-798/clean'
+      });
       done();
     });
   });
