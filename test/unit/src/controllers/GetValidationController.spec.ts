@@ -1,6 +1,6 @@
 import {NextFunction, Request, Response} from 'express';
 import * as Joi from 'joi';
-import GetFileValidationController from '../../../../src/controllers/GetFileValidationController';
+import GetValidationController from '../../../../src/controllers/GetValidationController';
 import GetFileValidation from '../../../../src/validation/GetFileValidation';
 import {expect, requestMock, responseMock, sinon, validateMock} from '../../../setupTests';
 
@@ -16,7 +16,7 @@ describe('GetFileValidationController', () => {
       });
       const res: Response = responseMock();
       const next: NextFunction = () => true;
-      const getValidationController: GetFileValidationController = new GetFileValidationController(Joi);
+      const getValidationController: GetValidationController = new GetValidationController(Joi, new GetFileValidation());
 
       getValidationController.validate = validateMock;
       const validateStub: sinon.SinonStub = sinon
