@@ -12,4 +12,15 @@ describe('StorageKey', () => {
       done();
     });
   });
+
+  describe('get()', () => {
+    it('should return a storage key in the correct format', (done) => {
+      const ETag: string = '"813c075f66e5874005546cb06a4ff080"';
+      const Key: string = 'BF-20200228-123/clean/3f5a2581-cb04-4edc-824f-ebf39d51ca0b';
+      const contents = [{ETag, Key}];
+      const storageKey = StorageKey.get(contents, ETag);
+      expect(storageKey).to.equal(Key);
+      done();
+    });
+  });
 });
