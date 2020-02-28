@@ -1,7 +1,10 @@
 import {NextFunction, Request, Response} from 'express';
+import moment = require('moment');
 import IConfig from '../interfaces/IConfig';
 import IPostRequestParams from '../interfaces/IPostRequestParams';
+import IS3UploadParams from '../interfaces/IS3UploadParams';
 import S3Service from '../services/S3Service';
+import StorageKey from '../utils/StorageKey';
 
 class StorageController {
   protected storageService: S3Service;
@@ -13,6 +16,7 @@ class StorageController {
     this.downloadFile = this.downloadFile.bind(this);
     this.uploadFile = this.uploadFile.bind(this);
     this.deleteFiles = this.deleteFiles.bind(this);
+    this.listFiles = this.listFiles.bind(this);
   }
 
   public async downloadFile(req: Request, res: Response): Promise<Response> {
@@ -70,6 +74,30 @@ class StorageController {
       logger('Failed to delete files', 'error');
       logger(err.toString(), 'error');
       return res.status(500).json({error: 'Failed to delete files'});
+    }
+  }
+
+  public async listFiles(req: Request, res: Response): Promise<Response> {
+    const {logger, params}: Request = req;
+    logger('Downloading file list');
+
+    try {
+      logger('File list downloaded');
+      const {endpoints, hostname, protocol} = this.config;
+      const {Contents}: any = await this.storageService.listFiles(params);
+      const promises = Contents.map(({Key}: any) => this.storageService.listMetadata(Key));
+      const files = await Promise.all(promises);
+      const data = files.map(({ETag, Metadata}: {ETag: string; Metadata: IS3UploadParams['Metadata']}) => ({
+        submittedDateTime: moment(Metadata.processedtime, 'x').format('YYYY-MM-DD HH:mm:ss'),
+        submittedEmail: Metadata.email,
+        submittedFilename: Metadata.originalfilename,
+        url: `${protocol}${hostname}${endpoints.files}/${StorageKey.get(Contents, ETag)}`
+      }));
+      return res.status(200).json(data);
+    } catch (err) {
+      logger('Failed to download file list', 'error');
+      logger(err.toString(), 'error');
+      return res.status(500).json({error: 'Failed to download file list'});
     }
   }
 }

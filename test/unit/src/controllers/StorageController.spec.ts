@@ -188,4 +188,64 @@ describe('StorageController', () => {
         });
     });
   });
+
+  describe('listFiles()', () => {
+    it('should return the correct data when a file list is returned', (done) => {
+      s3Service = {
+        listFiles: sinon.stub().returns({
+          Contents: [{
+            ETag: '"813c075f66e5874005546cb06a4ff080"',
+            Key: 'BF-20200228-123/clean/3f5a2581-cb04-4edc-824f-ebf39d51ca0b',
+            LastModified: '2020-02-27T14:27:55.000Z',
+            Size: 36729,
+            StorageClass: 'STANDARD'
+          }]
+        }),
+        listMetadata: sinon.stub().resolves({
+          ETag: '"813c075f66e5874005546cb06a4ff080"',
+          Metadata: {
+            email: 'officer@homeoffice.gov.uk',
+            originalfilename: 'ocr-test-file-3.png',
+            processedtime: '1582625526348'
+          }
+      })
+      };
+      storageController = new StorageController(s3Service, config);
+
+      storageController
+        .listFiles(req, res)
+        .then(() => {
+          expect(res.status).to.have.been.calledOnceWithExactly(200);
+          expect(res.json).to.have.been.calledOnceWithExactly([{
+            submittedDateTime: '2020-02-25 10:12:06',
+            submittedEmail: 'officer@homeoffice.gov.uk',
+            submittedFilename: 'ocr-test-file-3.png',
+            url: 'https://localhost/files/BF-20200228-123/clean/3f5a2581-cb04-4edc-824f-ebf39d51ca0b'
+          }]);
+          done();
+        })
+        .catch((err) => {
+          done(err);
+        });
+    });
+
+    it('should return an error message when the storage service is not available', (done) => {
+      req.params.filename = testFile.originalname;
+      s3Service = {
+        listFiles: sinon.stub().returns(Promise.reject(new Error('Internal Server Error')))
+      };
+      storageController = new StorageController(s3Service, config);
+
+      storageController
+        .listFiles(req, res)
+        .then(() => {
+          expect(res.status).to.have.been.calledOnceWithExactly(500);
+          expect(res.json).to.have.been.calledOnceWithExactly({error: 'Failed to download file list'});
+          done();
+        })
+        .catch((err) => {
+          done(err);
+        });
+    });
+  });
 });
