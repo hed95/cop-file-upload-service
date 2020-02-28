@@ -20,8 +20,9 @@ const config: IConfig = {
     ocr: 'ocr',
     original: 'orig'
   },
-  hostname: `${process.env.PROTOCOL}${process.env.FILE_UPLOAD_SERVICE_URL}` || 'https://localhost',
+  hostname: process.env.FILE_UPLOAD_SERVICE_URL || 'localhost',
   port: process.env.PORT || 8181,
+  protocol: process.env.PROTOCOL || 'https://',
   services: {
     keycloak: {
       authServerUrl: process.env.AUTH_URL,
