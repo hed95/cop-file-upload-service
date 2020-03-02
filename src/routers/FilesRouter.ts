@@ -16,6 +16,8 @@ import StorageController from '../controllers/StorageController';
 import VirusScanController from '../controllers/VirusScanController';
 import S3Service from '../services/S3Service';
 import FileConverter from '../utils/FileConverter';
+import GetFilesValidation from '../validation/GetFilesValidation';
+import GetFileValidation from '../validation/GetFileValidation';
 
 const storage: multer.StorageEngine = multer.memoryStorage();
 const upload: multer.Instance = multer({storage});
@@ -28,8 +30,14 @@ class FilesRouter {
 
     router.get(
       `${config.endpoints.files}/:businessKey/:fileVersion/:filename`,
-      new GetValidationController(joi).validateRoute,
+      new GetValidationController(joi, new GetFileValidation()).validateRoute,
       storageController.downloadFile
+    );
+
+    router.get(
+      `${config.endpoints.files}/:businessKey`,
+      new GetValidationController(joi, new GetFilesValidation()).validateRoute,
+      storageController.listFiles
     );
 
     router.post(

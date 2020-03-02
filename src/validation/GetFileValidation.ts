@@ -2,7 +2,7 @@ import { ObjectSchema } from 'joi';
 import config from '../config';
 import Validation from './Validation';
 
-class GetValidation extends Validation {
+class GetFileValidation extends Validation {
   public schema(): ObjectSchema {
     return this.joi
       .object()
@@ -22,4 +22,4 @@ class GetValidation extends Validation {
   }
 }
 
-export default GetValidation;
+export default GetFileValidation;

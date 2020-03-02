@@ -130,6 +130,47 @@ filename: The name of the file to be deleted
 }
 ```
 
+### Downloading a file list
+
+```
+GET /files/{businessKey}
+```
+
+#### Parameters
+
+businessKey: The business key of the process of the file list to be downloaded
+
+#### Responses
+
+200:
+
+```
+[
+    {
+        "submittedFilename": "test-file.pdf",
+        "submittedEmail": "officer@homeoffice.gov.uk",
+        "submittedDateTime": "2020-01-27 12:21:23",
+        "url": "https://localhost/files/BF-20200228-123/clean/2140b35d-ef07-4703-a75e-47b9614850ee"
+    }
+]
+```
+
+404: application/json
+
+```
+{
+  error: 'Route not found'
+}
+```
+
+500: application/json
+
+```
+{
+  error: 'Failed to download file list'
+}
+```
+
 ## Installing the app
 
 - Clone the repo:

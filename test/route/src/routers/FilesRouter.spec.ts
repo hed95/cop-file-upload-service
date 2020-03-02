@@ -123,32 +123,63 @@ describe('FilesRouter', () => {
   });
 
   describe('get()', () => {
-    const getUrl = `${endpoints.files}/${businessKey}/${fileVersions.original}`;
+    describe('/files/:businessKey/:fileVersion/:filename', () => {
+      const getUrl = `${endpoints.files}/${businessKey}/${fileVersions.original}`;
 
-    it('should return the correct status and response', (done) => {
-      chai
-        .request(app)
-        .get(`${getUrl}/${filename}`)
-        .end((err: Error, res: superagent.Response) => {
-          expect(res.status).to.equal(200);
-          expect(res.get('Content-Type')).to.equal('application/pdf');
-          expect(err).to.equal(null);
-          done();
-        });
+      it('should return the correct status and response', (done) => {
+        chai
+          .request(app)
+          .get(`${getUrl}/${filename}`)
+          .end((err: Error, res: superagent.Response) => {
+            expect(res.status).to.equal(200);
+            expect(res.get('Content-Type')).to.equal('application/pdf');
+            expect(err).to.equal(null);
+            done();
+          });
+      });
+
+      it('should return the correct status and response when the S3 service is not available', (done) => {
+        nock.cleanAll();
+
+        chai
+          .request(app)
+          .get(`${getUrl}/${filename}`)
+          .end((err: Error, res: superagent.Response) => {
+            expect(res.status).to.equal(500);
+            expect(res.body).to.deep.equal({error: 'Failed to download file'});
+            expect(err).to.equal(null);
+            done();
+          });
+      });
     });
 
-    it('should return the correct status and response when the S3 service is not available', (done) => {
-      nock.cleanAll();
+    describe('/files/:businessKey', () => {
+      const getUrl = `${endpoints.files}/${businessKey}`;
 
-      chai
-        .request(app)
-        .get(`${getUrl}/${filename}`)
-        .end((err: Error, res: superagent.Response) => {
-          expect(res.status).to.equal(500);
-          expect(res.body).to.deep.equal({error: 'Failed to download file'});
-          expect(err).to.equal(null);
-          done();
-        });
+      it('should return the correct status and response', (done) => {
+        chai
+          .request(app)
+          .get(getUrl)
+          .end((err: Error, res: superagent.Response) => {
+            expect(res.status).to.equal(200);
+            expect(err).to.equal(null);
+            done();
+          });
+      });
+
+      it('should return the correct status and response when the S3 service is not available', (done) => {
+        nock.cleanAll();
+
+        chai
+          .request(app)
+          .get(`${getUrl}/${filename}`)
+          .end((err: Error, res: superagent.Response) => {
+            expect(res.status).to.equal(500);
+            expect(res.body).to.deep.equal({error: 'Failed to download file list'});
+            expect(err).to.equal(null);
+            done();
+          });
+      });
     });
 
     it('should return the correct status and response when the route is not found', (done) => {
