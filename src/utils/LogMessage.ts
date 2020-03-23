@@ -2,10 +2,12 @@ import {LogEntry} from 'winston';
 import ILogMessage from '../interfaces/ILogMessage';
 
 class LogMessage {
-  public static create(params: ILogMessage): LogEntry {
-    const {email, filename, message, level, timestamp}: ILogMessage = params;
+  public static create({email, filename, message, level, timestamp}: ILogMessage): LogEntry {
+    const logMessage: LogEntry = {filename, level: level || 'info', message};
 
-    const logMessage: LogEntry = { email: email || 'user@example.com', filename, level: level || 'info', message };
+    if (email) {
+      logMessage.email = email;
+    }
 
     if (timestamp) {
       logMessage.timestamp = timestamp;

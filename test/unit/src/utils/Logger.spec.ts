@@ -11,7 +11,7 @@ describe('Logger', () => {
     createLogger = sinon.spy();
     format = {
       combine: sinon.stub(),
-      prettyPrint: sinon.spy(),
+      json: sinon.spy(),
       printf: sinon.spy(),
       timestamp: sinon.stub().returns('a timestamp')
     };
@@ -35,7 +35,7 @@ describe('Logger', () => {
   describe('formatMessage()', () => {
     it('should format a log message correctly when given a message as a string', (done) => {
       const params: ILogMessage = {
-        email: 'user@example.com',
+        email: 'officer@homeoffice.gov.uk',
         filename: '9e5eb809-bce7-463e-8c2f-b6bd8c4832d9',
         level: 'info',
         message: 'Virus scaning file',
@@ -44,7 +44,7 @@ describe('Logger', () => {
       const logger: Logger = new Logger(createLogger, format, transports);
       const message: string = logger.formatMessage(params);
       expect(message).to.equal(
-        `{"email":"${params.email}","filename":"${params.filename}","level":"${params.level}","message":"${params.message}","timestamp":"${params.timestamp}"}`
+        `{"filename":"${params.filename}","level":"${params.level}","message":"${params.message}","email":"${params.email}","timestamp":"${params.timestamp}"}`
       );
       done();
     });
@@ -59,7 +59,7 @@ describe('Logger', () => {
       expect(format.combine).to.have.been.calledOnce;
       expect(format.timestamp).to.have.been.calledOnce;
       expect(logger.outputFormat).to.have.been.calledOnce;
-      expect(format.prettyPrint).to.have.been.calledOnce;
+      expect(format.json).to.have.been.calledOnce;
       done();
     });
   });

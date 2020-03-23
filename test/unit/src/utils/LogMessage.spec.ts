@@ -8,7 +8,7 @@ describe('LogMessage', () => {
   let message: string;
 
   beforeEach(() => {
-    email = 'user@example.com';
+    email = 'officer@homeoffice.gov.uk';
     filename = '9e5eb809-bce7-463e-8c2f-b6bd8c4832d9';
     message = 'File uploaded - orig version';
   });
@@ -42,7 +42,6 @@ describe('LogMessage', () => {
       const level: string = 'info';
       const logMessage: LogEntry = LogMessage.create({email, filename, message, level});
       expect(logMessage).to.deep.equal({
-        email: 'user@example.com',
         filename,
         level: 'info',
         message
