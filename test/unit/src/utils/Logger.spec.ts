@@ -11,7 +11,7 @@ describe('Logger', () => {
     createLogger = sinon.spy();
     format = {
       combine: sinon.stub(),
-      prettyPrint: sinon.spy(),
+      json: sinon.spy(),
       printf: sinon.spy(),
       timestamp: sinon.stub().returns('a timestamp')
     };
@@ -59,7 +59,7 @@ describe('Logger', () => {
       expect(format.combine).to.have.been.calledOnce;
       expect(format.timestamp).to.have.been.calledOnce;
       expect(logger.outputFormat).to.have.been.calledOnce;
-      expect(format.prettyPrint).to.have.been.calledOnce;
+      expect(format.json).to.have.been.calledOnce;
       done();
     });
   });

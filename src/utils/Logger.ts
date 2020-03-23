@@ -7,7 +7,7 @@ class Logger {
   private transports: any;
   private combine: any;
   private printf: any;
-  private prettyPrint: any;
+  private json: any;
   private timestamp: any;
 
   constructor(createLogger: any, format: any, transports: any) {
@@ -15,7 +15,7 @@ class Logger {
     this.transports = transports;
     this.combine = format.combine;
     this.printf = format.printf;
-    this.prettyPrint = format.prettyPrint;
+    this.json = format.json;
     this.timestamp = format.timestamp;
   }
 
@@ -32,7 +32,7 @@ class Logger {
       format: this.combine(
         this.timestamp(),
         this.outputFormat(),
-        this.prettyPrint()
+        this.json()
       ),
       transports: [
         new this.transports.Console()
