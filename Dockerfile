@@ -6,7 +6,7 @@ WORKDIR /usr/src/app
 # Install app dependencies
 COPY package*.json ./
 
-RUN npm install
+RUN npm ci
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
   tesseract-ocr \
