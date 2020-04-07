@@ -50,7 +50,7 @@ pipeline:
   test:
       image: quay.io/ukhomeofficedigital/cop-node:11
       commands:
-        - npm install
+        - npm ci
         - npm run linter
         - npm run test:unit
         - npm run coverage
