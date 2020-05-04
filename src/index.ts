@@ -26,10 +26,14 @@ const corsConfiguration = {
 app.use(cors(corsConfiguration));
 app.options('*', cors(corsConfiguration));
 
+logger.info(`Request in ${process.env.NODE_ENV} env`);
+
 if (Environment.isProd(process.env.NODE_ENV)) {
+  logger.info('Checking auth token');
   const keycloak: Keycloak = new Keycloak({}, services.keycloak);
   app.use(keycloak.middleware());
   app.use(endpoints.files, keycloak.protect());
+  logger.info('Auth token valid');
 }
 
 app.use(helmet());
