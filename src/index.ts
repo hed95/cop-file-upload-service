@@ -11,7 +11,7 @@ import config from './config';
 import IConfig from './interfaces/IConfig';
 import FilesRouter from './routers/FilesRouter';
 import HealthRouter from './routers/HealthRouter';
-import Environment from './utils/Environment';
+// import Environment from './utils/Environment';
 import Logger from './utils/Logger';
 import LogMessage from './utils/LogMessage';
 
@@ -25,16 +25,6 @@ const corsConfiguration = {
 };
 app.use(cors(corsConfiguration));
 app.options('*', cors(corsConfiguration));
-
-logger.info(`Request in ${process.env.NODE_ENV} env`);
-
-if (Environment.isProd(process.env.NODE_ENV)) {
-  logger.info('Checking auth token');
-  const keycloak: Keycloak = new Keycloak({}, services.keycloak);
-  app.use(keycloak.middleware());
-  app.use(endpoints.files, keycloak.protect());
-  logger.info('Auth token valid');
-}
 
 app.use(helmet());
 
@@ -55,6 +45,12 @@ app.use((req, res, next) => {
   req.logger(`${req.method} request for ${req.originalUrl}`);
   next();
 });
+
+// if (Environment.isProd(process.env.NODE_ENV)) {
+const keycloak: Keycloak = new Keycloak({}, services.keycloak);
+app.use(keycloak.middleware());
+app.use(endpoints.files, keycloak.protect());
+// }
 
 app.use(FilesRouter.router());
 app.use(HealthRouter.router());
