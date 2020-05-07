@@ -27,4 +27,4 @@ spec:
   tls:
   - hosts:
     - {{.FILE_UPLOAD_SERVICE_URL}}
-    secretName: {{.FILE_UPLOAD_SERVICE_NAME}}-tls
+    secretName: {{.FILE_UPLOAD_SERVICE_NAME}}-cmio
