@@ -161,4 +161,4 @@ spec:
       volumes:
       - name: certs
         secret:
-          secretName: "{{.FILE_UPLOAD_SERVICE_NAME}}-pod-tls"
+          secretName: "{{.FILE_UPLOAD_SERVICE_NAME}}-pod-cmio"
