@@ -146,7 +146,7 @@ spec:
               name: {{.FILE_UPLOAD_SERVICE_NAME}}
               key: awsAccessKey
         - name: AWS_BUCKET
-          value: "{{.BUCKET_NAME_PREFIX}}attachment"
+          value: "{{.AWS_BUCKET}}"
         - name: AWS_REGION
           value: {{.AWS_REGION}}
         - name: AWS_SECRET_ACCESS_KEY
