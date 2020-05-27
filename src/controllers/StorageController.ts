@@ -48,12 +48,13 @@ class StorageController {
       file: fileToUpload
     };
 
-    logger(`Uploading file - ${fileToUpload.version} version`);
-
     try {
-      await this.storageService.uploadFile(uploadParams);
-      logger(`File uploaded - ${fileToUpload.version} version`);
-      delete allFiles[fileVersionToUpload];
+      if (fileToUpload) {
+        logger(`Uploading file - ${fileToUpload.version} version`);
+        await this.storageService.uploadFile(uploadParams);
+        logger(`File uploaded - ${fileToUpload.version} version`);
+        delete allFiles[fileVersionToUpload];
+      }
       return next();
     } catch (err) {
       logger(`Failed to upload file - ${fileToUpload.version} version`, 'error');
