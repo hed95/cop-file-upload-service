@@ -16,21 +16,21 @@ class FileConversionController {
   public async convertFile(req: Request, res: Response, next: NextFunction) {
     const {file, logger}: Request = req;
     const {fileVersions}: IConfig = this.config;
+    let convertedFile: Express.Multer.File;
 
-    if (!req.allFiles) {
-      req.allFiles = {};
-    }
+    req.allFiles = req.allFiles || {};
 
     const fileToConvert: Express.Multer.File = req.allFiles[fileVersions.clean] || file;
 
     try {
       if (FileType.isValidFileTypeForConversion(fileToConvert.mimetype)) {
         logger(`File can be converted - ${fileToConvert.mimetype}`);
-        const convertedFile: Express.Multer.File = await this.fileConverter.convert(fileToConvert, req.logger);
-        req.allFiles[fileVersions.clean] = convertedFile;
+        convertedFile = await this.fileConverter.convert(fileToConvert, logger);
       } else {
         logger(`File cannot be converted - ${file.mimetype}`);
+        convertedFile = {...file, ...{version: fileVersions.clean}};
       }
+      req.allFiles[fileVersions.clean] = convertedFile;
       return next();
     } catch (err) {
       logger('Unable to convert file', 'error');

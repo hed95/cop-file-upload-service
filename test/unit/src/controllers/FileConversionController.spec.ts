@@ -1,7 +1,7 @@
 import {NextFunction, Request, Response} from 'express';
 import * as fs from 'fs';
 import FileConversionController from '../../../../src/controllers/FileConversionController';
-import {config, expect, requestMock, responseMock, sinon, testFile} from '../../../setupTests';
+import {config, expect, requestMock, responseMock, sinon} from '../../../setupTests';
 
 describe('FileConversionController', () => {
   describe('convertFile()', () => {
@@ -13,11 +13,12 @@ describe('FileConversionController', () => {
 
     beforeEach(() => {
       req = requestMock({
-        file: testFile,
+        file: {
+          buffer: fs.readFileSync('test/data/test-file.pdf'),
+          mimetype: 'application/pdf'
+        },
         logger: sinon.spy()
       });
-      req.file.buffer = fs.readFileSync('test/data/test-file.pdf');
-      req.file.mimetype = 'application/pdf';
       res = responseMock();
       next = sinon.spy();
       image = {
@@ -81,8 +82,10 @@ describe('FileConversionController', () => {
     });
 
     it('should log the correct messages and call next() if the file cannot be converted - text file', (done) => {
-      req.file.mimetype = 'text/plain';
-      req.file.buffer = fs.readFileSync('test/data/test-file.txt');
+      const buffer = fs.readFileSync('test/data/test-file.txt');
+      const mimetype = 'text/plain';
+      req.file.buffer = buffer;
+      req.file.mimetype = mimetype;
 
       fileConversionController = new FileConversionController(image, config);
 
@@ -92,6 +95,12 @@ describe('FileConversionController', () => {
           expect(req.logger).to.have.been.calledOnce;
           expect(req.logger).to.have.been.calledWith('File cannot be converted - text/plain');
           expect(next).to.have.been.calledOnce;
+          expect(req.allFiles).to.have.property(config.fileVersions.clean);
+          expect(req.allFiles[config.fileVersions.clean]).to.deep.equal({
+            buffer,
+            mimetype,
+            version: config.fileVersions.clean
+          });
           done();
         })
         .catch((err) => {
