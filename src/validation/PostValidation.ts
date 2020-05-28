@@ -11,6 +11,27 @@ class PostValidation extends Validation {
           .required(),
         file: this.joi
           .object()
+          .keys({
+            buffer: this.joi
+              .fileType()
+              .hex()
+              .required(),
+            encoding: this.joi
+              .string()
+              .required(),
+            fieldname: this.joi
+              .string()
+              .required(),
+            mimetype: this.joi
+              .string()
+              .required(),
+            originalname: this.joi
+              .string()
+              .required(),
+            size: this.joi
+              .number()
+              .required()
+          })
           .required()
       });
   }
