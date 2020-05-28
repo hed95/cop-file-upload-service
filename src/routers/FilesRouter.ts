@@ -16,8 +16,10 @@ import StorageController from '../controllers/StorageController';
 import VirusScanController from '../controllers/VirusScanController';
 import S3Service from '../services/S3Service';
 import FileConverter from '../utils/FileConverter';
+import DeleteValidation from '../validation/DeleteValidation';
 import GetFilesValidation from '../validation/GetFilesValidation';
 import GetFileValidation from '../validation/GetFileValidation';
+import PostValidation from '../validation/PostValidation';
 
 const storage: multer.StorageEngine = multer.memoryStorage();
 const upload: multer.Instance = multer({storage});
@@ -43,7 +45,7 @@ class FilesRouter {
     router.post(
       `${config.endpoints.files}/:businessKey`,
       upload.single('file'),
-      new PostValidationController(joi).validateRoute,
+      new PostValidationController(joi, new PostValidation()).validateRoute,
       new MetadataController(Date.now(), config).generateMetadata,
       storageController.uploadFile,
       new VirusScanController(config).scanFile,
@@ -57,7 +59,7 @@ class FilesRouter {
 
     router.delete(
       `${config.endpoints.files}/:businessKey/:fileVersion/:filename`,
-      new DeleteValidationController(joi).validateRoute,
+      new DeleteValidationController(joi, new DeleteValidation()).validateRoute,
       storageController.deleteFiles
     );
 

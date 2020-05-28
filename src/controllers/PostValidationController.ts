@@ -1,7 +1,6 @@
 import {NextFunction, Request, Response} from 'express';
 import {ValidationError} from 'joi';
 import IPostRequestParams from '../interfaces/IPostRequestParams';
-import PostValidation from '../validation/PostValidation';
 import ValidationController from './ValidationController';
 
 class PostValidationController extends ValidationController {
@@ -11,7 +10,7 @@ class PostValidationController extends ValidationController {
       businessKey: params.businessKey,
       file
     };
-    const error: ValidationError | null = this.validate.validateFields(new PostValidation(), this.joi, data);
+    const error: ValidationError | null = this.validate.validateFields(this.validator, this.joi, data);
     return this.handleValidation(req, res, next, error);
   }
 }

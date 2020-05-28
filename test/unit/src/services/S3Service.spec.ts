@@ -45,7 +45,7 @@ describe('S3Service', () => {
   });
 
   describe('uploadParams()', () => {
-    it('should return the correct params', (done) => {
+    it('should return the correct params when email is given', (done) => {
       const requestParams: IPostRequestParams = {
         businessKey: 'BF-20191218-798',
         email: 'officer@homeoffice.gov.uk',
@@ -72,6 +72,40 @@ describe('S3Service', () => {
         }),
         Metadata: {
           email: requestParams.email,
+          originalfilename: requestParams.file.originalname,
+          processedtime: requestParams.file.processedTime.toString()
+        }
+      });
+
+      done();
+    });
+
+    it('should return the correct params when email is not given', (done) => {
+      const requestParams: IPostRequestParams = {
+        businessKey: 'BF-20191218-798',
+        file: {
+          ...testFile,
+          ...{
+            buffer: new Buffer('some file contents'),
+            filename: '9e5eb809-bce7-463e-8c2f-b6bd8c4832d9'
+          }
+        }
+      };
+
+      s3 = new S3Service(config, util);
+      const params: S3UploadParamsInterface = s3.uploadParams(config, requestParams);
+
+      expect(params).to.deep.equal({
+        Body: requestParams.file.buffer,
+        Bucket: config.services.s3.bucket,
+        ContentType: requestParams.file.mimetype,
+        Key: StorageKey.format({
+          businessKey: requestParams.businessKey,
+          fileVersion: requestParams.file.version,
+          filename: requestParams.file.filename
+        }),
+        Metadata: {
+          email: '',
           originalfilename: requestParams.file.originalname,
           processedtime: requestParams.file.processedTime.toString()
         }
@@ -215,6 +249,22 @@ describe('S3Service', () => {
     });
   });
 
+  describe('listMetadata()', () => {
+    it('should call fetchAsync() with the correct params', (done) => {
+      const key = 'BF-20191218-798/clean/cdb12ea9-da56-41c2-8631-deaf30ae93a9';
+      s3 = new S3Service(config, util);
+
+      s3.fetchAsync = sinon.spy();
+
+      s3.listMetadata(key);
+      expect(s3.fetchAsync).to.have.been.calledOnceWithExactly('headObject', {
+        Bucket: 'awsbucket',
+        Key: key
+      });
+      done();
+    });
+  });
+
   describe('fetchAsync()', () => {
     it('should call util.promisify()', (done) => {
       util = {
@@ -224,7 +274,6 @@ describe('S3Service', () => {
 
       s3.fetchAsync('upload', {file: {}});
       expect(s3.util.promisify).to.have.been.calledOnce;
-
       done();
     });
   });

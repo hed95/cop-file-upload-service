@@ -1,13 +1,16 @@
 import {NextFunction, Request, Response} from 'express';
 import {JoiObject, ValidationError} from 'joi';
 import Validate from '../utils/Validate';
+import Validation from '../validation/Validation';
 
 class ValidationController {
   public validate: Validate;
   protected joi: JoiObject;
+  protected validator: Validation;
 
-  constructor(joi: any) {
+  constructor(joi: any, validator: Validation) {
     this.joi = joi;
+    this.validator = validator;
     this.validate = new Validate();
     this.validateRoute = this.validateRoute.bind(this);
   }

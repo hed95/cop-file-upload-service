@@ -7,6 +7,7 @@ import {expect, requestMock, responseMock, sinon, validateMock} from '../../../s
 describe('GetFileValidationController', () => {
   describe('validateRoute()', () => {
     it('should call validate.validateFields() and handleValidation()', (done) => {
+      const getFileValidation: GetFileValidation = new GetFileValidation();
       const req: Request = requestMock({
         params: {
           businessKey: 'BF-20191218-798',
@@ -16,7 +17,7 @@ describe('GetFileValidationController', () => {
       });
       const res: Response = responseMock();
       const next: NextFunction = () => true;
-      const getValidationController: GetValidationController = new GetValidationController(Joi, new GetFileValidation());
+      const getValidationController: GetValidationController = new GetValidationController(Joi, getFileValidation);
 
       getValidationController.validate = validateMock;
       const validateStub: sinon.SinonStub = sinon
@@ -24,10 +25,10 @@ describe('GetFileValidationController', () => {
         .returns(null);
       getValidationController.handleValidation = sinon.spy();
 
-      getValidationController.validateRoute(req, res, next);
+      const result = getValidationController.validateRoute(req, res, next);
 
       expect(getValidationController.validate.validateFields).to.have.been.calledOnce;
-      expect(getValidationController.validate.validateFields).to.have.been.calledWith(new GetFileValidation(), Joi, req.params);
+      expect(getValidationController.validate.validateFields).to.have.been.calledWith(getFileValidation, Joi, req.params);
       expect(getValidationController.handleValidation).to.have.been.calledOnce;
       expect(getValidationController.handleValidation).to.have.been.calledWith(req, res, next, null);
 
