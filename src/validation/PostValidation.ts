@@ -1,4 +1,5 @@
 import { ObjectSchema } from 'joi';
+import config from '../config';
 import Validation from './Validation';
 
 class PostValidation extends Validation {
@@ -30,6 +31,7 @@ class PostValidation extends Validation {
               .required(),
             size: this.joi
               .number()
+              .max(config.fileSizeLimitInBytes)
               .required()
           })
           .required()

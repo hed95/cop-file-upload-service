@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as Joi from 'joi';
 import PostValidation from '../../../../src/validation/PostValidation';
-import {expect, testFile} from '../../../setupTests';
+import {config, expect} from '../../../setupTests';
 
 interface ITestPostRequest {
   file: any;
@@ -123,6 +123,13 @@ describe('PostValidation', () => {
       data.file.size = {size: 100};
       result = Joi.validate(data, schema);
       expect(result).to.have.property('error').and.match(/"size" must be a number/);
+      done();
+    });
+
+    it('should return an error when file size is greater than the max size', (done) => {
+      data.file.size = config.fileSizeLimitInBytes + 1;
+      result = Joi.validate(data, schema);
+      expect(result).to.have.property('error').and.match(/"size" must be less than or equal to 25000000/);
       done();
     });
 

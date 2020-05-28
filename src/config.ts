@@ -15,6 +15,7 @@ const config: IConfig = {
   fileConversions: {
     pdfDensity: 300
   },
+  fileSizeLimitInBytes: 25000000,
   fileVersions: {
     clean: 'clean',
     ocr: 'ocr',
