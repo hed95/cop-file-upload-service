@@ -1,5 +1,5 @@
 import * as fs from 'fs';
-import * as joi from 'joi';
+import * as Joi from 'joi';
 import IState from '../../../../../src/interfaces/IState';
 import FileTypeValidator from '../../../../../src/validation/validators/FileTypeValidator';
 import {config, expect, testFile} from '../../../../setupTests';
@@ -24,7 +24,7 @@ describe('FileTypeValidator', () => {
   describe('validate()', () => {
     it('should return the correct params for the validator', (done) => {
       const fileTypeValidator: FileTypeValidator = new FileTypeValidator();
-      const validator = fileTypeValidator.validate(joi, config);
+      const validator = fileTypeValidator.validate(Joi, config);
       expect(validator).to.have.property('language').and.to.deep.equal({
         hex: `file type is invalid, expecting one of ${Object.keys(config.validFileTypes).join(', ')}`
       });
@@ -49,7 +49,7 @@ describe('FileTypeValidator', () => {
 
       it('should return the value when the file is valid', (done) => {
         const fileTypeValidator: FileTypeValidator = new FileTypeValidator();
-        const validator = fileTypeValidator.validate(joi, config);
+        const validator = fileTypeValidator.validate(Joi, config);
         const isValid = validator.rules[0].validate(params, value, state, options);
         expect(isValid).to.deep.equal(file);
         done();
@@ -58,7 +58,7 @@ describe('FileTypeValidator', () => {
       it('should return a joi error object when the file is invalid', (done) => {
         state.parent.mimetype = 'text/plain';
         const fileTypeValidator: FileTypeValidator = new FileTypeValidator();
-        const validator = fileTypeValidator.validate(joi, config);
+        const validator = fileTypeValidator.validate(Joi, config);
         const isValid = validator.rules[0].validate(params, value, state, options);
         expect(isValid).to.deep.equal({
           context: {
