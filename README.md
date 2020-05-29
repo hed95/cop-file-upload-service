@@ -12,6 +12,16 @@ The service performs the following actions on the uploaded files:
 - extracting text with ocr - valid files for ocr are: for .png, .jpg, .jpeg, .jpe, .tiff, .tif, .bmp, .pnm and .jfif
 - saving into storage - 3 file versions (`orig`, `clean` and `ocr`) are saved for most images and pdfs, 2 file versions (`orig` and `clean`) are saved for all other file types - currently S3 is supported
 
+The following file types can be uploaded:
+
+- doc
+- docx
+- gif
+- jpg
+- pdf
+- xls
+- xlsx
+
 ## Using the API
 
 ### Uploading a file

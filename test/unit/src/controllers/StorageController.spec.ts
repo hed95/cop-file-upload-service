@@ -9,14 +9,27 @@ describe('StorageController', () => {
   let next: NextFunction;
   let s3Service: any;
   let storageController: StorageController;
+  const email: string = 'officer@homeoffice.gov.uk';
+  const businessKey: string = 'BF-20191218-798';
 
   beforeEach(() => {
     req = requestMock({
       allFiles: {},
       body: {},
       file: testFile,
+      kauth: {
+        grant: {
+          access_token: {
+            content: {
+              email
+            }
+          }
+        }
+      },
       logger: sinon.spy(),
-      params: {}
+      params: {
+        file: testFile
+      }
     });
     res = responseMock();
     next = sinon.spy();
@@ -42,6 +55,7 @@ describe('StorageController', () => {
       storageController
         .downloadFile(req, res)
         .then(() => {
+          expect(s3Service.downloadFile).to.have.been.calledOnceWithExactly(req.params);
           expect(req.logger).to.have.been.calledTwice;
           expect(req.logger).to.have.been.calledWith('Downloading file');
           expect(req.logger).to.have.been.calledWith('File downloaded');
@@ -91,16 +105,41 @@ describe('StorageController', () => {
     });
 
     it('should log the correct messages and call next() when a file is uploaded successfully', (done) => {
-      req.params.businessKey = 'BF-20191218-798';
+      req.params.businessKey = businessKey;
 
       storageController = new StorageController(s3Service, config);
 
       storageController
         .uploadFile(req, res, next)
         .then(() => {
+          expect(s3Service.uploadFile).to.have.been.calledOnceWithExactly({
+            businessKey,
+            email,
+            file: testFile
+          });
           expect(req.logger).to.have.been.calledTwice;
           expect(req.logger).to.have.been.calledWith(`Uploading file - ${config.fileVersions.original} version`);
           expect(req.logger).to.have.been.calledWith(`File uploaded - ${config.fileVersions.original} version`);
+          expect(next).to.have.been.calledOnce;
+          expect(req.allFiles).to.be.empty;
+          done();
+        })
+        .catch((err) => {
+          done(err);
+        });
+    });
+
+    it('should call next() when a file is not available to be uploaded', (done) => {
+      req.params.businessKey = businessKey;
+      req.allFiles = {};
+
+      storageController = new StorageController(s3Service, config);
+
+      storageController
+        .uploadFile(req, res, next)
+        .then(() => {
+          expect(s3Service.uploadFile).not.to.have.been.called;
+          expect(req.logger).not.to.have.been.called;
           expect(next).to.have.been.calledOnce;
           expect(req.allFiles).to.be.empty;
           done();
@@ -141,7 +180,7 @@ describe('StorageController', () => {
   describe('deleteFiles()', () => {
     it('should log the correct messages and return a success message when files are deleted successfully', (done) => {
       s3Service = {
-        deleteFiles: () => true
+        deleteFiles: sinon.spy()
       };
 
       storageController = new StorageController(s3Service, config);
@@ -149,6 +188,7 @@ describe('StorageController', () => {
       storageController
         .deleteFiles(req, res)
         .then(() => {
+          expect(s3Service.deleteFiles).to.have.been.calledOnceWithExactly(req.params);
           expect(req.logger).to.have.been.calledTwice;
           expect(req.logger).to.have.been.calledWith('Deleting files');
           expect(req.logger).to.have.been.calledWith('Files deleted');

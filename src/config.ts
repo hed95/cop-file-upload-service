@@ -15,6 +15,7 @@ const config: IConfig = {
   fileConversions: {
     pdfDensity: 300
   },
+  fileSizeLimitInBytes: 25000000,
   fileVersions: {
     clean: 'clean',
     ocr: 'ocr',
@@ -43,6 +44,36 @@ const config: IConfig = {
       host: process.env.VIRUS_SCAN_HOST || 'localhost',
       path: '/scan',
       port: process.env.VIRUS_SCAN_PORT || 8080
+    }
+  },
+  validFileTypes: {
+    doc: {
+      mimetype: 'application/msword',
+      signature: 'd0cf11e0a1b11ae1'
+    },
+    docx: {
+      mimetype: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      signature: '504b0304'
+    },
+    gif: {
+      mimetype: 'image/gif',
+      signature: '47494638'
+    },
+    jpg: {
+      mimetype: 'image/jpeg',
+      signature: 'ffd8ffe0'
+    },
+    pdf: {
+      mimetype: 'application/pdf',
+      signature: '25504446'
+    },
+    xls: {
+      mimetype: 'application/vnd.ms-excel',
+      signature: 'd0cf11e0a1b11ae1'
+    },
+    xlsx: {
+      mimetype: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      signature: '504b0304'
     }
   }
 };

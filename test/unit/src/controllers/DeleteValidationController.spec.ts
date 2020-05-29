@@ -7,6 +7,7 @@ import {expect, requestMock, responseMock, sinon, validateMock} from '../../../s
 describe('DeleteValidationController', () => {
   describe('validateRoute()', () => {
     it('should call validate.validateFields() and handleValidation()', (done) => {
+      const deleteValidation: DeleteValidation = new DeleteValidation();
       const req: Request = requestMock({
         params: {
           businessKey: 'BF-20191218-798',
@@ -15,7 +16,7 @@ describe('DeleteValidationController', () => {
       });
       const res: Response = responseMock({});
       const next: NextFunction = () => true;
-      const deleteValidationController: DeleteValidationController = new DeleteValidationController(Joi);
+      const deleteValidationController: DeleteValidationController = new DeleteValidationController(Joi, deleteValidation);
 
       deleteValidationController.validate = validateMock;
       const validateStub: sinon.SinonStub = sinon.stub(deleteValidationController.validate, 'validateFields').returns(null);
@@ -24,7 +25,7 @@ describe('DeleteValidationController', () => {
       deleteValidationController.validateRoute(req, res, next);
 
       expect(deleteValidationController.validate.validateFields).to.have.been.calledOnce;
-      expect(deleteValidationController.validate.validateFields).to.have.been.calledWith(new DeleteValidation(), Joi, req.params);
+      expect(deleteValidationController.validate.validateFields).to.have.been.calledWith(deleteValidation, Joi, req.params);
       expect(deleteValidationController.handleValidation).to.have.been.calledOnce;
       expect(deleteValidationController.handleValidation).to.have.been.calledWith(req, res, next, null);
 

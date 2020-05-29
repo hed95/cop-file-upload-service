@@ -1,6 +1,6 @@
 import * as express from 'express';
 import * as gm from 'gm';
-import * as joi from 'joi';
+import * as Joi from 'joi';
 import * as multer from 'multer';
 import * as ocr from 'tesseractocr';
 import * as util from 'util';
@@ -16,8 +16,10 @@ import StorageController from '../controllers/StorageController';
 import VirusScanController from '../controllers/VirusScanController';
 import S3Service from '../services/S3Service';
 import FileConverter from '../utils/FileConverter';
+import DeleteValidation from '../validation/DeleteValidation';
 import GetFilesValidation from '../validation/GetFilesValidation';
 import GetFileValidation from '../validation/GetFileValidation';
+import PostValidation from '../validation/PostValidation';
 
 const storage: multer.StorageEngine = multer.memoryStorage();
 const upload: multer.Instance = multer({storage});
@@ -30,20 +32,20 @@ class FilesRouter {
 
     router.get(
       `${config.endpoints.files}/:businessKey/:fileVersion/:filename`,
-      new GetValidationController(joi, new GetFileValidation()).validateRoute,
+      new GetValidationController(Joi, new GetFileValidation()).validateRoute,
       storageController.downloadFile
     );
 
     router.get(
       `${config.endpoints.files}/:businessKey`,
-      new GetValidationController(joi, new GetFilesValidation()).validateRoute,
+      new GetValidationController(Joi, new GetFilesValidation()).validateRoute,
       storageController.listFiles
     );
 
     router.post(
       `${config.endpoints.files}/:businessKey`,
       upload.single('file'),
-      new PostValidationController(joi).validateRoute,
+      new PostValidationController(Joi, new PostValidation()).validateRoute,
       new MetadataController(Date.now(), config).generateMetadata,
       storageController.uploadFile,
       new VirusScanController(config).scanFile,
@@ -57,7 +59,7 @@ class FilesRouter {
 
     router.delete(
       `${config.endpoints.files}/:businessKey/:fileVersion/:filename`,
-      new DeleteValidationController(joi).validateRoute,
+      new DeleteValidationController(Joi, new DeleteValidation()).validateRoute,
       storageController.deleteFiles
     );
 

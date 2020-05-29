@@ -1,3 +1,5 @@
+import IValidFileType from './IValidFileType';
+
 interface IConfig {
   port: string | number;
   protocol: string;
@@ -37,6 +39,16 @@ interface IConfig {
   fileConversions: {
     pdfDensity: number
   };
+  validFileTypes: {
+    doc: IValidFileType,
+    docx: IValidFileType,
+    gif: IValidFileType,
+    jpg: IValidFileType,
+    pdf: IValidFileType,
+    xls: IValidFileType,
+    xlsx: IValidFileType
+  };
+  fileSizeLimitInBytes: number;
 }
 
 export default IConfig;

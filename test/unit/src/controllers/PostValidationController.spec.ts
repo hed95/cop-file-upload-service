@@ -7,6 +7,7 @@ import {expect, requestMock, responseMock, sinon, testFile, validateMock} from '
 describe('PostValidationController', () => {
   describe('validateRoute()', () => {
     it('should call validate.validateFields() and handleValidation()', (done) => {
+      const postValidation: PostValidation = new PostValidation();
       const req: Request = requestMock({
         file: testFile,
         params: {
@@ -15,7 +16,7 @@ describe('PostValidationController', () => {
       });
       const res: Response = responseMock();
       const next: NextFunction = sinon.stub();
-      const postValidationController: PostValidationController = new PostValidationController(Joi);
+      const postValidationController: PostValidationController = new PostValidationController(Joi, postValidation);
 
       postValidationController.validate = validateMock;
       const validateStub: sinon.SinonStub = sinon.stub(postValidationController.validate, 'validateFields').returns(null);
@@ -24,10 +25,7 @@ describe('PostValidationController', () => {
       postValidationController.validateRoute(req, res, next);
 
       expect(postValidationController.validate.validateFields).to.have.been.calledOnce;
-      expect(postValidationController.validate.validateFields).to.have.been.calledWith(new PostValidation(), Joi, {
-        businessKey: 'BF-20191218-798',
-        file: testFile
-      });
+      expect(postValidationController.validate.validateFields).to.have.been.calledWith(postValidation);
       expect(postValidationController.handleValidation).to.have.been.calledOnce;
       expect(postValidationController.handleValidation).to.have.been.calledWith(req, res, next, null);
 
