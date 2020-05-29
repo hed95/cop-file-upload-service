@@ -108,8 +108,8 @@ pipeline:
     environment:
       - AWS_REGION=eu-west-2
     secrets:
-      - source: DEV_BUCKET_NAME_PREFIX
-        target: BUCKET_NAME_PREFIX
+      - source: DEV_FILE_UPLOAD_SERVICE_S3_BUCKET_NAME
+        target: AWS_BUCKET
       - source: DEV_KUBE_NAMESPACE_PRIVATE_COP
         target: KUBE_NAMESPACE
       - source: DEV_KUBE_SERVER
@@ -156,13 +156,66 @@ pipeline:
       branch: master
       event: push
 
+  deploy_to_dev_eforms:
+    image: quay.io/ukhomeofficedigital/kd
+    environment:
+      - AWS_REGION=eu-west-2
+    secrets:
+      - source: DEV_FILE_UPLOAD_SERVICE_EFORMS_S3_AWS_BUCKET_NAME
+        target: AWS_BUCKET
+      - source: DEV_KUBE_NAMESPACE_COP_EFORMS
+        target: KUBE_NAMESPACE
+      - source: DEV_KUBE_SERVER
+        target: KUBE_SERVER
+      - source: DEV_EFORMS_KUBE_TOKEN
+        target: KUBE_TOKEN
+      - source: DEV_KEYCLOAK_URL
+        target: KEYCLOAK_URL
+      - source: DEV_KEYCLOAK_REALM
+        target: KEYCLOAK_REALM
+      - source: DEV_FILE_UPLOAD_SERVICE_EFORMS_S3_AWS_ACCESS_KEY_ID
+        target: AWS_ACCESS_KEY
+      - source: DEV_FILE_UPLOAD_SERVICE_EFORMS_S3_AWS_SECRET_ACCESS_KEY
+        target: AWS_SECRET_ACCESS_KEY
+      - source: PROTOCOL_HTTPS
+        target: PROTOCOL
+      - source: DEV_WHITELIST
+        target: WHITELIST
+      - source: DEV_WWW_EFORMS_URL
+        target: WWW_URL
+      - source: FILE_UPLOAD_SERVICE_KEYCLOAK_CLIENT_ID
+        target: FILE_UPLOAD_SERVICE_KEYCLOAK_CLIENT_ID
+      - source: FILE_UPLOAD_SERVICE_NAME
+        target: FILE_UPLOAD_SERVICE_NAME
+      - source: FILE_UPLOAD_SERVICE_PORT
+        target: FILE_UPLOAD_SERVICE_PORT
+      - source: DEV_FILE_UPLOAD_SERVICE_EFORMS_URL
+        target: FILE_UPLOAD_SERVICE_URL
+      - source: NGINX_IMAGE
+        target: NGINX_IMAGE
+      - source: NGINX_TAG
+        target: NGINX_TAG
+      - source: PROTOCOL_HTTPS
+        target: KEYCLOAK_PROTOCOL
+    commands:
+      - export IMAGE_TAG=$${DRONE_COMMIT_SHA}
+      - kd --insecure-skip-tls-verify -f kube/cert.yml
+      - kd --insecure-skip-tls-verify -f kube/network-policy.yml
+      - kd --insecure-skip-tls-verify -f kube/secret.yml
+      - kd --insecure-skip-tls-verify -f kube/service.yml
+      - kd --insecure-skip-tls-verify -f kube/deployment.yml --timeout=10m
+      - kd --insecure-skip-tls-verify -f kube/ingress.yml
+    when:
+      branch: master
+      event: push
+
   deploy_to_staging:
     image: quay.io/ukhomeofficedigital/kd
     environment:
       - AWS_REGION=eu-west-2
     secrets:
-      - source: STAGING_BUCKET_NAME_PREFIX
-        target: BUCKET_NAME_PREFIX
+      - source: STAGING_FILE_UPLOAD_SERVICE_S3_BUCKET_NAME
+        target: AWS_BUCKET
       - source: STAGING_KUBE_NAMESPACE_PRIVATE_COP
         target: KUBE_NAMESPACE
       - source: STAGING_KUBE_SERVER
@@ -214,8 +267,8 @@ pipeline:
     environment:
       - AWS_REGION=eu-west-2
     secrets:
-      - source: PRODUCTION_BUCKET_NAME_PREFIX
-        target: BUCKET_NAME_PREFIX
+      - source: PRODUCTION_FILE_UPLOAD_SERVICE_S3_BUCKET_NAME
+        target: AWS_BUCKET
       - source: PRODUCTION_KUBE_NAMESPACE_PRIVATE_COP
         target: KUBE_NAMESPACE
       - source: PRODUCTION_KUBE_SERVER
