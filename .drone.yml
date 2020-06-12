@@ -315,6 +315,60 @@ pipeline:
       environment: production
       event: deployment
 
+  deploy_to_production_eforms:
+    image: quay.io/ukhomeofficedigital/kd
+    environment:
+      - AWS_REGION=eu-west-2
+    secrets:
+      - source: PRODUCTION_FILE_UPLOAD_SERVICE_EFORMS_S3_AWS_BUCKET_NAME
+        target: AWS_BUCKET
+      - source: PRODUCTION_KUBE_NAMESPACE_COP_EFORMS
+        target: KUBE_NAMESPACE
+      - source: PRODUCTION_KUBE_SERVER
+        target: KUBE_SERVER
+      - source: PRODUCTION_EFORMS_KUBE_TOKEN
+        target: KUBE_TOKEN
+      - source: PRODUCTION_KEYCLOAK_URL
+        target: KEYCLOAK_URL
+      - source: PRODUCTION_KEYCLOAK_REALM
+        target: KEYCLOAK_REALM
+      - source: PRODUCTION_FILE_UPLOAD_SERVICE_EFORMS_S3_AWS_ACCESS_KEY_ID
+        target: AWS_ACCESS_KEY
+      - source: PRODUCTION_FILE_UPLOAD_SERVICE_EFORMS_S3_AWS_SECRET_ACCESS_KEY
+        target: AWS_SECRET_ACCESS_KEY
+      - source: PROTOCOL_HTTPS
+        target: PROTOCOL
+      - source: PRODUCTION_WHITELIST
+        target: WHITELIST
+      - source: PRODUCTION_WWW_EFORMS_URL
+        target: WWW_URL
+      - source: FILE_UPLOAD_SERVICE_KEYCLOAK_CLIENT_ID
+        target: FILE_UPLOAD_SERVICE_KEYCLOAK_CLIENT_ID
+      - source: FILE_UPLOAD_SERVICE_NAME
+        target: FILE_UPLOAD_SERVICE_NAME
+      - source: FILE_UPLOAD_SERVICE_PORT
+        target: FILE_UPLOAD_SERVICE_PORT
+      - source: PRODUCTION_FILE_UPLOAD_SERVICE_EFORMS_URL
+        target: FILE_UPLOAD_SERVICE_URL
+      - source: NGINX_IMAGE
+        target: NGINX_IMAGE
+      - source: NGINX_TAG
+        target: NGINX_TAG
+      - source: PROTOCOL_HTTPS
+        target: KEYCLOAK_PROTOCOL
+    commands:
+      - export IMAGE_TAG=$${DRONE_COMMIT_SHA}
+      - kd --insecure-skip-tls-verify -f kube/cert.yml
+      - kd --insecure-skip-tls-verify -f kube/network-policy.yml
+      - kd --insecure-skip-tls-verify -f kube/secret.yml
+      - kd --insecure-skip-tls-verify -f kube/service.yml
+      - kd --insecure-skip-tls-verify -f kube/deployment.yml --timeout=10m
+      - kd --insecure-skip-tls-verify -f kube/ingress.yml
+    when:
+      branch: master
+      environment: production
+      event: deployment
+
   notify:
     image: plugins/slack
     secrets: [ SLACK_WEBHOOK ]
