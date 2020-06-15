@@ -10,15 +10,35 @@ The service performs the following actions on the uploaded files:
 - virus scanning
 - file conversion - if a virus is not found and the file is an image or a pdf then a clean version is created by converting the file into a different format twice
 - extracting text with ocr - valid files for ocr are: for .png, .jpg, .jpeg, .jpe, .tiff, .tif, .bmp, .pnm and .jfif
-- saving into storage - 3 file versions (`orig`, `clean` and `ocr`) are saved for most images and pdfs, 2 file versions (`orig` and `clean`) are saved for all other file types - currently S3 is supported
+- saving into storage - 3 file versions (`orig`, `clean` and `ocr`) are saved for most images and pdfs, 2 file versions (`orig` and `clean`) are saved for all other file types.
+
+Currently S3 is supported for storage
 
 The following file types can be uploaded:
 
+- avi
 - doc
 - docx
+- dot
+- eps
+- flv
 - gif
 - jpg
+- m4v
+- mov
+- mp3
+- odp
+- odt
+- oga
+- ogg
+- ogv
 - pdf
+- png
+- pps
+- ppt
+- pptx
+- rtf
+- tif
 - xls
 - xlsx
 
