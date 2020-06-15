@@ -40,11 +40,29 @@ interface IConfig {
     pdfDensity: number
   };
   validFileTypes: {
+    avi: IValidFileType,
     doc: IValidFileType,
     docx: IValidFileType,
+    dot: IValidFileType,
+    eps: IValidFileType,
+    flv: IValidFileType,
     gif: IValidFileType,
     jpg: IValidFileType,
+    m4v: IValidFileType,
+    mov: IValidFileType,
+    mp3: IValidFileType,
+    odp: IValidFileType,
+    odt: IValidFileType,
+    oga: IValidFileType,
+    ogg: IValidFileType,
+    ogv: IValidFileType,
     pdf: IValidFileType,
+    png: IValidFileType,
+    pps: IValidFileType,
+    ppt: IValidFileType,
+    pptx: IValidFileType,
+    rtf: IValidFileType,
+    tif: IValidFileType,
     xls: IValidFileType,
     xlsx: IValidFileType
   };
