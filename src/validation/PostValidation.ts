@@ -15,6 +15,7 @@ class PostValidation extends Validation {
           .keys({
             buffer: this.joi
               .fileType()
+              .mime()
               .hex()
               .required(),
             encoding: this.joi

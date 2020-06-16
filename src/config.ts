@@ -47,6 +47,10 @@ const config: IConfig = {
     }
   },
   validFileTypes: {
+    avi: {
+      mimetype: 'video/x-msvideo',
+      signature: '52494646'
+    },
     doc: {
       mimetype: 'application/msword',
       signature: 'd0cf11e0a1b11ae1'
@@ -54,6 +58,18 @@ const config: IConfig = {
     docx: {
       mimetype: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
       signature: '504b0304'
+    },
+    dot: {
+      mimetype: 'application/msword',
+      signature: 'd0cf11e0a1b11ae1'
+    },
+    eps: {
+      mimetype: 'application/postscript',
+      signature: '252150532d41646f'
+    },
+    flv: {
+      mimetype: 'video/x-flv',
+      signature: '464c56'
     },
     gif: {
       mimetype: 'image/gif',
@@ -63,9 +79,67 @@ const config: IConfig = {
       mimetype: 'image/jpeg',
       signature: 'ffd8ffe0'
     },
+    m4v: {
+      mimetype: 'video/x-m4v',
+      offset: 8,
+      signature: '667479704d345620'
+    },
+    mov: {
+      mimetype: 'video/quicktime',
+      offset: 8,
+      signature: '6674797071742020'
+    },
+    mp3: {
+      mimetype: 'audio/mpeg',
+      signature: '494433'
+    },
+    odp: {
+      mimetype: 'application/vnd.oasis.opendocument.presentation',
+      signature: '504b0304'
+    },
+    odt: {
+      mimetype: 'application/vnd.oasis.opendocument.text',
+      signature: '504b0304'
+    },
+    oga: {
+      mimetype: 'audio/ogg',
+      signature: '4f67675300020000'
+    },
+    ogg: {
+      mimetype: 'audio/ogg',
+      signature: '4f67675300020000'
+    },
+    ogv: {
+      mimetype: 'video/ogg',
+      signature: '4f67675300020000'
+    },
     pdf: {
       mimetype: 'application/pdf',
       signature: '25504446'
+    },
+    png: {
+      mimetype: 'image/png',
+      signature: '89504e470d0a1a0a'
+    },
+    pps: {
+      mimetype: 'application/vnd.ms-powerpoint',
+      signature: 'd0cf11e0a1b11ae1'
+    },
+    ppt: {
+      mimetype: 'application/vnd.ms-powerpoint',
+      signature: 'd0cf11e0a1b11ae1'
+    },
+    pptx: {
+      mimetype: 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+      signature: '504b0304'
+    },
+    rtf: {
+      mimetype: 'application/rtf',
+      signature: '7b5c72746631'
+    },
+    tif: {
+      mimetype: 'image/tiff',
+      signature: '49492a00'
     },
     xls: {
       mimetype: 'application/vnd.ms-excel',
