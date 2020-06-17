@@ -366,7 +366,7 @@ pipeline:
       - kd --insecure-skip-tls-verify -f kube/ingress.yml
     when:
       branch: master
-      environment: production
+      environment: production_eforms
       event: deployment
 
   notify:
