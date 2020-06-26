@@ -46,7 +46,7 @@ class FilesRouter {
       `${config.endpoints.files}/:businessKey`,
       upload.single('file'),
       new PostValidationController(Joi, new PostValidation()).validateRoute,
-      new MetadataController(Date.now(), config).generateMetadata,
+      new MetadataController(config).generateMetadata,
       storageController.uploadFile,
       new VirusScanController(config).scanFile,
       new FileConversionController(new FileConverter(gm, util, config), config).convertFile,
