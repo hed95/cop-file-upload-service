@@ -2,11 +2,9 @@ import {NextFunction, Request, Response} from 'express';
 import IConfig from '../interfaces/IConfig';
 
 class MetadataController {
-  protected processedTime: number;
   protected config: IConfig;
 
-  constructor(processedTime: number, config: IConfig) {
-    this.processedTime = processedTime;
+  constructor(config: IConfig) {
     this.config = config;
     this.generateMetadata = this.generateMetadata.bind(this);
   }
@@ -17,7 +15,7 @@ class MetadataController {
       ...{
         filename: req.uuid,
         originalMimeType: req.file.mimetype,
-        processedTime: this.processedTime,
+        processedTime: req.processedTime,
         version: this.config.fileVersions.original
       }
     };

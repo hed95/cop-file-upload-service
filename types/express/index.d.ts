@@ -3,7 +3,8 @@ declare module Express {
     allFiles: {[key: string]: Multer.File};
     logger: any;
     file: Multer.File;
-    uuid: any;
+    uuid: string;
+    processedTime: number;
     kauth: any;
   }
 

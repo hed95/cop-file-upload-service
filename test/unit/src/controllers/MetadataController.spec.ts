@@ -8,11 +8,12 @@ describe('MetadataController', () => {
       const processedTime: number = Date.now();
       const req: Request = requestMock({
         file: testFile,
+        processedTime,
         uuid: '9e5eb809-bce7-463e-8c2f-b6bd8c4832d9'
       });
       const res: Response = responseMock();
       const next: NextFunction = sinon.spy();
-      const metadataController: MetadataController = new MetadataController(processedTime, config);
+      const metadataController: MetadataController = new MetadataController(config);
 
       metadataController.generateMetadata(req, res, next);
 

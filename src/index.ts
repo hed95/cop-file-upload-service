@@ -36,6 +36,7 @@ app.use(helmet());
 
 app.use((req, res, next) => {
   req.uuid = uuid();
+  req.processedTime = Date.now();
   next();
 });
 
