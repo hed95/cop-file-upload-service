@@ -1,0 +1,22 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{.FILE_UPLOAD_SERVICE_NAME}}-internal
+spec:
+  ingress:
+    - from:
+      - namespaceSelector:
+          matchLabels:
+            name: ingress-internal
+      - podSelector:
+          matchLabels:
+            name: form-builder
+      ports:
+        - port: 10443
+          protocol: TCP
+  podSelector:
+    matchLabels:
+      name: {{.FILE_UPLOAD_SERVICE_NAME}}
+  policyTypes:
+    - Ingress
