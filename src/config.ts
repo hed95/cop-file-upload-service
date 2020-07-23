@@ -22,6 +22,7 @@ const config: IConfig = {
     original: 'orig'
   },
   hostname: process.env.FILE_UPLOAD_SERVICE_URL || 'localhost',
+  logLevel: process.env.FILE_UPLOAD_SERVICE_LOG_LEVEL || 'info',
   port: process.env.PORT || 8181,
   protocol: process.env.PROTOCOL || 'https://',
   services: {

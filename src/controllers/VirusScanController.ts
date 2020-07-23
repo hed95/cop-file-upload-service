@@ -15,12 +15,17 @@ class VirusScanController {
     const {services} = this.config;
     const {virusScan} = services;
     logger('Virus scanning file');
+    logger(`url = http://${virusScan.host}:${virusScan.port}${virusScan.path}`, 'debug');
+    logger(`file.buffer.length = ${file.buffer.length}`, 'debug');
+    logger(`file.originalname = ${file.originalname}`, 'debug');
 
     try {
       const result = await request
         .post(`http://${virusScan.host}:${virusScan.port}${virusScan.path}`)
         .attach('file', file.buffer, file.originalname)
         .field('name', file.originalname);
+
+      logger(`result.text = ${result.text}`, 'debug');
 
       if (result.text.includes('true')) {
         logger('Virus scan passed');
@@ -32,6 +37,7 @@ class VirusScanController {
     } catch (err) {
       logger('Unable to call the virus scanning service', 'error');
       logger(err.toString(), 'error');
+      logger(err, 'debug');
       return res.status(500).json({error: 'Unable to call the virus scanning service'});
     }
   }

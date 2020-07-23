@@ -69,6 +69,7 @@ interface IConfig {
     xlsx: IValidFileType
   };
   fileSizeLimitInBytes: number;
+  logLevel: string;
 }
 
 export default IConfig;

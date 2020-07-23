@@ -1,4 +1,5 @@
 import winston = require('winston');
+import config from '../config';
 import ILogMessage from '../interfaces/ILogMessage';
 import LogMessage from './LogMessage';
 
@@ -34,6 +35,7 @@ class Logger {
         this.outputFormat(),
         this.json()
       ),
+      level: config.logLevel,
       transports: [
         new this.transports.Console()
       ]
