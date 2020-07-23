@@ -144,6 +144,8 @@ pipeline:
         target: NGINX_TAG
       - source: PROTOCOL_HTTPS
         target: KEYCLOAK_PROTOCOL
+      - source: DEV_FILE_UPLOAD_SERVICE_LOG_LEVEL
+        target: FILE_UPLOAD_SERVICE_LOG_LEVEL
     commands:
       - export IMAGE_TAG=$${DRONE_COMMIT_SHA}
       - kd --insecure-skip-tls-verify -f kube/cert.yml
@@ -197,6 +199,8 @@ pipeline:
         target: NGINX_TAG
       - source: PROTOCOL_HTTPS
         target: KEYCLOAK_PROTOCOL
+      - source: DEV_FILE_UPLOAD_SERVICE_LOG_LEVEL
+        target: FILE_UPLOAD_SERVICE_LOG_LEVEL
     commands:
       - export IMAGE_TAG=$${DRONE_COMMIT_SHA}
       - kd --insecure-skip-tls-verify -f kube/cert.yml
@@ -251,6 +255,8 @@ pipeline:
         target: NGINX_TAG
       - source: PROTOCOL_HTTPS
         target: KEYCLOAK_PROTOCOL
+      - source: STAGING_FILE_UPLOAD_SERVICE_LOG_LEVEL
+        target: FILE_UPLOAD_SERVICE_LOG_LEVEL
     commands:
       - export IMAGE_TAG=$${DRONE_COMMIT_SHA}
       - kd --insecure-skip-tls-verify -f kube/cert.yml
@@ -304,6 +310,8 @@ pipeline:
         target: NGINX_TAG
       - source: PROTOCOL_HTTPS
         target: KEYCLOAK_PROTOCOL
+      - source: PRODUCTION_FILE_UPLOAD_SERVICE_LOG_LEVEL
+        target: FILE_UPLOAD_SERVICE_LOG_LEVEL
     commands:
       - export IMAGE_TAG=$${DRONE_COMMIT_SHA}
       - kd --insecure-skip-tls-verify -f kube/cert.yml
@@ -358,6 +366,8 @@ pipeline:
         target: NGINX_TAG
       - source: PROTOCOL_HTTPS
         target: KEYCLOAK_PROTOCOL
+      - source: PRODUCTION_FILE_UPLOAD_SERVICE_LOG_LEVEL
+        target: FILE_UPLOAD_SERVICE_LOG_LEVEL
     commands:
       - export IMAGE_TAG=$${DRONE_COMMIT_SHA}
       - kd --insecure-skip-tls-verify -f kube/cert.yml

@@ -158,6 +158,8 @@ spec:
           value: {{.FILE_UPLOAD_SERVICE_URL}}
         - name: PROTOCOL
           value: {{.PROTOCOL}}
+        - name: FILE_UPLOAD_SERVICE_LOG_LEVEL
+          value: {{.FILE_UPLOAD_SERVICE_LOG_LEVEL}}
       volumes:
       - name: certs
         secret:
