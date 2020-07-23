@@ -41,7 +41,6 @@ describe('VirusScanController', () => {
       virusScanController
         .scanFile(req, res, next)
         .then(() => {
-          expect(req.logger).to.have.been.calledTwice;
           expect(req.logger).to.have.been.calledWith('Virus scanning file');
           expect(req.logger).to.have.been.calledWith('Virus scan passed');
           expect(next).to.have.been.calledOnce;
@@ -60,7 +59,6 @@ describe('VirusScanController', () => {
       virusScanController
         .scanFile(req, res, next)
         .then(() => {
-          expect(req.logger).to.have.been.calledTwice;
           expect(req.logger).to.have.been.calledWith('Virus scanning file');
           expect(req.logger).to.have.been.calledWith('Virus scan failed');
           expect(res.status).to.have.been.calledOnce;
@@ -82,7 +80,6 @@ describe('VirusScanController', () => {
       virusScanController
         .scanFile(req, res, next)
         .then(() => {
-          expect(req.logger).to.have.been.calledThrice;
           expect(req.logger).to.have.been.calledWith('Virus scanning file');
           expect(req.logger).to.have.been.calledWith('Unable to call the virus scanning service');
           expect(req.logger).to.have.been.calledWith('Error: Internal Server Error');

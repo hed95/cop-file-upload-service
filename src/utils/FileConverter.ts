@@ -21,9 +21,12 @@ class FileConverter {
     return file.mimetype === 'application/pdf' ? gm.density(pdfDensity, pdfDensity) : gm;
   }
 
-  public fetchFileBuffer(file: File, newFileType: string): Buffer {
+  public fetchFileBuffer(file: File, newFileType: string, logger: any): Buffer {
+    logger(`newFileType = ${newFileType}`, 'debug');
     const gm = this.initGm(file);
+    logger('set gm', 'debug');
     const toBufferAsync = this.util.promisify(gm.toBuffer.bind(gm));
+    logger('set toBufferAsync', 'debug');
     return toBufferAsync(newFileType);
   }
 
@@ -39,10 +42,15 @@ class FileConverter {
     return [originalMimeType, FileType.fileType(originalMimeType)];
   }
 
-  public async fetchFile(file: File): Promise<IFileConversionReturnParams> {
+  public async fetchFile(file: File, logger: any): Promise<IFileConversionReturnParams> {
     const {mimetype, originalMimeType}: File = file;
+    logger(`mimetype = ${mimetype}`, 'debug');
+    logger(`originalMimeType = ${originalMimeType}`, 'debug');
     const [newMimeType, newExtension]: string[] = this.newMimeType(mimetype, originalMimeType);
-    const newBuffer: Buffer = await this.fetchFileBuffer(file, newExtension);
+    logger(`newMimeType = ${newMimeType}`, 'debug');
+    logger(`newExtension = ${newExtension}`, 'debug');
+    const newBuffer: Buffer = await this.fetchFileBuffer(file, newExtension, logger);
+    logger('set newBuffer', 'debug');
     return {
       buffer: newBuffer,
       mimetype: newMimeType,
@@ -52,7 +60,7 @@ class FileConverter {
 
   public async convert(file: File, logger: any): Promise<File> {
     logger('Converting file');
-    const convertedFile: IFileConversionReturnParams = await this.fetchFile(file);
+    const convertedFile: IFileConversionReturnParams = await this.fetchFile(file, logger);
     logger(`File converted from ${file.mimetype} to ${convertedFile.mimetype}`);
     return {...file, ...convertedFile};
   }

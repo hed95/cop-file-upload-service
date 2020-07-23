@@ -46,8 +46,9 @@ describe('FileConverter', () => {
   describe('fetchFileBuffer()', () => {
     it('should call gm() and util.promisify()', (done) => {
       const newFileType: string = 'png';
+      const logger = () => true;
       const fileConverter: FileConverter = new FileConverter(gm, util, config);
-      fileConverter.fetchFileBuffer(file, newFileType);
+      fileConverter.fetchFileBuffer(file, newFileType, logger);
       expect(fileConverter.gm).to.have.been.calledOnce;
       expect(fileConverter.gm).to.have.been.calledWith(file.buffer, file.originalname);
       expect(fileConverter.util.promisify).to.have.been.calledOnce;
@@ -95,12 +96,13 @@ describe('FileConverter', () => {
 
   describe('fetchFile()', () => {
     it('should return the correct file', (done) => {
+      const logger = () => true;
       const fileConverter: FileConverter = new FileConverter(gm, util, config);
 
       fileConverter.fetchFileBuffer = sinon.stub().returns(file.buffer);
 
       fileConverter
-        .fetchFile(file)
+        .fetchFile(file, logger)
         .then((res) => {
           expect(res).to.deep.equal({
             buffer: file.buffer,
