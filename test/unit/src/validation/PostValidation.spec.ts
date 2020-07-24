@@ -53,14 +53,14 @@ describe('PostValidation', () => {
     it('should return an error when file buffer has an invalid mime type', (done) => {
       data.file.mimetype = 'text/plain';
       result = Joi.validate(data, schema);
-      expect(result).to.have.property('error').and.match(new RegExp(`"buffer" file type is invalid, valid formats are: ${validFileTypes}`));
+      expect(result).to.have.property('error').and.match(new RegExp(`"buffer" file type is invalid \\(mime\\), valid formats are: ${validFileTypes}`));
       done();
     });
 
     it('should return an error when file buffer has an invalid hex signature', (done) => {
       data.file.buffer = fs.readFileSync('test/data/invalid-file-with-valid-ext.pdf');
       result = Joi.validate(data, schema);
-      expect(result).to.have.property('error').and.match(new RegExp(`"buffer" file type is invalid, valid formats are: ${validFileTypes}`));
+      expect(result).to.have.property('error').and.match(new RegExp(`"buffer" file type is invalid \\(hex\\), valid formats are: ${validFileTypes}`));
       done();
     });
 
@@ -102,14 +102,14 @@ describe('PostValidation', () => {
     it('should return an error when file mimetype is not valid', (done) => {
       data.file.mimetype = {mimetype: 'application/pdf'};
       result = Joi.validate(data, schema);
-      expect(result).to.have.property('error').and.match(new RegExp(`"buffer" file type is invalid, valid formats are: ${validFileTypes}`));
+      expect(result).to.have.property('error').and.match(new RegExp(`"buffer" file type is invalid \\(mime\\), valid formats are: ${validFileTypes}`));
       done();
     });
 
     it('should return an error when file mimetype is not given', (done) => {
       delete data.file.mimetype;
       result = Joi.validate(data, schema);
-      expect(result).to.have.property('error').and.match(new RegExp(`"buffer" file type is invalid, valid formats are: ${validFileTypes}`));
+      expect(result).to.have.property('error').and.match(new RegExp(`"buffer" file type is invalid \\(mime\\), valid formats are: ${validFileTypes}`));
       done();
     });
 

@@ -72,7 +72,8 @@ describe('FileTypeValidator', () => {
       const fileTypeValidator: FileTypeValidator = new FileTypeValidator();
       const validator = fileTypeValidator.validate(Joi, config);
       expect(validator).to.have.property('language').and.to.deep.equal({
-        invalid: `file type is invalid, valid formats are: ${Object.keys(config.validFileTypes).join(', ')}`
+        hex: `file type is invalid (hex), valid formats are: ${Object.keys(config.validFileTypes).join(', ')}`,
+        mime: `file type is invalid (mime), valid formats are: ${Object.keys(config.validFileTypes).join(', ')}`
       });
       expect(validator).to.have.property('name').and.to.equal('fileType');
       expect(validator).to.have.property('rules');
@@ -119,7 +120,7 @@ describe('FileTypeValidator', () => {
             options: {},
             path: [],
             template: undefined,
-            type: 'fileType.invalid'
+            type: 'fileType.hex'
           });
           done();
         });
@@ -151,7 +152,7 @@ describe('FileTypeValidator', () => {
             options: {},
             path: [],
             template: undefined,
-            type: 'fileType.invalid'
+            type: 'fileType.mime'
           });
           done();
         });
