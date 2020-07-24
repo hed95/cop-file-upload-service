@@ -99,7 +99,7 @@ spec:
         ports:
           - containerPort: 8080
         env:
-           - name: CLAMAV_HOST
+           - name: CLAMD_HOST
              value: localhost
         resources:
           requests:
