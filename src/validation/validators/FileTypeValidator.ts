@@ -28,7 +28,8 @@ class FileTypeValidator implements IValidator {
     return {
       base: joi.binary(),
       language: {
-        invalid: `file type is invalid, valid formats are: ${Object.keys(validFileTypes).join(', ')}`
+        hex: `file type is invalid (hex), valid formats are: ${Object.keys(validFileTypes).join(', ')}`,
+        mime: `file type is invalid (mime), valid formats are: ${Object.keys(validFileTypes).join(', ')}`
       },
       name: 'fileType',
       rules: [{
@@ -39,13 +40,13 @@ class FileTypeValidator implements IValidator {
           );
           const fileHex: string = FileTypeValidator.fileHex(value, offset);
           const isValidHex = FileTypeValidator.isValidHex(fileHex, signature);
-          return isValidHex ? value : joi.createError('fileType.invalid', {value}, state, options);
+          return isValidHex ? value : joi.createError('fileType.hex', {value}, state, options);
         }
       }, {
         name: 'mime',
         validate(params: object, value: Buffer, state: IState, options: object): any {
           const isValidMimeType: boolean = FileTypeValidator.isValidMimeType(validFileTypes, state.parent.mimetype);
-          return isValidMimeType ? value : joi.createError('fileType.invalid', {value}, state, options);
+          return isValidMimeType ? value : joi.createError('fileType.mime', {value}, state, options);
         }
       }]
     };
