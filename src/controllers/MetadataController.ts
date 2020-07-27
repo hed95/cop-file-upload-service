@@ -10,6 +10,7 @@ class MetadataController {
   }
 
   public generateMetadata(req: Request, res: Response, next: NextFunction): Response | void {
+    console.log(`req.file = ${req.file.toString()}`);
     req.file = {
       ...req.file,
       ...{
