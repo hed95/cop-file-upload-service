@@ -8,8 +8,45 @@ describe('FileTypeValidator', () => {
   describe('validFileProps()', () => {
     it('should return the correct file props', (done) => {
       const mimetype: string = 'application/pdf';
-      const validFileProps = FileTypeValidator.validFileProps(config.validFileTypes, mimetype);
+      const filter = FileTypeValidator.mimeFilter(mimetype);
+      const validFileProps = FileTypeValidator.validFileProps(config.validFileTypes, filter);
       expect(validFileProps).to.equal(config.validFileTypes.pdf);
+      done();
+    });
+  });
+
+  describe('mimeFilter()', () => {
+    const mimetype: string = 'application/pdf';
+
+    it('should return true when the filetype matches', (done) => {
+      const mimeFilter = FileTypeValidator.mimeFilter(mimetype);
+      const result = mimeFilter(['pdf', config.validFileTypes.pdf]);
+      expect(result).to.be.true;
+      done();
+    });
+
+    it('should return false when the mimetype does not match', (done) => {
+      const mimeFilter = FileTypeValidator.mimeFilter(mimetype);
+      const result = mimeFilter(['jpg', config.validFileTypes.jpg]);
+      expect(result).to.be.false;
+      done();
+    });
+  });
+
+  describe('extensionFilter()', () => {
+    const extension: string = 'pdf';
+
+    it('should return true when the extension matches', (done) => {
+      const extensionFilter = FileTypeValidator.extensionFilter(extension);
+      const result = extensionFilter(['pdf', config.validFileTypes.pdf]);
+      expect(result).to.be.true;
+      done();
+    });
+
+    it('should return false when the extension does not match', (done) => {
+      const extensionFilter = FileTypeValidator.extensionFilter(extension);
+      const result = extensionFilter(['jpg', config.validFileTypes.jpg]);
+      expect(result).to.be.false;
       done();
     });
   });
@@ -34,18 +71,19 @@ describe('FileTypeValidator', () => {
   });
 
   describe('isValidHex()', () => {
-    const fileHex: string = '255044462d312e330a25c4e5f2e5eba7f3';
+    const value: Buffer = Buffer.from('255044462d312e330a25c4e5f2e5eba7f3');
+    const offset: number = 0;
 
     it('should return true when the file hex is valid', (done) => {
-      const signature: string = '25504446';
-      const isValidHex: boolean = FileTypeValidator.isValidHex(fileHex, signature);
+      const signature: string = '32353530';
+      const isValidHex: boolean = FileTypeValidator.isValidHex(value, offset, signature);
       expect(isValidHex).to.be.true;
       done();
     });
 
     it('should return false when the file hex is invalid', (done) => {
       const signature: string = '504b0304';
-      const isValidHex: boolean = FileTypeValidator.isValidHex(fileHex, signature);
+      const isValidHex: boolean = FileTypeValidator.isValidHex(value, offset, signature);
       expect(isValidHex).to.be.false;
       done();
     });
@@ -63,6 +101,14 @@ describe('FileTypeValidator', () => {
       const mimeType: string = 'text/plain';
       const isValidMimeType: boolean = FileTypeValidator.isValidMimeType(config.validFileTypes, mimeType);
       expect(isValidMimeType).to.be.false;
+      done();
+    });
+  });
+
+  describe('fileExtension()', () => {
+    it('should return the extension from a filename', (done) => {
+      const extension: string = FileTypeValidator.fileExtension('test-file.pdf');
+      expect(extension).to.equal('pdf');
       done();
     });
   });
@@ -95,7 +141,17 @@ describe('FileTypeValidator', () => {
       const options: object = {};
 
       describe('hex', () => {
-        it('should return the value when the file is valid', (done) => {
+        it('should return the value when the file mimetype is valid', (done) => {
+          const fileTypeValidator: FileTypeValidator = new FileTypeValidator();
+          const validator = fileTypeValidator.validate(Joi, config);
+          const isValid = validator.rules[0].validate(params, file, state, options);
+          expect(isValid).to.deep.equal(file);
+          done();
+        });
+
+        it('should return the value when the file mimetype is invalid but the extension is valid', (done) => {
+          state.parent.mimetype = 'application/octet-stream';
+
           const fileTypeValidator: FileTypeValidator = new FileTypeValidator();
           const validator = fileTypeValidator.validate(Joi, config);
           const isValid = validator.rules[0].validate(params, file, state, options);
