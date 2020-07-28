@@ -17,7 +17,7 @@ class FileConverter {
 
   public initGm(file: File) {
     const {pdfDensity} = this.config.fileConversions;
-    const gm = this.gm(file.buffer, file.originalname);
+    const gm = this.gm(file.buffer, file.originalname).command('convert');
     return file.mimetype === 'application/pdf' ? gm.density(pdfDensity, pdfDensity) : gm;
   }
 
@@ -33,7 +33,7 @@ class FileConverter {
   public newMimeType(currentMimeType: string, originalMimeType: string): string[] {
     if (currentMimeType === originalMimeType) {
       const mimeTypeMap: {[key: string]: string[]} = {
-        'application/pdf': ['image/png', 'png'],
+        'application/pdf': ['image/tiff', 'tif'],
         'image/jpeg': ['image/png', 'png']
       };
       return mimeTypeMap[currentMimeType] || ['image/jpeg', 'jpeg'];

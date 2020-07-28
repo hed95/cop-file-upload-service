@@ -8,8 +8,9 @@ describe('FileConverter', () => {
 
   beforeEach(() => {
     gm = sinon.stub().returns({
-      density: sinon.spy(),
-      toBuffer: sinon.spy()
+      command: sinon.stub().returnsThis(),
+      density: sinon.stub().returnsThis(),
+      toBuffer: sinon.stub().returnsThis()
     });
     util = {
       promisify: sinon.stub().returns(() => true)
@@ -71,7 +72,7 @@ describe('FileConverter', () => {
       const originalMimeType: string = 'application/pdf';
       const fileConverter: FileConverter = new FileConverter(gm, util, config);
       const newMimeType: string[] = fileConverter.newMimeType(currentMimeType, originalMimeType);
-      expect(newMimeType).to.deep.equal(['image/png', 'png']);
+      expect(newMimeType).to.deep.equal(['image/tiff', 'tif']);
       done();
     });
 
