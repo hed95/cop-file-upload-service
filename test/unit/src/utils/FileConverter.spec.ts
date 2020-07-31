@@ -8,9 +8,9 @@ describe('FileConverter', () => {
 
   beforeEach(() => {
     gm = sinon.stub().returns({
-      command: sinon.stub().returnsThis(),
-      density: sinon.stub().returnsThis(),
-      toBuffer: sinon.stub().returnsThis()
+      command: sinon.spy(),
+      density: sinon.spy(),
+      toBuffer: sinon.spy()
     });
     util = {
       promisify: sinon.stub().returns(() => true)

@@ -2,8 +2,6 @@ class FileType {
   public static isValidFileTypeForConversion(mimeType: string): boolean {
     if (this.fileTypeGroup(mimeType) === 'image') {
       return true;
-    } else if (mimeType === 'application/pdf') {
-      return true;
     }
     return false;
   }
