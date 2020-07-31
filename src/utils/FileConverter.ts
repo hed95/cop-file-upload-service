@@ -17,7 +17,7 @@ class FileConverter {
 
   public initGm(file: File) {
     const {pdfDensity} = this.config.fileConversions;
-    const gm = this.gm(file.buffer, file.originalname).command('convert');
+    const gm = this.gm(file.buffer, file.originalname);
     return file.mimetype === 'application/pdf' ? gm.density(pdfDensity, pdfDensity) : gm;
   }
 

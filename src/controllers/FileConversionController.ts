@@ -27,7 +27,7 @@ class FileConversionController {
         logger(`File can be converted - ${fileToConvert.mimetype}`);
         convertedFile = await this.fileConverter.convert(fileToConvert, logger);
       } else {
-        logger(`File cannot be converted - ${file.mimetype}`);
+        logger(`File not valid for conversion - ${file.mimetype}`);
         convertedFile = {...file, ...{version: fileVersions.clean}};
       }
       req.allFiles[fileVersions.clean] = convertedFile;

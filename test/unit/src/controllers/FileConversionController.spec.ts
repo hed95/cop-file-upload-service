@@ -14,8 +14,8 @@ describe('FileConversionController', () => {
     beforeEach(() => {
       req = requestMock({
         file: {
-          buffer: fs.readFileSync('test/data/test-file.pdf'),
-          mimetype: 'application/pdf'
+          buffer: fs.readFileSync('test/data/test-file.png'),
+          mimetype: 'image/png'
         },
         logger: sinon.spy()
       });
@@ -33,14 +33,14 @@ describe('FileConversionController', () => {
       sinon.stub(res, 'json').returns(res);
     });
 
-    it('should log the correct messages and call next() if the file can be converted - image or pdf file and req.allFiles does not exist', (done) => {
+    it('should log the correct messages and call next() if the file can be converted - image and req.allFiles does not exist', (done) => {
       fileConversionController = new FileConversionController(image, config);
 
       fileConversionController
         .convertFile(req, res, next)
         .then(() => {
           expect(req.logger).to.have.been.calledOnce;
-          expect(req.logger).to.have.been.calledWith('File can be converted - application/pdf');
+          expect(req.logger).to.have.been.calledWith('File can be converted - image/png');
           expect(next).to.have.been.calledOnce;
           expect(req.allFiles).to.have.property(config.fileVersions.clean);
           expect(req.allFiles[config.fileVersions.clean]).to.deep.equal({
@@ -81,7 +81,7 @@ describe('FileConversionController', () => {
         });
     });
 
-    it('should log the correct messages and call next() if the file cannot be converted - text file', (done) => {
+    it('should log the correct messages and call next() if the file is not valid for conversion - text file', (done) => {
       const buffer = fs.readFileSync('test/data/test-file.txt');
       const mimetype = 'text/plain';
       req.file.buffer = buffer;
@@ -93,7 +93,7 @@ describe('FileConversionController', () => {
         .convertFile(req, res, next)
         .then(() => {
           expect(req.logger).to.have.been.calledOnce;
-          expect(req.logger).to.have.been.calledWith('File cannot be converted - text/plain');
+          expect(req.logger).to.have.been.calledWith('File not valid for conversion - text/plain');
           expect(next).to.have.been.calledOnce;
           expect(req.allFiles).to.have.property(config.fileVersions.clean);
           expect(req.allFiles[config.fileVersions.clean]).to.deep.equal({
@@ -121,7 +121,7 @@ describe('FileConversionController', () => {
         .convertFile(req, res, next)
         .then(() => {
           expect(req.logger).to.have.been.calledThrice;
-          expect(req.logger).to.have.been.calledWith('File can be converted - application/pdf');
+          expect(req.logger).to.have.been.calledWith('File can be converted - image/png');
           expect(req.logger).to.have.been.calledWith('Unable to convert file', 'error');
           expect(req.logger).to.have.been.calledWith('Error: Internal Server Error');
           expect(res.status).to.have.been.calledOnce;
